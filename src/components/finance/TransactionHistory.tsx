@@ -1,29 +1,8 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Payment } from '@/types/finance';
+import { Student, Employee } from '@/types';
 import TransactionTable from './TransactionTable';
-
-interface Payment {
-  id: string;
-  type: string;
-  amount: number;
-  date: string;
-  description: string;
-  paidBy?: string;
-  paidTo?: string;
-  status: string;
-}
-
-interface Student {
-  id: string;
-  name: string;
-}
-
-interface Employee {
-  id: string;
-  name: string;
-  role: string;
-}
 
 interface TransactionHistoryProps {
   filteredPayments: Payment[];
@@ -41,27 +20,23 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   updatePaymentStatus,
 }) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Transaction History</CardTitle>
-        <CardDescription>
-          View all financial transactions
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="bg-card rounded-md border shadow-sm">
+      <div className="p-4 border-b">
+        <h2 className="text-xl font-semibold">Transaction History</h2>
+        <p className="text-sm text-muted-foreground">
+          Showing {filteredPayments.length} of {allPaymentsCount} transactions
+        </p>
+      </div>
+      
+      <div className="overflow-x-auto">
         <TransactionTable 
           payments={filteredPayments}
           students={students}
           employees={employees}
           updatePaymentStatus={updatePaymentStatus}
         />
-      </CardContent>
-      <CardFooter className="justify-between border-t px-6 py-4">
-        <div className="text-sm text-muted-foreground">
-          Showing <strong>{filteredPayments.length}</strong> of <strong>{allPaymentsCount}</strong> transactions
-        </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 };
 

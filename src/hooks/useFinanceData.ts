@@ -53,7 +53,7 @@ const mockPayments = [
 
 export const useFinanceData = () => {
   const [payments, setPayments] = useState<Payment[]>(mockPayments);
-  const [filterType, setFilterType] = useState<string>("");
+  const [filterType, setFilterType] = useState<string>("all"); // Changed from empty string to "all"
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newPayment, setNewPayment] = useState({
@@ -87,7 +87,7 @@ export const useFinanceData = () => {
 
   // Filter payments based on type and search term
   const filteredPayments = payments.filter(payment => {
-    const matchesType = !filterType || payment.type === filterType;
+    const matchesType = filterType === 'all' || payment.type === filterType;
     
     const matchesSearch = searchTerm === '' || 
       payment.description.toLowerCase().includes(searchTerm.toLowerCase());

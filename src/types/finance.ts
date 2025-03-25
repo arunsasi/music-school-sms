@@ -21,5 +21,5 @@ export interface NewPayment {
 }
 
 // Re-export types from index.ts for convenience when importing from finance.ts
-import { Student, Employee } from '@/types';
-export { Student, Employee };
+import type { Student, Employee } from '@/types';
+export type { Student, Employee };

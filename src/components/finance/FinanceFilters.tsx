@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Download, Filter, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -25,37 +24,31 @@ const FinanceFilters: React.FC<FinanceFiltersProps> = ({
   setFilterType,
 }) => {
   return (
-    <div className="flex items-center gap-4">
-      <div className="relative flex-1">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="relative w-full sm:w-64">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
-          type="search"
           placeholder="Search transactions..."
-          className="pl-8 w-full"
+          className="pl-8"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       
-      <Select value={filterType} onValueChange={setFilterType}>
-        <SelectTrigger className="w-[180px]">
-          <span className="flex items-center">
-            <Filter className="mr-2 h-4 w-4" />
-            <SelectValue placeholder="All transactions" />
-          </span>
+      <Select 
+        value={filterType} 
+        onValueChange={(value) => setFilterType(value)}
+      >
+        <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectValue placeholder="Filter by type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All types</SelectItem>
-          <SelectItem value="Fee">Fees</SelectItem>
-          <SelectItem value="Salary">Salaries</SelectItem>
+          <SelectItem value="all">All Transactions</SelectItem>
+          <SelectItem value="Fee">Fee Payments</SelectItem>
+          <SelectItem value="Salary">Salary Payments</SelectItem>
           <SelectItem value="Expense">Expenses</SelectItem>
         </SelectContent>
       </Select>
-      
-      <Button variant="outline">
-        <Download className="mr-2 h-4 w-4" />
-        Export
-      </Button>
     </div>
   );
 };
