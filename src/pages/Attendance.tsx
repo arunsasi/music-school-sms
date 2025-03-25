@@ -64,7 +64,7 @@ const initialAttendanceRecords = [
 
 const Attendance: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("today");
-  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedClass, setSelectedClass] = useState("all"); // Changed from empty string to "all"
   const [searchTerm, setSearchTerm] = useState("");
   const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendanceRecords, setAttendanceRecords] = useState(initialAttendanceRecords);
@@ -72,7 +72,7 @@ const Attendance: React.FC = () => {
   // Filter students based on selected class and search term
   const filteredStudents = mockStudents.filter(student => {
     return (
-      (!selectedClass || student.class === selectedClass) &&
+      (selectedClass === "all" || student.class === selectedClass) && // Updated condition to check for "all"
       (student.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
@@ -164,7 +164,7 @@ const Attendance: React.FC = () => {
                 </span>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Classes</SelectItem>
+                <SelectItem value="all">All Classes</SelectItem>
                 {mockClasses.map(c => (
                   <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
                 ))}
