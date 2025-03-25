@@ -153,16 +153,22 @@ const Finance: React.FC = () => {
       return;
     }
 
-    const paymentToAdd = {
+    // Create base payment object
+    let paymentToAdd: any = {
       id: `${Date.now()}`,
       type: newPayment.type as 'Fee' | 'Salary' | 'Expense',
       amount: Number(newPayment.amount),
       date: newPayment.date,
       description: newPayment.description,
-      status: newPayment.status as 'Paid' | 'Pending' | 'Cancelled',
-      ...(newPayment.type === 'Fee' && { paidBy: newPayment.paidBy }),
-      ...(newPayment.type === 'Salary' && { paidTo: newPayment.paidTo }),
+      status: newPayment.status as 'Paid' | 'Pending' | 'Cancelled'
     };
+
+    // Add appropriate payer/payee based on payment type
+    if (newPayment.type === 'Fee' && newPayment.paidBy) {
+      paymentToAdd.paidBy = newPayment.paidBy;
+    } else if (newPayment.type === 'Salary' && newPayment.paidTo) {
+      paymentToAdd.paidTo = newPayment.paidTo;
+    }
 
     setPayments([paymentToAdd, ...payments]);
     
