@@ -62,3 +62,19 @@ export interface User {
 }
 
 export type UserRole = 'admin' | 'teacher' | 'accounts';
+
+export interface Teacher extends Employee {
+  classes: string[]; // Class IDs assigned to teacher
+}
+
+export interface AttendanceRecord {
+  id: string;
+  studentId: string;
+  classId: string;
+  date: string;
+  status: 'Present' | 'Late' | 'Absent';
+  remark: string;
+  takenBy: string;
+  editedBy?: string;
+  editedAt?: string;
+}

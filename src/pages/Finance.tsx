@@ -5,9 +5,13 @@ import { mockStudents, mockEmployees } from '@/data/mockData';
 import FinanceSummaryCards from '@/components/finance/FinanceSummaryCards';
 import FinanceFilters from '@/components/finance/FinanceFilters';
 import AddTransactionDialog from '@/components/finance/AddTransactionDialog';
+import EditTransactionDialog from '@/components/finance/EditTransactionDialog';
 import TransactionHistory from '@/components/finance/TransactionHistory';
+import { useAuth } from '@/context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const Finance: React.FC = () => {
+  const { hasPermission } = useAuth();
   const {
     filterType,
     setFilterType,
@@ -15,6 +19,8 @@ const Finance: React.FC = () => {
     setSearchTerm,
     isAddDialogOpen,
     setIsAddDialogOpen,
+    isEditDialogOpen,
+    setIsEditDialogOpen,
     newPayment,
     setNewPayment,
     totalIncome,
@@ -25,10 +31,26 @@ const Finance: React.FC = () => {
     paidExpensesCount,
     pendingFeesCount,
     filteredPayments,
+    currentTransactions,
+    currentPage,
+    totalPages,
+    nextPage,
+    prevPage,
+    goToPage,
     handleAddPayment,
     updatePaymentStatus,
-    payments
+    payments,
+    editingPayment,
+    startEditPayment,
+    handleEditPayment,
+    editNote,
+    setEditNote
   } = useFinanceData();
+
+  // Access control - only admin and accounts can access
+  if (!hasPermission(['admin', 'accounts'])) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -64,11 +86,29 @@ const Finance: React.FC = () => {
 
       <TransactionHistory 
         filteredPayments={filteredPayments}
+        currentTransactions={currentTransactions}
         allPaymentsCount={payments.length}
         students={mockStudents}
         employees={mockEmployees}
         updatePaymentStatus={updatePaymentStatus}
+        startEditPayment={startEditPayment}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        nextPage={nextPage}
+        prevPage={prevPage}
+        goToPage={goToPage}
       />
+
+      {editingPayment && (
+        <EditTransactionDialog
+          isOpen={isEditDialogOpen}
+          setIsOpen={setIsEditDialogOpen}
+          payment={editingPayment}
+          editNote={editNote}
+          setEditNote={setEditNote}
+          handleEditPayment={handleEditPayment}
+        />
+      )}
     </div>
   );
 };

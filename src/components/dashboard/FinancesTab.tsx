@@ -56,16 +56,16 @@ const FinancesTab: React.FC<FinancesTabProps> = ({ stats, recentPayments }) => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">Total Revenue</span>
-                <span className="font-bold text-lg">${stats.totalRevenue.toLocaleString()}</span>
+                <span className="font-bold text-lg">₹{stats.totalRevenue.toLocaleString()}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">Total Expenses</span>
-                <span className="font-bold text-lg">${stats.totalExpenses.toLocaleString()}</span>
+                <span className="font-bold text-lg">₹{stats.totalExpenses.toLocaleString()}</span>
               </div>
               <div className="border-t pt-2 flex justify-between items-center">
                 <span className="text-sm font-medium">Net Profit</span>
                 <span className="font-bold text-lg text-green-500">
-                  ${(stats.totalRevenue - stats.totalExpenses).toLocaleString()}
+                  ₹{(stats.totalRevenue - stats.totalExpenses).toLocaleString()}
                 </span>
               </div>
             </div>
@@ -83,7 +83,7 @@ const FinancesTab: React.FC<FinancesTabProps> = ({ stats, recentPayments }) => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">${payment.amount}</p>
+                    <p className="font-medium">₹{payment.amount.toLocaleString()}</p>
                     <Badge 
                       variant={
                         payment.status === 'Paid' 

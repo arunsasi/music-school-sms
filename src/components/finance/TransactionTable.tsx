@@ -1,7 +1,10 @@
 
 import React from 'react';
-import { UserCircle } from 'lucide-react';
+import { Payment } from '@/types/finance';
+import { Student, Employee } from '@/types';
+import { Edit, Info, UserCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -17,34 +20,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-interface Payment {
-  id: string;
-  type: string;
-  amount: number;
-  date: string;
-  description: string;
-  paidBy?: string;
-  paidTo?: string;
-  status: string;
-}
-
-interface Student {
-  id: string;
-  name: string;
-}
-
-interface Employee {
-  id: string;
-  name: string;
-  role: string;
-}
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { useAuth } from '@/context/AuthContext';
 
 interface TransactionTableProps {
   payments: Payment[];
   students: Student[];
   employees: Employee[];
   updatePaymentStatus: (id: string, newStatus: 'Paid' | 'Pending' | 'Cancelled') => void;
+  startEditPayment: (payment: Payment) => void;
 }
 
 const TransactionTable: React.FC<TransactionTableProps> = ({
@@ -52,7 +46,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   students,
   employees,
   updatePaymentStatus,
+  startEditPayment,
 }) => {
+  const { user, hasPermission } = useAuth();
+  const canEditTransactions = hasPermission(['admin', 'accounts']);
+
   return (
     <Table>
       <TableHeader>
@@ -110,7 +108,31 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                 {!payment.paidBy && !payment.paidTo && '-'}
               </TableCell>
               <TableCell className={payment.type === 'Fee' ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
-                {payment.type === 'Fee' ? '+' : '-'}${payment.amount.toFixed(2)}
+                {payment.type === 'Fee' ? '+' : '-'}₹{payment.amount.toLocaleString()}
+                
+                {payment.editHistory && payment.editHistory.length > 0 && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 ml-1">
+                        <Info className="h-3 w-3" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Edit History</h4>
+                        {payment.editHistory.map((edit, index) => (
+                          <div key={index} className="border-t pt-2 text-xs">
+                            <p><strong>Changed by:</strong> {edit.editedBy}</p>
+                            <p><strong>Date:</strong> {new Date(edit.editDate).toLocaleString()}</p>
+                            <p><strong>From:</strong> ₹{edit.previousAmount.toLocaleString()}</p>
+                            <p><strong>To:</strong> ₹{edit.newAmount.toLocaleString()}</p>
+                            <p><strong>Reason:</strong> {edit.note}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </TableCell>
               <TableCell>
                 <Badge
@@ -140,6 +162,26 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                       <SelectItem value="Cancelled">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
+                  
+                  {canEditTransactions && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => startEditPayment(payment)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Edit Transaction</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                 </div>
               </TableCell>
             </TableRow>

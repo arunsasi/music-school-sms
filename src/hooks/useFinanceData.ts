@@ -1,14 +1,15 @@
 
 import { useState } from 'react';
-import { Payment } from '@/types/finance';
+import { Payment, EditHistory } from '@/types/finance';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 // Mock data
 const mockPayments = [
   { 
     id: '1', 
     type: 'Fee' as const, 
-    amount: 120, 
+    amount: 12000, 
     date: '2023-07-05', 
     description: 'Piano Beginners - July 2023', 
     paidBy: '1', 
@@ -17,7 +18,7 @@ const mockPayments = [
   { 
     id: '2', 
     type: 'Fee' as const, 
-    amount: 150, 
+    amount: 15000, 
     date: '2023-07-06', 
     description: 'Violin Intermediate - July 2023', 
     paidBy: '4', 
@@ -26,7 +27,7 @@ const mockPayments = [
   { 
     id: '3', 
     type: 'Salary' as const, 
-    amount: 2500, 
+    amount: 25000, 
     date: '2023-06-30', 
     description: 'Teacher Salary - June 2023', 
     paidTo: '3', 
@@ -35,7 +36,7 @@ const mockPayments = [
   { 
     id: '4', 
     type: 'Expense' as const, 
-    amount: 350, 
+    amount: 3500, 
     date: '2023-07-10', 
     description: 'New music equipment', 
     status: 'Paid' as const 
@@ -43,7 +44,7 @@ const mockPayments = [
   { 
     id: '5', 
     type: 'Fee' as const, 
-    amount: 120, 
+    amount: 12000, 
     date: '2023-07-15', 
     description: 'Piano Beginners - August 2023', 
     paidBy: '1', 
@@ -51,11 +52,29 @@ const mockPayments = [
   },
 ];
 
+// Function to get only current month transactions
+const getCurrentMonthTransactions = (payments: Payment[]) => {
+  const currentDate = new Date();
+  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  
+  return payments.filter(payment => {
+    const paymentDate = new Date(payment.date);
+    return paymentDate >= firstDayOfMonth;
+  });
+};
+
 export const useFinanceData = () => {
+  const { user } = useAuth();
   const [payments, setPayments] = useState<Payment[]>(mockPayments);
-  const [filterType, setFilterType] = useState<string>("all"); // Changed from empty string to "all"
+  const [filterType, setFilterType] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [editingPayment, setEditingPayment] = useState<Payment | null>(null);
+  const [editNote, setEditNote] = useState("");
+  const itemsPerPage = 5;
+  
   const [newPayment, setNewPayment] = useState({
     type: 'Fee',
     amount: '',
@@ -94,6 +113,15 @@ export const useFinanceData = () => {
     
     return matchesType && matchesSearch;
   });
+
+  // Get current month transactions for history display with pagination
+  const currentMonthTransactions = getCurrentMonthTransactions(filteredPayments);
+  const totalPages = Math.ceil(currentMonthTransactions.length / itemsPerPage);
+  
+  // Get current page of transactions
+  const currentTransactions = currentMonthTransactions
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleAddPayment = () => {
     if (!newPayment.amount || !newPayment.description || !newPayment.date) {
@@ -142,6 +170,62 @@ export const useFinanceData = () => {
     toast.success(`Payment status updated to ${newStatus}`);
   };
 
+  // Functions for editing transactions
+  const startEditPayment = (payment: Payment) => {
+    setEditingPayment(payment);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditPayment = (newAmount: number) => {
+    if (!editingPayment || !editNote) {
+      toast.error("Please provide a reason for editing the transaction");
+      return;
+    }
+
+    const editHistoryEntry: EditHistory = {
+      previousAmount: editingPayment.amount,
+      newAmount: newAmount,
+      editedBy: user?.name || 'Unknown user',
+      editDate: new Date().toISOString(),
+      note: editNote
+    };
+
+    const updatedPayments = payments.map(payment => 
+      payment.id === editingPayment.id 
+        ? { 
+            ...payment, 
+            amount: newAmount,
+            editHistory: [...(payment.editHistory || []), editHistoryEntry]
+          } 
+        : payment
+    );
+
+    setPayments(updatedPayments);
+    setIsEditDialogOpen(false);
+    setEditingPayment(null);
+    setEditNote("");
+    toast.success("Payment amount updated successfully");
+  };
+
+  // Pagination handlers
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return {
     payments,
     filterType,
@@ -150,6 +234,8 @@ export const useFinanceData = () => {
     setSearchTerm,
     isAddDialogOpen,
     setIsAddDialogOpen,
+    isEditDialogOpen,
+    setIsEditDialogOpen,
     newPayment,
     setNewPayment,
     totalIncome,
@@ -160,7 +246,19 @@ export const useFinanceData = () => {
     paidExpensesCount,
     pendingFeesCount,
     filteredPayments,
+    currentTransactions,
+    currentPage,
+    totalPages,
+    nextPage,
+    prevPage,
+    goToPage,
     handleAddPayment,
-    updatePaymentStatus
+    updatePaymentStatus,
+    editingPayment,
+    setEditingPayment,
+    startEditPayment,
+    handleEditPayment,
+    editNote,
+    setEditNote
   };
 };
