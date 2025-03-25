@@ -10,17 +10,6 @@ export interface Payment {
   status: 'Paid' | 'Pending' | 'Cancelled';
 }
 
-export interface Student {
-  id: string;
-  name: string;
-}
-
-export interface Employee {
-  id: string;
-  name: string;
-  role: string;
-}
-
 export interface NewPayment {
   type: string;
   amount: string;
@@ -30,3 +19,7 @@ export interface NewPayment {
   paidTo: string;
   status: string;
 }
+
+// Re-export types from index.ts for convenience when importing from finance.ts
+import { Student, Employee } from '@/types';
+export { Student, Employee };
