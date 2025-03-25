@@ -14,6 +14,7 @@ import {
   UserPlus,
   Plus,
   Check,
+  MoreVertical, // Add the missing MoreVertical icon import
 } from 'lucide-react';
 import { 
   Card, 
