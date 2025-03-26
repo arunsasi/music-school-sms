@@ -1,16 +1,7 @@
 
 import React, { useState } from 'react';
-import { 
-  BarChart3, 
-  Calendar, 
-  Download, 
-  FileText, 
-  Filter, 
-  PieChart, 
-  Users 
-} from 'lucide-react';
+import { Calendar, Filter } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { 
   Select, 
   SelectContent, 
@@ -22,49 +13,8 @@ import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import AttendanceReportTab from '@/components/reports/AttendanceReportTab';
 import FinanceReportTab from '@/components/reports/FinanceReportTab';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart as RePieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
-
-// Mock data for charts
-const studentGrowthData = [
-  { month: 'Jan', students: 45 },
-  { month: 'Feb', students: 52 },
-  { month: 'Mar', students: 49 },
-  { month: 'Apr', students: 55 },
-  { month: 'May', students: 59 },
-  { month: 'Jun', students: 68 },
-];
-
-const financialData = [
-  { month: 'Jan', income: 520000, expenses: 380000, profit: 140000 },
-  { month: 'Feb', income: 550000, expenses: 400000, profit: 150000 },
-  { month: 'Mar', income: 600000, expenses: 420000, profit: 180000 },
-  { month: 'Apr', income: 580000, expenses: 410000, profit: 170000 },
-  { month: 'May', income: 620000, expenses: 430000, profit: 190000 },
-  { month: 'Jun', income: 650000, expenses: 450000, profit: 200000 },
-];
-
-const studentDistributionData = [
-  { name: 'Piano', value: 35, color: '#8884d8' },
-  { name: 'Violin', value: 25, color: '#82ca9d' },
-  { name: 'Guitar', value: 20, color: '#ffc658' },
-  { name: 'Vocal', value: 15, color: '#ff8042' },
-  { name: 'Drums', value: 5, color: '#0088fe' },
-];
+import OverviewReportTab from '@/components/reports/OverviewReportTab';
+import StudentsReportTab from '@/components/reports/StudentsReportTab';
 
 const Reports: React.FC = () => {
   const { hasPermission } = useAuth();
@@ -111,114 +61,8 @@ const Reports: React.FC = () => {
           <TabsTrigger value="students">Students</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">68</div>
-                <p className="text-xs text-muted-foreground">
-                  +8% from last month
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Attendance Rate</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">82%</div>
-                <p className="text-xs text-muted-foreground">
-                  +3% from last month
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">₹6,500</div>
-                <p className="text-xs text-muted-foreground">
-                  +5% from last month
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Classes</CardTitle>
-                <PieChart className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">12</div>
-                <p className="text-xs text-muted-foreground">
-                  +2 from last month
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Student Growth</CardTitle>
-                <CardDescription>
-                  New student enrollments over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pl-2">
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={studentGrowthData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="students" 
-                      stroke="#8884d8" 
-                      activeDot={{ r: 8 }} 
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-            
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Financial Overview</CardTitle>
-                <CardDescription>
-                  Income vs. Expenses
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pl-2">
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={financialData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="income" fill="#8884d8" name="Income" />
-                    <Bar dataKey="expenses" fill="#82ca9d" name="Expenses" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="flex justify-center">
-            <Button onClick={() => exportReport('overview')}>
-              <Download className="mr-2 h-4 w-4" />
-              Export Overview Report
-            </Button>
-          </div>
+        <TabsContent value="overview">
+          <OverviewReportTab exportReport={exportReport} />
         </TabsContent>
         
         <TabsContent value="attendance" className="space-y-4">
@@ -237,98 +81,8 @@ const Reports: React.FC = () => {
           )}
         </TabsContent>
         
-        <TabsContent value="students" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Student Distribution by Instrument</CardTitle>
-                <CardDescription>
-                  Breakdown of student enrollment
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex justify-center">
-                <ResponsiveContainer width="100%" height={300}>
-                  <RePieChart>
-                    <Pie
-                      data={studentDistributionData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      dataKey="value"
-                      label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {studentDistributionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </RePieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Student Growth</CardTitle>
-                <CardDescription>
-                  New student enrollments over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pl-2">
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={studentGrowthData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="students" 
-                      stroke="#8884d8" 
-                      activeDot={{ r: 8 }} 
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-            
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Student Age Distribution</CardTitle>
-                <CardDescription>
-                  Number of students by age group
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pl-2">
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart 
-                    data={[
-                      { age: 'Under 10', count: 12 },
-                      { age: '10-15', count: 24 },
-                      { age: '16-20', count: 18 },
-                      { age: '21-30', count: 8 },
-                      { age: 'Over 30', count: 6 },
-                    ]}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="age" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="count" fill="#8884d8" name="Number of Students" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="flex justify-center">
-            <Button onClick={() => exportReport('students')}>
-              <Download className="mr-2 h-4 w-4" />
-              Export Student Report
-            </Button>
-          </div>
+        <TabsContent value="students">
+          <StudentsReportTab exportReport={exportReport} />
         </TabsContent>
       </Tabs>
     </div>
