@@ -95,15 +95,15 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+    <Card className="border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <CardHeader className="flex flex-row items-center justify-between border-b px-6 py-4">
         <div>
-          <CardTitle>
+          <CardTitle className="text-xl font-semibold">
             {selectedClass === "all" 
               ? "Mark Attendance for All Classes" 
               : `Mark Attendance for ${getClassName(selectedClass)}`}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm text-muted-foreground">
             {currentDate === today 
               ? "Today's attendance" 
               : `Attendance for ${new Date(currentDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`}
@@ -111,7 +111,10 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
         </div>
         
         {selectedClass !== "all" && !attendanceSubmitted && canTakeOrEditAttendance() && (
-          <Button onClick={handleSubmitAttendance}>
+          <Button 
+            onClick={handleSubmitAttendance}
+            className="bg-music-500 hover:bg-music-600"
+          >
             Submit Attendance
           </Button>
         )}
@@ -123,117 +126,123 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
         )}
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="p-0">
         {isPastDate && !canEditAttendance && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4 flex items-center">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md mx-6 mt-6 p-3 mb-4 flex items-center">
             <AlertTriangle className="h-5 w-5 text-yellow-500 mr-2" />
-            <p className="text-yellow-700">
+            <p className="text-yellow-700 text-sm">
               You cannot mark attendance for past dates. Please contact an administrator.
             </p>
           </div>
         )}
         
         {isFutureDate && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4 flex items-center">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md mx-6 mt-6 p-3 mb-4 flex items-center">
             <AlertTriangle className="h-5 w-5 text-yellow-500 mr-2" />
-            <p className="text-yellow-700">
+            <p className="text-yellow-700 text-sm">
               You cannot mark attendance for future dates.
             </p>
           </div>
         )}
           
         {attendanceSubmitted && !canEditAttendance && (
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4 flex items-center">
+          <div className="bg-blue-50 border border-blue-200 rounded-md mx-6 mt-6 p-3 mb-4 flex items-center">
             <AlertTriangle className="h-5 w-5 text-blue-500 mr-2" />
-            <p className="text-blue-700">
+            <p className="text-blue-700 text-sm">
               Attendance has been submitted and can only be edited by administrators.
             </p>
           </div>
         )}
-        
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Student Name</TableHead>
-              <TableHead>Class</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Remarks</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredStudents.length === 0 ? (
+
+        <div className="max-w-full overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-gray-50 text-left">
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No students found
-                </TableCell>
+                <TableHead className="py-4 px-4 font-medium">Student</TableHead>
+                <TableHead className="py-4 px-4 font-medium hidden md:table-cell">Class</TableHead>
+                <TableHead className="py-4 px-4 font-medium">Status</TableHead>
+                <TableHead className="py-4 px-4 font-medium">Actions</TableHead>
               </TableRow>
-            ) : (
-              filteredStudents.map((student) => {
-                const status = getAttendanceStatus(student.id, currentDate);
-                return (
-                  <TableRow key={student.id}>
-                    <TableCell className="font-medium">{student.name}</TableCell>
-                    <TableCell>{getClassName(student.classId)}</TableCell>
-                    <TableCell>
-                      {status && (
-                        <Badge
-                          className={
-                            status === 'Present' 
-                              ? 'bg-green-100 text-green-800 hover:bg-green-100'
-                              : status === 'Late'
-                              ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
-                              : 'bg-red-100 text-red-800 hover:bg-red-100'
-                          }
-                        >
-                          {status}
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {/* No editable remarks for now */}
-                      -
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className={status === 'Present' ? 'bg-green-100' : ''}
-                          onClick={() => markAttendance(student.id, student.classId, 'Present')}
-                          disabled={!canTakeOrEditAttendance()}
-                        >
-                          <CheckCircle2 className="h-4 w-4 mr-1" />
-                          Present
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className={status === 'Late' ? 'bg-yellow-100' : ''}
-                          onClick={() => markAttendance(student.id, student.classId, 'Late', 'Arrived late')}
-                          disabled={!canTakeOrEditAttendance()}
-                        >
-                          <Clock className="h-4 w-4 mr-1" />
-                          Late
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className={status === 'Absent' ? 'bg-red-100' : ''}
-                          onClick={() => markAttendance(student.id, student.classId, 'Absent')}
-                          disabled={!canTakeOrEditAttendance()}
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Absent
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredStudents.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-24 text-center">
+                    No students found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredStudents.map((student) => {
+                  const status = getAttendanceStatus(student.id, currentDate);
+                  return (
+                    <TableRow key={student.id}>
+                      <TableCell className="py-4 px-4 font-medium">
+                        <div className="flex flex-col">
+                          <span>{student.name}</span>
+                          <span className="text-xs text-muted-foreground md:hidden mt-1">
+                            {getClassName(student.classId)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4 px-4 hidden md:table-cell">
+                        {getClassName(student.classId)}
+                      </TableCell>
+                      <TableCell className="py-4 px-4">
+                        {status && (
+                          <Badge
+                            className={
+                              status === 'Present' 
+                                ? 'bg-green-100 text-green-800 hover:bg-green-100'
+                                : status === 'Late'
+                                ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
+                                : 'bg-red-100 text-red-800 hover:bg-red-100'
+                            }
+                          >
+                            {status}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="py-4 px-4">
+                        <div className="flex flex-wrap gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={status === 'Present' ? 'bg-green-100' : ''}
+                            onClick={() => markAttendance(student.id, student.classId, 'Present')}
+                            disabled={!canTakeOrEditAttendance()}
+                          >
+                            <CheckCircle2 className="h-4 w-4 mr-1" />
+                            <span className="hidden sm:inline">Present</span>
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className={status === 'Late' ? 'bg-yellow-100' : ''}
+                            onClick={() => markAttendance(student.id, student.classId, 'Late', 'Arrived late')}
+                            disabled={!canTakeOrEditAttendance()}
+                          >
+                            <Clock className="h-4 w-4 mr-1" />
+                            <span className="hidden sm:inline">Late</span>
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className={status === 'Absent' ? 'bg-red-100' : ''}
+                            onClick={() => markAttendance(student.id, student.classId, 'Absent')}
+                            disabled={!canTakeOrEditAttendance()}
+                          >
+                            <XCircle className="h-4 w-4 mr-1" />
+                            <span className="hidden sm:inline">Absent</span>
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );

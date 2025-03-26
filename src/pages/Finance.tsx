@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { mockStudents, mockEmployees } from '@/data/mockData';
 import FinanceSummaryCards from '@/components/finance/FinanceSummaryCards';
@@ -7,8 +7,10 @@ import FinanceFilters from '@/components/finance/FinanceFilters';
 import AddTransactionDialog from '@/components/finance/AddTransactionDialog';
 import EditTransactionDialog from '@/components/finance/EditTransactionDialog';
 import TransactionHistory from '@/components/finance/TransactionHistory';
+import PendingFeesReport from '@/components/finance/PendingFeesReport';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Finance: React.FC = () => {
   const { hasPermission } = useAuth();
@@ -46,6 +48,8 @@ const Finance: React.FC = () => {
     editNote,
     setEditNote
   } = useFinanceData();
+  
+  const [activeTab, setActiveTab] = useState('transactions');
 
   // Access control - only admin and accounts can access
   if (!hasPermission(['admin', 'accounts'])) {
@@ -77,27 +81,40 @@ const Finance: React.FC = () => {
         pendingFeesCount={pendingFeesCount}
       />
 
-      <FinanceFilters 
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        filterType={filterType}
-        setFilterType={setFilterType}
-      />
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-2 md:w-auto">
+          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          <TabsTrigger value="pending-fees">Pending Fees</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="transactions" className="space-y-6">
+          <FinanceFilters 
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            filterType={filterType}
+            setFilterType={setFilterType}
+          />
 
-      <TransactionHistory 
-        filteredPayments={filteredPayments}
-        currentTransactions={currentTransactions}
-        allPaymentsCount={payments.length}
-        students={mockStudents}
-        employees={mockEmployees}
-        updatePaymentStatus={updatePaymentStatus}
-        startEditPayment={startEditPayment}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        nextPage={nextPage}
-        prevPage={prevPage}
-        goToPage={goToPage}
-      />
+          <TransactionHistory 
+            filteredPayments={filteredPayments}
+            currentTransactions={currentTransactions}
+            allPaymentsCount={payments.length}
+            students={mockStudents}
+            employees={mockEmployees}
+            updatePaymentStatus={updatePaymentStatus}
+            startEditPayment={startEditPayment}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            nextPage={nextPage}
+            prevPage={prevPage}
+            goToPage={goToPage}
+          />
+        </TabsContent>
+        
+        <TabsContent value="pending-fees">
+          <PendingFeesReport />
+        </TabsContent>
+      </Tabs>
 
       {editingPayment && (
         <EditTransactionDialog

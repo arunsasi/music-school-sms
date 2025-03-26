@@ -13,7 +13,10 @@ import {
   Phone,
   Mail,
   MapPin,
-  Filter
+  Filter,
+  Eye,
+  Presentation,
+  CreditCard
 } from 'lucide-react';
 import { Student } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -36,6 +39,9 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import StudentDetails from '@/components/students/StudentDetails';
+import StudentClasses from '@/components/students/StudentClasses';
+import StudentPayments from '@/components/students/StudentPayments';
 
 // Mock students data
 const MOCK_STUDENTS: Student[] = [
@@ -137,6 +143,12 @@ const Students: React.FC = () => {
   const [isAddingStudent, setIsAddingStudent] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   
+  // State for detail views
+  const [viewingStudent, setViewingStudent] = useState<Student | null>(null);
+  const [isViewingDetails, setIsViewingDetails] = useState(false);
+  const [isManagingClasses, setIsManagingClasses] = useState(false);
+  const [isViewingPayments, setIsViewingPayments] = useState(false);
+  
   const filteredStudents = students
     .filter(student => 
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -201,6 +213,21 @@ const Students: React.FC = () => {
     const updatedStudents = students.filter(student => student.id !== id);
     setStudents(updatedStudents);
     toast.success(`${studentToDelete.name} has been removed`);
+  };
+  
+  const viewDetails = (student: Student) => {
+    setViewingStudent(student);
+    setIsViewingDetails(true);
+  };
+  
+  const manageClasses = (student: Student) => {
+    setViewingStudent(student);
+    setIsManagingClasses(true);
+  };
+  
+  const viewPayments = (student: Student) => {
+    setViewingStudent(student);
+    setIsViewingPayments(true);
   };
   
   return (
@@ -364,6 +391,7 @@ const Students: React.FC = () => {
                           variant="ghost" 
                           size="icon"
                           onClick={() => setEditingStudent(student)}
+                          title="Edit Student"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -374,9 +402,27 @@ const Students: React.FC = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="cursor-pointer">View Details</DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">Manage Classes</DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">Payment History</DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="cursor-pointer"
+                              onClick={() => viewDetails(student)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="cursor-pointer"
+                              onClick={() => manageClasses(student)}
+                            >
+                              <Presentation className="mr-2 h-4 w-4" />
+                              Manage Classes
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="cursor-pointer"
+                              onClick={() => viewPayments(student)}
+                            >
+                              <CreditCard className="mr-2 h-4 w-4" />
+                              Payment History
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               className="text-destructive focus:text-destructive cursor-pointer"
@@ -413,6 +459,25 @@ const Students: React.FC = () => {
           initialData={editingStudent}
         />
       )}
+      
+      {/* Detail View Components */}
+      <StudentDetails 
+        student={viewingStudent}
+        isOpen={isViewingDetails}
+        onClose={() => setIsViewingDetails(false)}
+      />
+      
+      <StudentClasses
+        student={viewingStudent}
+        isOpen={isManagingClasses}
+        onClose={() => setIsManagingClasses(false)}
+      />
+      
+      <StudentPayments
+        student={viewingStudent}
+        isOpen={isViewingPayments}
+        onClose={() => setIsViewingPayments(false)}
+      />
     </div>
   );
 };

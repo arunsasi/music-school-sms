@@ -1,29 +1,13 @@
-
 import React, { useState } from 'react';
 import { 
   ChevronDown, 
   Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  MoreHorizontal,
-  Users,
-  Calendar,
-  Clock,
-  DollarSign,
-  Music
+  Search,
+  Filter
 } from 'lucide-react';
 import { Class, Subject } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +17,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import ClassForm from '@/components/ClassForm';
+import ClassesTable from '@/components/classes/ClassesTable';
+import ClassSchedule from '@/components/classes/ClassSchedule';
+import ClassStudents from '@/components/classes/ClassStudents';
 
 // Mock subjects for demo purposes
 const MOCK_SUBJECTS: Subject[] = [
@@ -126,15 +113,6 @@ const MOCK_CLASSES: Class[] = [
   }
 ];
 
-// Background colors for each subject (for visual variety)
-const SUBJECT_COLORS: { [key: string]: string } = {
-  'Piano': 'bg-blue-50 dark:bg-blue-950',
-  'Guitar': 'bg-green-50 dark:bg-green-950',
-  'Violin': 'bg-purple-50 dark:bg-purple-950',
-  'Drums': 'bg-orange-50 dark:bg-orange-950',
-  'Vocals': 'bg-pink-50 dark:bg-pink-950',
-};
-
 const Classes: React.FC = () => {
   const [classes, setClasses] = useState<Class[]>(MOCK_CLASSES);
   const [searchTerm, setSearchTerm] = useState('');
@@ -142,14 +120,15 @@ const Classes: React.FC = () => {
   const [editingClass, setEditingClass] = useState<Class | null>(null);
   const [subjectFilter, setSubjectFilter] = useState<string>('');
   
-  // Filter classes
+  const [viewingClass, setViewingClass] = useState<Class | null>(null);
+  const [isViewingSchedule, setIsViewingSchedule] = useState(false);
+  const [isManagingStudents, setIsManagingStudents] = useState(false);
+  
   const filteredClasses = classes.filter(cls => {
-    // Subject filter
     if (subjectFilter && cls.subject.name !== subjectFilter) {
       return false;
     }
     
-    // Search term filter
     return (
       cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cls.subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -191,12 +170,29 @@ const Classes: React.FC = () => {
     toast.success(`${classToDelete.name} class has been removed`);
   };
   
+  const viewSchedule = (cls: Class) => {
+    setViewingClass(cls);
+    setIsViewingSchedule(true);
+  };
+  
+  const manageStudents = (cls: Class) => {
+    setViewingClass(cls);
+    setIsManagingStudents(true);
+  };
+  
+  const handleUpdateClassStudents = (updatedClass: Class) => {
+    const updatedClasses = classes.map(cls => 
+      cls.id === updatedClass.id ? updatedClass : cls
+    );
+    setClasses(updatedClasses);
+  };
+  
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Classes</h1>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-bold text-black dark:text-white">Classes</h2>
+          <p className="text-sm text-muted-foreground">
             Manage your school's classes and schedules
           </p>
         </div>
@@ -212,12 +208,12 @@ const Classes: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="mb-6 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="relative w-full md:w-1/2">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search classes..."
-            className="pl-8"
+            className="w-full pl-11 pr-4 py-3 rounded-lg border border-stroke bg-transparent focus-visible:outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -225,13 +221,14 @@ const Classes: React.FC = () => {
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto flex items-center gap-2.5">
+              <Filter className="h-5 w-5" />
               Subject
-              <ChevronDown className="ml-2 h-4 w-4" />
+              <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setSubjectFilter('')}>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onClick={() => setSubjectFilter('')} className="cursor-pointer">
               All Subjects
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -239,6 +236,7 @@ const Classes: React.FC = () => {
               <DropdownMenuItem 
                 key={subject.id}
                 onClick={() => setSubjectFilter(subject.name)}
+                className="cursor-pointer"
               >
                 {subject.name}
               </DropdownMenuItem>
@@ -247,98 +245,14 @@ const Classes: React.FC = () => {
         </DropdownMenu>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredClasses.length === 0 ? (
-          <div className="col-span-full text-center py-8 text-muted-foreground">
-            No classes found. Try a different search term or filter.
-          </div>
-        ) : (
-          filteredClasses.map(cls => {
-            const subjectColor = SUBJECT_COLORS[cls.subject.name] || 'bg-gray-50 dark:bg-gray-800';
-            
-            return (
-              <Card 
-                key={cls.id} 
-                className={`dashboard-card h-full border-t-4 border-t-music-500 ${subjectColor}`}
-              >
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <Badge variant="outline" className="mb-2">
-                      {cls.subject.name}
-                    </Badge>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setEditingClass(cls)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Calendar className="mr-2 h-4 w-4" />
-                          View Schedule
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Users className="mr-2 h-4 w-4" />
-                          Manage Students
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => deleteClass(cls.id)}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <CardTitle className="text-lg">{cls.name}</CardTitle>
-                  <div className="text-sm text-muted-foreground">
-                    Instructor: {MOCK_TEACHERS[cls.teacherId]}
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-2">
-                  <div className="space-y-3">
-                    <div className="flex items-start text-sm">
-                      <Calendar className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground flex-shrink-0" />
-                      <div className="space-y-1">
-                        {cls.schedule.map((sch, idx) => (
-                          <div key={idx}>
-                            <span className="font-medium">{sch.day}:</span> {sch.startTime} - {sch.endTime}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span>{cls.students.length} Student{cls.students.length !== 1 ? 's' : ''}</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span>${cls.fee}/month</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={() => setEditingClass(cls)}
-                  >
-                    <Edit className="h-4 w-4 mr-1" />
-                    Manage Class
-                  </Button>
-                </CardFooter>
-              </Card>
-            );
-          })
-        )}
-      </div>
+      <ClassesTable 
+        classes={filteredClasses}
+        teacherNames={MOCK_TEACHERS}
+        onEditClass={setEditingClass}
+        onDeleteClass={deleteClass}
+        onViewSchedule={viewSchedule}
+        onManageStudents={manageStudents}
+      />
       
       {isAddingClass && (
         <ClassForm
@@ -356,6 +270,19 @@ const Classes: React.FC = () => {
           initialData={editingClass}
         />
       )}
+      
+      <ClassSchedule 
+        classData={viewingClass}
+        isOpen={isViewingSchedule}
+        onClose={() => setIsViewingSchedule(false)}
+      />
+      
+      <ClassStudents
+        classData={viewingClass}
+        isOpen={isManagingStudents}
+        onClose={() => setIsManagingStudents(false)}
+        onUpdate={handleUpdateClassStudents}
+      />
     </div>
   );
 };

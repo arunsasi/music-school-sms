@@ -25,3 +25,12 @@ export const studentDistributionData = [
   { name: 'Vocal', value: 15, color: '#ff8042' },
   { name: 'Drums', value: 5, color: '#0088fe' },
 ];
+
+// Mock data for pending fees
+export const pendingFeesData = [
+  { id: '1', studentName: 'Emma Thompson', className: 'Piano Beginners', amount: 300, dueDate: '2023-07-15', status: 'Overdue' },
+  { id: '2', studentName: 'Liam Davis', className: 'Guitar Advanced', amount: 350, dueDate: '2023-07-20', status: 'Pending' },
+  { id: '3', studentName: 'Sophia Martinez', className: 'Violin Intermediate', amount: 320, dueDate: '2023-07-22', status: 'Pending' },
+  { id: '4', studentName: 'Noah Wilson', className: 'Vocal Training', amount: 370, dueDate: '2023-07-10', status: 'Overdue' },
+  { id: '5', studentName: 'Olivia Johnson', className: 'Drum Fundamentals', amount: 280, dueDate: '2023-07-25', status: 'Pending' },
+];
