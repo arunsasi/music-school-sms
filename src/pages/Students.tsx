@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   ChevronDown, 
@@ -11,7 +12,8 @@ import {
   Calendar,
   Phone,
   Mail,
-  MapPin
+  MapPin,
+  Filter
 } from 'lucide-react';
 import { Student } from '@/types';
 import { Button } from '@/components/ui/button';
