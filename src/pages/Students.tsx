@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   ChevronDown, 
@@ -9,8 +8,6 @@ import {
   Trash2, 
   MoreHorizontal,
   ArrowUpDown,
-  CheckCircle2,
-  XCircle,
   Calendar,
   Phone,
   Mail,
@@ -20,13 +17,6 @@ import { Student } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Card, 
-  CardContent, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +26,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import StudentForm from '@/components/StudentForm';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 
 // Mock students data
 const MOCK_STUDENTS: Student[] = [
@@ -132,13 +130,11 @@ const MOCK_STUDENTS: Student[] = [
 const Students: React.FC = () => {
   const [students, setStudents] = useState<Student[]>(MOCK_STUDENTS);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isGridView, setIsGridView] = useState(true);
   const [sortBy, setSortBy] = useState<keyof Student>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [isAddingStudent, setIsAddingStudent] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   
-  // Filter and sort students
   const filteredStudents = students
     .filter(student => 
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -206,23 +202,16 @@ const Students: React.FC = () => {
   };
   
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Students</h1>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-bold text-black dark:text-white">Students</h2>
+          <p className="text-sm text-muted-foreground">
             Manage your enrolled students
           </p>
         </div>
         
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            className="hidden md:flex"
-            onClick={() => setIsGridView(!isGridView)}
-          >
-            {isGridView ? 'List View' : 'Grid View'}
-          </Button>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <Button variant="outline" className="hidden md:flex">
             <Download className="mr-2 h-4 w-4" />
             Export
@@ -237,12 +226,12 @@ const Students: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="mb-6 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="relative w-full md:w-1/2">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search students..."
-            className="pl-8"
+            className="w-full pl-11 pr-4 py-3 rounded-lg border border-stroke bg-transparent focus-visible:outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -250,197 +239,124 @@ const Students: React.FC = () => {
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto flex items-center gap-2.5">
+              <Filter className="h-5 w-5" />
               Filter
-              <ChevronDown className="ml-2 h-4 w-4" />
+              <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setSearchTerm('')}>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onClick={() => setSearchTerm('')} className="cursor-pointer">
               All Students
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleSort('name')}>
+            <DropdownMenuItem onClick={() => handleSort('name')} className="cursor-pointer">
               Sort by Name
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSort('age')}>
+            <DropdownMenuItem onClick={() => handleSort('age')} className="cursor-pointer">
               Sort by Age
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSort('enrollmentDate')}>
+            <DropdownMenuItem onClick={() => handleSort('enrollmentDate')} className="cursor-pointer">
               Sort by Enrollment Date
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setSearchTerm('active')}>
+            <DropdownMenuItem onClick={() => setSearchTerm('active')} className="cursor-pointer">
               Active Students
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSearchTerm('inactive')}>
+            <DropdownMenuItem onClick={() => setSearchTerm('inactive')} className="cursor-pointer">
               Inactive Students
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       
-      {isGridView ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredStudents.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-muted-foreground">
-              No students found. Try a different search term.
-            </div>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id} className="dashboard-card h-full">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg">{student.name}</CardTitle>
-                    <Badge 
-                      variant={student.status === 'Active' ? 'default' : 'secondary'}
-                      className={student.status === 'Active' ? 'bg-green-500' : ''}
-                    >
-                      {student.status}
-                    </Badge>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Age: {student.age} years
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-2">
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm">
-                      <span className="font-medium mr-2">Guardian:</span>
-                      <span>{student.guardian}</span>
-                    </div>
-                    <div className="flex items-start text-sm">
-                      <Phone className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-                      <span>{student.mobile}</span>
-                    </div>
-                    {student.email && (
-                      <div className="flex items-start text-sm">
-                        <Mail className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-                        <span>{student.email}</span>
-                      </div>
-                    )}
-                    <div className="flex items-start text-sm">
-                      <MapPin className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-                      <span className="truncate">{student.address}</span>
-                    </div>
-                    <div className="flex items-start text-sm">
-                      <Calendar className="h-4 w-4 mr-2 mt-0.5 text-muted-foreground" />
-                      <span>Enrolled: {new Date(student.enrollmentDate).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="pt-2">
-                  <div className="flex justify-between w-full">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setEditingStudent(student)}
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Manage Classes</DropdownMenuItem>
-                        <DropdownMenuItem>Payment History</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => deleteStudent(student.id)}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))
-          )}
-        </div>
-      ) : (
-        <div className="rounded-md border overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-muted">
-              <tr>
-                <th 
-                  className="py-3 px-4 text-left font-medium cursor-pointer"
+      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="max-w-full overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-gray-2 text-left dark:bg-meta-4">
+              <TableRow>
+                <TableHead 
+                  className="py-4.5 px-4 font-medium cursor-pointer"
                   onClick={() => handleSort('name')}
                 >
                   <div className="flex items-center">
                     Name <ArrowUpDown className="ml-2 h-4 w-4" />
                   </div>
-                </th>
-                <th 
-                  className="py-3 px-4 text-left font-medium cursor-pointer hidden md:table-cell"
+                </TableHead>
+                <TableHead 
+                  className="py-4.5 px-4 font-medium cursor-pointer hidden md:table-cell"
                   onClick={() => handleSort('age')}
                 >
                   <div className="flex items-center">
                     Age <ArrowUpDown className="ml-2 h-4 w-4" />
                   </div>
-                </th>
-                <th className="py-3 px-4 text-left font-medium hidden md:table-cell">
+                </TableHead>
+                <TableHead className="py-4.5 px-4 font-medium hidden md:table-cell">
                   Guardian
-                </th>
-                <th className="py-3 px-4 text-left font-medium hidden lg:table-cell">
+                </TableHead>
+                <TableHead className="py-4.5 px-4 font-medium hidden lg:table-cell">
                   Contact
-                </th>
-                <th 
-                  className="py-3 px-4 text-left font-medium cursor-pointer hidden lg:table-cell"
+                </TableHead>
+                <TableHead 
+                  className="py-4.5 px-4 font-medium cursor-pointer hidden lg:table-cell"
                   onClick={() => handleSort('enrollmentDate')}
                 >
                   <div className="flex items-center">
                     Enrolled <ArrowUpDown className="ml-2 h-4 w-4" />
                   </div>
-                </th>
-                <th className="py-3 px-4 text-left font-medium">Status</th>
-                <th className="py-3 px-4 text-right font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+                </TableHead>
+                <TableHead className="py-4.5 px-4 font-medium">Status</TableHead>
+                <TableHead className="py-4.5 px-4 text-right font-medium">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filteredStudents.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-6 text-muted-foreground">
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
                     No students found. Try a different search term.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredStudents.map(student => (
-                  <tr key={student.id} className="border-t">
-                    <td className="py-3 px-4 font-medium">
+                  <TableRow key={student.id} className="border-b border-[#eee] dark:border-strokedark">
+                    <TableCell className="py-5 px-4 font-medium">
                       {student.name}
-                    </td>
-                    <td className="py-3 px-4 hidden md:table-cell">
+                    </TableCell>
+                    <TableCell className="py-5 px-4 hidden md:table-cell">
                       {student.age}
-                    </td>
-                    <td className="py-3 px-4 hidden md:table-cell">
+                    </TableCell>
+                    <TableCell className="py-5 px-4 hidden md:table-cell">
                       {student.guardian}
-                    </td>
-                    <td className="py-3 px-4 hidden lg:table-cell">
-                      <div>{student.mobile}</div>
-                      {student.email && (
-                        <div className="text-muted-foreground text-xs">{student.email}</div>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 hidden lg:table-cell">
-                      {new Date(student.enrollmentDate).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 px-4">
+                    </TableCell>
+                    <TableCell className="py-5 px-4 hidden lg:table-cell">
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4" />
+                          <span>{student.mobile}</span>
+                        </div>
+                        {student.email && (
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <Mail className="h-4 w-4" />
+                            <span className="text-sm text-muted-foreground">{student.email}</span>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-5 px-4 hidden lg:table-cell">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <span>{new Date(student.enrollmentDate).toLocaleDateString()}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-5 px-4">
                       <Badge 
                         variant={student.status === 'Active' ? 'default' : 'secondary'}
                         className={student.status === 'Active' ? 'bg-green-500' : ''}
                       >
                         {student.status}
                       </Badge>
-                    </td>
-                    <td className="py-3 px-4 text-right">
+                    </TableCell>
+                    <TableCell className="py-5 px-4 text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <Button 
                           variant="ghost" 
@@ -456,12 +372,12 @@ const Students: React.FC = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem>Manage Classes</DropdownMenuItem>
-                            <DropdownMenuItem>Payment History</DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">View Details</DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">Manage Classes</DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">Payment History</DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
-                              className="text-destructive focus:text-destructive"
+                              className="text-destructive focus:text-destructive cursor-pointer"
                               onClick={() => deleteStudent(student.id)}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
@@ -470,14 +386,14 @@ const Students: React.FC = () => {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
-      )}
+      </div>
       
       {isAddingStudent && (
         <StudentForm
