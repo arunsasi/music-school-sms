@@ -94,7 +94,7 @@ const StudentForm: React.FC<StudentFormProps> = ({
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col p-0">
+      <DialogContent className="max-w-md max-h-[90vh] flex flex-col p-0">
         <DialogHeader className="p-6 border-b sticky top-0 bg-white z-10">
           <DialogTitle className="text-xl">
             {initialData ? 'Edit Student' : 'Add New Student'}
@@ -224,7 +224,7 @@ const StudentForm: React.FC<StudentFormProps> = ({
           </form>
         </ScrollArea>
         
-        <DialogFooter className="p-6 border-t sticky bottom-0 bg-white z-10">
+        <DialogFooter className="p-6 border-t sticky bottom-0 bg-white z-10 mt-auto">
           <div className="flex gap-2 w-full justify-end">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Clock, Plus } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface DashboardHeaderProps {
@@ -22,10 +22,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
         <Button variant="outline" className="hidden md:flex">
           <Clock className="mr-2 h-4 w-4" />
           Activity Log
-        </Button>
-        <Button className="bg-music-500 hover:bg-music-600">
-          <Plus className="mr-2 h-4 w-4" />
-          New Entry
         </Button>
       </div>
     </div>

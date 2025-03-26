@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DollarSign, CalendarDays } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Payment {
   id: string;
@@ -48,69 +49,71 @@ const StudentPayments: React.FC<StudentPaymentsProps> = ({ student, isOpen, onCl
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="sm:max-w-md w-full overflow-y-auto">
-        <SheetHeader className="pb-4">
+      <SheetContent className="w-full md:max-w-md p-0 flex flex-col">
+        <SheetHeader className="p-6 border-b">
           <SheetTitle>Payment History for {student.name}</SheetTitle>
         </SheetHeader>
         
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white border rounded-lg p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-1">
-                <h4 className="text-sm font-medium text-gray-500">Total Paid</h4>
-                <DollarSign className="h-4 w-4 text-green-500" />
+        <ScrollArea className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white border rounded-lg p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="text-sm font-medium text-gray-500">Total Paid</h4>
+                  <DollarSign className="h-4 w-4 text-green-500" />
+                </div>
+                <p className="text-2xl font-semibold text-green-600">$620</p>
               </div>
-              <p className="text-2xl font-semibold text-green-600">$620</p>
+              
+              <div className="bg-white border rounded-lg p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="text-sm font-medium text-gray-500">Pending</h4>
+                  <CalendarDays className="h-4 w-4 text-yellow-500" />
+                </div>
+                <p className="text-2xl font-semibold text-yellow-600">$620</p>
+              </div>
             </div>
             
-            <div className="bg-white border rounded-lg p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-1">
-                <h4 className="text-sm font-medium text-gray-500">Pending</h4>
-                <CalendarDays className="h-4 w-4 text-yellow-500" />
-              </div>
-              <p className="text-2xl font-semibold text-yellow-600">$620</p>
+            <div>
+              <h3 className="text-lg font-medium mb-3">Recent Transactions</h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Class</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockPayments.map(payment => (
+                    <TableRow key={payment.id}>
+                      <TableCell className="font-medium">{payment.className}</TableCell>
+                      <TableCell>${payment.amount}</TableCell>
+                      <TableCell>{new Date(payment.date).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Badge 
+                          className={
+                            payment.status === 'Paid' 
+                              ? 'bg-green-100 text-green-800 hover:bg-green-100' 
+                              : payment.status === 'Pending'
+                              ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
+                              : 'bg-red-100 text-red-800 hover:bg-red-100'
+                          }
+                        >
+                          {payment.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-3">Recent Transactions</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockPayments.map(payment => (
-                  <TableRow key={payment.id}>
-                    <TableCell className="font-medium">{payment.className}</TableCell>
-                    <TableCell>${payment.amount}</TableCell>
-                    <TableCell>{new Date(payment.date).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        className={
-                          payment.status === 'Paid' 
-                            ? 'bg-green-100 text-green-800 hover:bg-green-100' 
-                            : payment.status === 'Pending'
-                            ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
-                            : 'bg-red-100 text-red-800 hover:bg-red-100'
-                        }
-                      >
-                        {payment.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+        </ScrollArea>
         
-        <SheetFooter className="mt-6">
-          <Button onClick={onClose}>Close</Button>
+        <SheetFooter className="mt-auto p-6 border-t">
+          <Button onClick={onClose} className="w-full sm:w-auto">Close</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

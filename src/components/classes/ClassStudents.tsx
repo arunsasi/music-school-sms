@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Search, Plus, UserMinus, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Mock students data
 const mockStudents = [
@@ -95,115 +96,117 @@ const ClassStudents: React.FC<ClassStudentsProps> = ({ classData, isOpen, onClos
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full md:max-w-md lg:max-w-lg overflow-y-auto">
-        <SheetHeader className="mb-4">
+      <SheetContent className="w-full md:max-w-md lg:max-w-lg p-0 flex flex-col">
+        <SheetHeader className="p-6 border-b">
           <SheetTitle className="text-xl">Students in {classData.name}</SheetTitle>
         </SheetHeader>
         
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium mb-3">Current Students ({enrolledStudents.length})</h3>
-            {enrolledStudents.length === 0 ? (
-              <div className="bg-gray-50 rounded-md p-4 text-center">
-                <p className="text-muted-foreground">No students enrolled in this class</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader className="bg-gray-50">
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="hidden md:table-cell">Age</TableHead>
-                    <TableHead className="hidden md:table-cell">Status</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {enrolledStudents.map(student => (
-                    <TableRow key={student.id}>
-                      <TableCell className="font-medium">{student.name}</TableCell>
-                      <TableCell className="hidden md:table-cell">{student.age}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        <Badge variant={student.status === 'Active' ? 'default' : 'secondary'}>
-                          {student.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-red-500 hover:text-red-600"
-                          onClick={() => handleRemoveStudent(student.id)}
-                        >
-                          <UserMinus className="h-3.5 w-3.5 mr-1" />
-                          Remove
-                        </Button>
-                      </TableCell>
+        <ScrollArea className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-medium mb-3">Current Students ({enrolledStudents.length})</h3>
+              {enrolledStudents.length === 0 ? (
+                <div className="bg-gray-50 rounded-md p-4 text-center">
+                  <p className="text-muted-foreground">No students enrolled in this class</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader className="bg-gray-50">
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead className="hidden md:table-cell">Age</TableHead>
+                      <TableHead className="hidden md:table-cell">Status</TableHead>
+                      <TableHead>Action</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-          
-          <div>
-            <h3 className="font-medium mb-3">Add Students</h3>
-            <div className="relative mb-4">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search students to add..."
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+                  </TableHeader>
+                  <TableBody>
+                    {enrolledStudents.map(student => (
+                      <TableRow key={student.id}>
+                        <TableCell className="font-medium">{student.name}</TableCell>
+                        <TableCell className="hidden md:table-cell">{student.age}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <Badge variant={student.status === 'Active' ? 'default' : 'secondary'}>
+                            {student.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-red-500 hover:text-red-600"
+                            onClick={() => handleRemoveStudent(student.id)}
+                          >
+                            <UserMinus className="h-3.5 w-3.5 mr-1" />
+                            Remove
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </div>
             
-            {availableStudents.length === 0 ? (
-              <div className="bg-gray-50 rounded-md p-4 text-center">
-                <p className="text-muted-foreground">No matching students found</p>
+            <div>
+              <h3 className="font-medium mb-3">Add Students</h3>
+              <div className="relative mb-4">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search students to add..."
+                  className="pl-9"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-            ) : (
-              <Table>
-                <TableHeader className="bg-gray-50">
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="hidden md:table-cell">Age</TableHead>
-                    <TableHead className="hidden md:table-cell">Status</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {availableStudents.map(student => (
-                    <TableRow key={student.id}>
-                      <TableCell className="font-medium">{student.name}</TableCell>
-                      <TableCell className="hidden md:table-cell">{student.age}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        <Badge variant={student.status === 'Active' ? 'default' : 'secondary'}>
-                          {student.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-green-500 hover:text-green-600"
-                          onClick={() => handleAddStudent(student)}
-                        >
-                          <Plus className="h-3.5 w-3.5 mr-1" />
-                          Add
-                        </Button>
-                      </TableCell>
+              
+              {availableStudents.length === 0 ? (
+                <div className="bg-gray-50 rounded-md p-4 text-center">
+                  <p className="text-muted-foreground">No matching students found</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader className="bg-gray-50">
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead className="hidden md:table-cell">Age</TableHead>
+                      <TableHead className="hidden md:table-cell">Status</TableHead>
+                      <TableHead>Action</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+                  </TableHeader>
+                  <TableBody>
+                    {availableStudents.map(student => (
+                      <TableRow key={student.id}>
+                        <TableCell className="font-medium">{student.name}</TableCell>
+                        <TableCell className="hidden md:table-cell">{student.age}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <Badge variant={student.status === 'Active' ? 'default' : 'secondary'}>
+                            {student.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-green-500 hover:text-green-600"
+                            onClick={() => handleAddStudent(student)}
+                          >
+                            <Plus className="h-3.5 w-3.5 mr-1" />
+                            Add
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
           </div>
-        </div>
+        </ScrollArea>
         
-        <SheetFooter className="mt-6">
+        <SheetFooter className="mt-auto p-6 border-t">
           <Button 
             onClick={onClose}
-            className="bg-music-500 hover:bg-music-600"
+            className="bg-music-500 hover:bg-music-600 w-full sm:w-auto"
           >
             <Check className="mr-2 h-4 w-4" />
             Done
