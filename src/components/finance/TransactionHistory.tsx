@@ -77,7 +77,15 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious onClick={prevPage} disabled={currentPage === 1} />
+                {currentPage === 1 ? (
+                  <Button variant="outline" size="icon" disabled className="h-8 w-8">
+                    <PaginationPrevious className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="icon" onClick={prevPage} className="h-8 w-8">
+                    <PaginationPrevious className="h-4 w-4" />
+                  </Button>
+                )}
               </PaginationItem>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -92,7 +100,15 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               ))}
 
               <PaginationItem>
-                <PaginationNext onClick={nextPage} disabled={currentPage === totalPages} />
+                {currentPage === totalPages ? (
+                  <Button variant="outline" size="icon" disabled className="h-8 w-8">
+                    <PaginationNext className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="icon" onClick={nextPage} className="h-8 w-8">
+                    <PaginationNext className="h-4 w-4" />
+                  </Button>
+                )}
               </PaginationItem>
             </PaginationContent>
           </Pagination>
