@@ -9,406 +9,208 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      church_members: {
+      attendance: {
         Row: {
-          church_id: string | null
-          created_at: string | null
-          email: string
-          first_name: string
+          class_id: string | null
+          date: string
           id: string
-          last_name: string
-          phone: string | null
-          role: Database["public"]["Enums"]["user_role"] | null
-          updated_at: string | null
+          marked_at: string | null
+          marked_by: string | null
+          notes: string | null
+          status: string
+          student_id: string | null
         }
         Insert: {
-          church_id?: string | null
-          created_at?: string | null
-          email: string
-          first_name: string
-          id: string
-          last_name: string
-          phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"] | null
-          updated_at?: string | null
+          class_id?: string | null
+          date: string
+          id?: string
+          marked_at?: string | null
+          marked_by?: string | null
+          notes?: string | null
+          status: string
+          student_id?: string | null
         }
         Update: {
-          church_id?: string | null
-          created_at?: string | null
-          email?: string
-          first_name?: string
+          class_id?: string | null
+          date?: string
           id?: string
-          last_name?: string
-          phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"] | null
-          updated_at?: string | null
+          marked_at?: string | null
+          marked_by?: string | null
+          notes?: string | null
+          status?: string
+          student_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "church_members_church_id_fkey"
-            columns: ["church_id"]
+            foreignKeyName: "attendance_class_id_fkey"
+            columns: ["class_id"]
             isOneToOne: false
-            referencedRelation: "churches"
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_marked_by_fkey"
+            columns: ["marked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      churches: {
+      classes: {
         Row: {
-          address: string | null
-          contact_email: string
-          contact_phone: string | null
           created_at: string | null
           description: string | null
           id: string
-          logo_url: string | null
-          max_families: number | null
+          max_students: number
           name: string
-          subscription_end_date: string | null
-          subscription_status:
-            | Database["public"]["Enums"]["subscription_status"]
-            | null
+          schedule: Json
+          teacher_id: string | null
           updated_at: string | null
         }
         Insert: {
-          address?: string | null
-          contact_email: string
-          contact_phone?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
-          logo_url?: string | null
-          max_families?: number | null
+          max_students?: number
           name: string
-          subscription_end_date?: string | null
-          subscription_status?:
-            | Database["public"]["Enums"]["subscription_status"]
-            | null
+          schedule: Json
+          teacher_id?: string | null
           updated_at?: string | null
         }
         Update: {
-          address?: string | null
-          contact_email?: string
-          contact_phone?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
-          logo_url?: string | null
-          max_families?: number | null
+          max_students?: number
           name?: string
-          subscription_end_date?: string | null
-          subscription_status?:
-            | Database["public"]["Enums"]["subscription_status"]
-            | null
+          schedule?: Json
+          teacher_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enrollments: {
+        Row: {
+          class_id: string | null
+          enrolled_at: string | null
+          id: string
+          status: string
+          student_id: string | null
+        }
+        Insert: {
+          class_id?: string | null
+          enrolled_at?: string | null
+          id?: string
+          status?: string
+          student_id?: string | null
+        }
+        Update: {
+          class_id?: string | null
+          enrolled_at?: string | null
+          id?: string
+          status?: string
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          phone: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name: string
+          id: string
+          phone?: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string | null
         }
         Relationships: []
-      }
-      donations: {
-        Row: {
-          amount: number
-          church_id: string | null
-          created_at: string | null
-          currency: string | null
-          donor_id: string | null
-          id: string
-          is_recurring: boolean | null
-          payment_method: string
-          payment_status: string
-          purpose: string | null
-        }
-        Insert: {
-          amount: number
-          church_id?: string | null
-          created_at?: string | null
-          currency?: string | null
-          donor_id?: string | null
-          id?: string
-          is_recurring?: boolean | null
-          payment_method: string
-          payment_status: string
-          purpose?: string | null
-        }
-        Update: {
-          amount?: number
-          church_id?: string | null
-          created_at?: string | null
-          currency?: string | null
-          donor_id?: string | null
-          id?: string
-          is_recurring?: boolean | null
-          payment_method?: string
-          payment_status?: string
-          purpose?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "donations_church_id_fkey"
-            columns: ["church_id"]
-            isOneToOne: false
-            referencedRelation: "churches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "donations_donor_id_fkey"
-            columns: ["donor_id"]
-            isOneToOne: false
-            referencedRelation: "church_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      events: {
-        Row: {
-          church_id: string | null
-          created_at: string | null
-          created_by: string | null
-          description: string | null
-          end_time: string
-          event_type: Database["public"]["Enums"]["event_type"] | null
-          id: string
-          is_private: boolean | null
-          location: string | null
-          start_time: string
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          church_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          end_time: string
-          event_type?: Database["public"]["Enums"]["event_type"] | null
-          id?: string
-          is_private?: boolean | null
-          location?: string | null
-          start_time: string
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          church_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          end_time?: string
-          event_type?: Database["public"]["Enums"]["event_type"] | null
-          id?: string
-          is_private?: boolean | null
-          location?: string | null
-          start_time?: string
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "events_church_id_fkey"
-            columns: ["church_id"]
-            isOneToOne: false
-            referencedRelation: "churches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "events_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "church_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      families: {
-        Row: {
-          address: string | null
-          church_id: string | null
-          created_at: string | null
-          id: string
-          name: string
-          photo_url: string | null
-          primary_contact_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          address?: string | null
-          church_id?: string | null
-          created_at?: string | null
-          id?: string
-          name: string
-          photo_url?: string | null
-          primary_contact_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          address?: string | null
-          church_id?: string | null
-          created_at?: string | null
-          id?: string
-          name?: string
-          photo_url?: string | null
-          primary_contact_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "families_church_id_fkey"
-            columns: ["church_id"]
-            isOneToOne: false
-            referencedRelation: "churches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "families_primary_contact_id_fkey"
-            columns: ["primary_contact_id"]
-            isOneToOne: false
-            referencedRelation: "church_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      family_members: {
-        Row: {
-          birthday: string | null
-          created_at: string | null
-          family_id: string | null
-          id: string
-          member_id: string | null
-          relationship: string
-          updated_at: string | null
-        }
-        Insert: {
-          birthday?: string | null
-          created_at?: string | null
-          family_id?: string | null
-          id?: string
-          member_id?: string | null
-          relationship: string
-          updated_at?: string | null
-        }
-        Update: {
-          birthday?: string | null
-          created_at?: string | null
-          family_id?: string | null
-          id?: string
-          member_id?: string | null
-          relationship?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "family_members_family_id_fkey"
-            columns: ["family_id"]
-            isOneToOne: false
-            referencedRelation: "families"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "family_members_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "church_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      staff: {
-        Row: {
-          church_id: string | null
-          created_at: string | null
-          department: string | null
-          id: string
-          member_id: string | null
-          position: string
-          start_date: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          church_id?: string | null
-          created_at?: string | null
-          department?: string | null
-          id?: string
-          member_id?: string | null
-          position: string
-          start_date?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          church_id?: string | null
-          created_at?: string | null
-          department?: string | null
-          id?: string
-          member_id?: string | null
-          position?: string
-          start_date?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "staff_church_id_fkey"
-            columns: ["church_id"]
-            isOneToOne: false
-            referencedRelation: "churches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "church_members"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      youtube_streams: {
-        Row: {
-          church_id: string | null
-          created_at: string | null
-          created_by: string | null
-          id: string
-          is_live: boolean | null
-          scheduled_start: string | null
-          title: string
-          updated_at: string | null
-          youtube_url: string
-        }
-        Insert: {
-          church_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_live?: boolean | null
-          scheduled_start?: string | null
-          title: string
-          updated_at?: string | null
-          youtube_url: string
-        }
-        Update: {
-          church_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_live?: boolean | null
-          scheduled_start?: string | null
-          title?: string
-          updated_at?: string | null
-          youtube_url?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "youtube_streams_church_id_fkey"
-            columns: ["church_id"]
-            isOneToOne: false
-            referencedRelation: "churches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "youtube_streams_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "church_members"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {
@@ -418,9 +220,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      event_type: "service" | "meeting" | "special" | "other"
-      subscription_status: "trial" | "active" | "past_due" | "canceled"
-      user_role: "super_admin" | "church_admin" | "family_member" | "staff"
+      user_role: "admin" | "teacher" | "student" | "parent"
     }
     CompositeTypes: {
       [_ in never]: never
