@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Class, Subject } from '@/types';
+import { Class, Subject, ScheduleItem } from '@/types';
 import { toast } from 'sonner';
+import { Json } from '@/integrations/supabase/types';
 
 export const useSupabaseClasses = () => {
   const [classes, setClasses] = useState<Class[]>([]);
@@ -32,9 +33,7 @@ export const useSupabaseClasses = () => {
             description: dbClass.description || ''
           },
           teacherId: dbClass.teacher_id || '1',
-          schedule: Array.isArray(dbClass.schedule) 
-            ? dbClass.schedule 
-            : [],
+          schedule: parseScheduleFromJson(dbClass.schedule),
           fee: 300, // Default fee
           students: []
         }));
@@ -50,6 +49,31 @@ export const useSupabaseClasses = () => {
     }
   };
 
+  // Helper function to parse schedule from JSON
+  const parseScheduleFromJson = (jsonSchedule: Json): ScheduleItem[] => {
+    if (!jsonSchedule) return [];
+    
+    try {
+      // If it's already an array of ScheduleItem-like objects
+      if (Array.isArray(jsonSchedule)) {
+        return jsonSchedule.map(item => ({
+          day: item.day || '',
+          startTime: item.startTime || '',
+          endTime: item.endTime || ''
+        }));
+      }
+      return [];
+    } catch (err) {
+      console.error('Error parsing schedule:', err);
+      return [];
+    }
+  };
+
+  // Helper function to convert ScheduleItem[] to Json
+  const convertScheduleToJson = (schedule: ScheduleItem[]): Json => {
+    return schedule as unknown as Json;
+  };
+
   // Create a new class
   const addClass = async (classData: Omit<Class, 'id'>) => {
     try {
@@ -58,7 +82,7 @@ export const useSupabaseClasses = () => {
         name: classData.name,
         description: classData.subject.description,
         teacher_id: classData.teacherId,
-        schedule: classData.schedule,
+        schedule: convertScheduleToJson(classData.schedule),
         max_students: 10
       };
       
@@ -81,7 +105,7 @@ export const useSupabaseClasses = () => {
             description: data.description || ''
           },
           teacherId: data.teacher_id || '1',
-          schedule: Array.isArray(data.schedule) ? data.schedule : [],
+          schedule: parseScheduleFromJson(data.schedule),
           fee: 300, // Default fee
           students: []
         };
@@ -105,7 +129,7 @@ export const useSupabaseClasses = () => {
         name: classData.name,
         description: classData.subject.description,
         teacher_id: classData.teacherId,
-        schedule: classData.schedule,
+        schedule: convertScheduleToJson(classData.schedule),
         max_students: 10
       };
       

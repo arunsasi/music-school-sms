@@ -53,6 +53,8 @@ export interface Class {
   students: string[];
 }
 
+export type UserRole = 'admin' | 'teacher' | 'accounts' | 'student' | 'parent';
+
 export interface User {
   id: string;
   name: string;
@@ -60,8 +62,6 @@ export interface User {
   role: UserRole;
   avatar: string;
 }
-
-export type UserRole = 'admin' | 'teacher' | 'accounts';
 
 export interface Teacher extends Employee {
   classes: string[]; // Class IDs assigned to teacher

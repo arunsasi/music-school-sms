@@ -2,74 +2,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
- 
-    --radius: 0.5rem;
-
-    /* Updated branding colors */
-    --color-brand-50: #ecf3ff;
-    --color-brand-100: #dde9ff;
-    --color-brand-200: #c2d6ff;
-    --color-brand-300: #9cb9ff;
-    --color-brand-400: #7592ff;
-    --color-brand-500: #465fff;
-    --color-brand-600: #3641f5;
-    --color-brand-800: #252dae;
-    --color-brand-950: #161950;
-    
-    /* Updated music colors - using the brand colors */
-    --music-50: var(--color-brand-50);
-    --music-100: var(--color-brand-100);
-    --music-200: var(--color-brand-200);
-    --music-300: var(--color-brand-300);
-    --music-400: var(--color-brand-400);
-    --music-500: var(--color-brand-500);
-    --music-600: var(--color-brand-600);
-    --music-700: #4338CA;
-    --music-800: var(--color-brand-800);
-    --music-900: #312E81;
-    --music-950: var(--color-brand-950);
-    
-    --app-background: 210 20% 98%;
-    
-    /* Additional colors from user request */
+  :root, :host {
     --color-orange-50: #fff6ed;
     --color-orange-400: #fd853a;
     --color-orange-500: #fb6514;
     --color-blue-500: oklch(0.623 0.214 259.815);
-    --color-blue-light-50: #f0f9ff;
-    --color-blue-light-500: #0ba5ec;
-    --color-blue-light-600: #0086c9;
-    
     --color-gray-50: #f9fafb;
     --color-gray-100: #f2f4f7;
     --color-gray-200: #e4e7ec;
@@ -80,35 +19,8 @@
     --color-gray-700: #344054;
     --color-gray-800: #1d2939;
     --color-gray-900: #101828;
-    --color-gray-dark: #1a2231;
     --color-black: #101828;
     --color-white: #ffffff;
-    
-    --color-success-50: #ecfdf3;
-    --color-success-300: #6ce9a6;
-    --color-success-500: #12b76a;
-    --color-success-600: #039855;
-    --color-success-700: #027a48;
-    --color-success-800: #05603a;
-    
-    --color-error-50: #fef3f2;
-    --color-error-300: #fda29b;
-    --color-error-400: #f97066;
-    --color-error-500: #f04438;
-    --color-error-600: #d92d20;
-    --color-error-700: #b42318;
-    --color-error-800: #912018;
-    
-    --color-warning-50: #fffaeb;
-    --color-warning-400: #fdb022;
-    --color-warning-500: #f79009;
-    --color-warning-600: #dc6803;
-    --color-warning-700: #b54708;
-    
-    --color-theme-pink-500: #ee46bc;
-    --color-theme-purple-500: #7a5af8;
-    
-    /* Typography */
     --spacing: 0.25rem;
     --container-xs: 20rem;
     --container-md: 28rem;
@@ -124,6 +36,40 @@
     --text-xl--line-height: calc(1.75 / 1.25);
     --text-2xl: 1.5rem;
     --text-2xl--line-height: calc(2 / 1.5);
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --radius-xs: 0.125rem;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
+    --drop-shadow-2xl: 0 25px 25px rgb(0 0 0 / 0.15);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --animate-spin: spin 1s linear infinite;
+    --animate-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+    --aspect-video: 16 / 9;
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    --default-font-family: var(--font-sans);
+    --default-font-feature-settings: var(--font-sans--font-feature-settings);
+    --default-font-variation-settings: var(
+      --font-sans--font-variation-settings
+    );
+    --default-mono-font-family: var(--font-mono);
+    --default-mono-font-feature-settings: var(
+      --font-mono--font-feature-settings
+    );
+    --default-mono-font-variation-settings: var(
+      --font-mono--font-variation-settings
+    );
+    --font-outfit: Outfit, sans-serif;
+    --breakpoint-2xl: 1536px;
     --text-title-2xl: 72px;
     --text-title-2xl--line-height: 90px;
     --text-title-xl: 60px;
@@ -142,45 +88,41 @@
     --text-theme-sm--line-height: 20px;
     --text-theme-xs: 12px;
     --text-theme-xs--line-height: 18px;
-    
-    /* Font weights */
-    --font-weight-normal: 400;
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-    --font-weight-bold: 700;
-    --leading-tight: 1.25;
-    --leading-normal: 1.5;
-    
-    /* Border radius */
-    --radius-xs: 0.125rem;
-    --radius-sm: 0.25rem;
-    --radius-md: 0.375rem;
-    --radius-lg: 0.5rem;
-    --radius-xl: 0.75rem;
-    --radius-2xl: 1rem;
-    --radius-3xl: 1.5rem;
-    
-    /* Shadows and effects */
-    --drop-shadow-2xl: 0 25px 25px rgb(0 0 0 / 0.15);
-    --drop-shadow-4xl: 0 35px 35px rgba(0, 0, 0, 0.25), 0 45px 65px rgba(0, 0, 0, 0.15);
-    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-    --animate-spin: spin 1s linear infinite;
-    --animate-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-    --aspect-video: 16 / 9;
-    
-    /* Defaults */
-    --default-transition-duration: 150ms;
-    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    --default-font-family: var(--font-sans);
-    --default-font-feature-settings: var(--font-sans--font-feature-settings);
-    --default-font-variation-settings: var(--font-sans--font-variation-settings);
-    --default-mono-font-family: var(--font-mono);
-    --default-mono-font-feature-settings: var(--font-mono--font-feature-settings);
-    --default-mono-font-variation-settings: var(--font-mono--font-variation-settings);
-    --font-outfit: Outfit, sans-serif;
-    --breakpoint-2xl: 1536px;
-    
-    /* Z-index */
+    --color-brand-50: #ecf3ff;
+    --color-brand-100: #dde9ff;
+    --color-brand-200: #c2d6ff;
+    --color-brand-300: #9cb9ff;
+    --color-brand-400: #7592ff;
+    --color-brand-500: #465fff;
+    --color-brand-600: #3641f5;
+    --color-brand-800: #252dae;
+    --color-brand-950: #161950;
+    --color-blue-light-50: #f0f9ff;
+    --color-blue-light-500: #0ba5ec;
+    --color-blue-light-600: #0086c9;
+    --color-gray-dark: #1a2231;
+    --color-success-50: #ecfdf3;
+    --color-success-300: #6ce9a6;
+    --color-success-500: #12b76a;
+    --color-success-600: #039855;
+    --color-success-700: #027a48;
+    --color-success-800: #05603a;
+    --color-error-50: #fef3f2;
+    --color-error-300: #fda29b;
+    --color-error-400: #f97066;
+    --color-error-500: #f04438;
+    --color-error-600: #d92d20;
+    --color-error-700: #b42318;
+    --color-error-800: #912018;
+    --color-warning-50: #fffaeb;
+    --color-warning-400: #fdb022;
+    --color-warning-500: #f79009;
+    --color-warning-600: #dc6803;
+    --color-warning-700: #b54708;
+    --color-theme-pink-500: #ee46bc;
+    --color-theme-purple-500: #7a5af8;
+    --drop-shadow-4xl: 0 35px 35px rgba(0, 0, 0, 0.25),
+    0 45px 65px rgba(0, 0, 0, 0.15);
     --z-index-1: 1;
     --z-index-9: 9;
     --z-index-999: 999;
@@ -188,130 +130,60 @@
     --z-index-99999: 99999;
     --z-index-999999: 999999;
   }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
 }
- 
+
+/* Additional styling */
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-body dark:bg-bodydark text-foreground font-sans;
-  }
-  
-  .dark table {
-    @apply bg-boxdark border-strokedark;
-  }
-  
-  /* Minimal login styles */
-  .minimal-login {
-    @apply bg-white dark:bg-boxdark shadow-card rounded-sm border border-stroke dark:border-strokedark;
+    @apply bg-background text-foreground;
   }
 }
 
-.container-main {
-  min-width: 100%;
-  width: 100%;
-  padding: 1rem;
-  background-color: hsl(var(--app-background));
-}
-
-@media (min-width: 640px) {
-  .container-main {
-    padding: 1.5rem;
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-in-out;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Fix modal scrolling */
-.dialog-content-scrollable {
-  max-height: 85vh;
-  overflow-y: auto;
-}
-
-/* Fix for sheet interactions */
-.sheet-content-scrollable {
-  max-height: 100vh;
-  overflow-y: auto;
-}
-
-/* Modal animation */
-.modal-transition {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Custom notification badge */
-.notification-badge {
-  @apply absolute top-0 right-0 h-2 w-2 rounded-full bg-meta-1;
-}
-
-/* TailAdmin specific styles */
 .music-bars {
-  @apply flex h-4 items-end space-x-0.5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 30px;
+  width: 40px;
 }
 
 .music-bars span {
-  @apply bg-music-500 w-1 rounded-sm animate-music-pulse;
-  height: 16px;
+  display: inline-block;
+  width: 4px;
+  height: 100%;
+  background-color: var(--color-brand-500);
+  animation: music-bars 1.2s infinite ease-in-out;
+  margin: 0 2px;
+}
+
+.music-bars span:nth-child(1) {
+  animation-delay: -1.2s;
+  height: 40%;
 }
 
 .music-bars span:nth-child(2) {
-  @apply animate-music-pulse-delay-1;
-  height: 12px;
+  animation-delay: -1.1s;
+  height: 60%;
 }
 
 .music-bars span:nth-child(3) {
-  @apply animate-music-pulse-delay-2;
-  height: 16px;
+  animation-delay: -1.0s;
+  height: 80%;
 }
 
 .music-bars span:nth-child(4) {
-  @apply animate-music-pulse-delay-3;
-  height: 10px;
+  animation-delay: -0.9s;
+  height: 60%;
 }
 
-/* Glass card effect */
-.glass-card {
-  @apply bg-white dark:bg-boxdark border border-stroke dark:border-strokedark shadow-default rounded-sm;
+@keyframes music-bars {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1);
+  }
 }
