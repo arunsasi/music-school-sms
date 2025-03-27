@@ -25,47 +25,78 @@ import {
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const isTeacher = user?.role === 'teacher';
+  
+  // Filter data for teacher role
+  const filteredClasses = isTeacher 
+    ? MOCK_UPCOMING_CLASSES.filter(cls => cls.teacher === user?.name) 
+    : MOCK_UPCOMING_CLASSES;
+  
+  // Filter tasks for teacher role
+  const filteredTasks = isTeacher
+    ? MOCK_TASKS.filter(task => task.assignedTo === user?.name || task.assignedTo === 'All Teachers')
+    : MOCK_TASKS;
   
   return (
     <div className="space-y-6">
       <DashboardHeader user={user} />
       
       <Tabs defaultValue="overview" className="space-y-6" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="students">Students</TabsTrigger>
+          {!isTeacher && <TabsTrigger value="students">Students</TabsTrigger>}
           <TabsTrigger value="classes">Classes</TabsTrigger>
-          <TabsTrigger value="finances">Finances</TabsTrigger>
+          {!isTeacher && <TabsTrigger value="finances">Finances</TabsTrigger>}
         </TabsList>
         
         <TabsContent value="overview" className="space-y-6">
-          {/* Stats Cards */}
-          <StatsCards stats={MOCK_STATS} />
+          {/* Stats Cards - Show limited stats for teachers */}
+          {isTeacher ? (
+            <StatsCards stats={{
+              totalStudents: MOCK_STATS.totalStudents,
+              totalClasses: filteredClasses.length,
+              activeStudents: MOCK_STATS.activeStudents,
+              totalEmployees: 0,
+              totalRevenue: 0,
+              totalExpenses: 0
+            }} />
+          ) : (
+            <StatsCards stats={MOCK_STATS} />
+          )}
           
           {/* Recent and Upcoming */}
           <div className="grid gap-4 md:grid-cols-2">
-            <RecentEnrollments students={MOCK_RECENT_STUDENTS} />
-            <UpcomingClasses classes={MOCK_UPCOMING_CLASSES} />
+            {!isTeacher && <RecentEnrollments students={MOCK_RECENT_STUDENTS} />}
+            <UpcomingClasses classes={filteredClasses} />
+            {isTeacher && (
+              <div className="md:col-span-1">
+                <TasksReminders initialTasks={filteredTasks} />
+              </div>
+            )}
           </div>
           
-          {/* Tasks and Reminders */}
-          <TasksReminders initialTasks={MOCK_TASKS} />
+          {/* Tasks and Reminders for non-teachers */}
+          {!isTeacher && <TasksReminders initialTasks={MOCK_TASKS} />}
         </TabsContent>
         
-        <TabsContent value="students">
-          <StudentsTab stats={MOCK_STATS} />
-        </TabsContent>
+        {!isTeacher && (
+          <TabsContent value="students">
+            <StudentsTab stats={MOCK_STATS} />
+          </TabsContent>
+        )}
         
         <TabsContent value="classes">
           <ClassesTab />
         </TabsContent>
         
-        <TabsContent value="finances">
-          <FinancesTab 
-            stats={MOCK_STATS} 
-            recentPayments={MOCK_RECENT_PAYMENTS} 
-          />
-        </TabsContent>
+        {!isTeacher && (
+          <TabsContent value="finances">
+            <FinancesTab 
+              stats={MOCK_STATS} 
+              recentPayments={MOCK_RECENT_PAYMENTS} 
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

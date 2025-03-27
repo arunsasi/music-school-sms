@@ -23,7 +23,7 @@ const EmployeesHeader: React.FC<EmployeesHeaderProps> = ({ onAddEmployee }) => {
           Export
         </Button>
         <Button 
-          className="bg-music-500 hover:bg-music-600"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
           onClick={onAddEmployee}
         >
           <Plus className="mr-2 h-4 w-4" />

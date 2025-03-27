@@ -1,14 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Bell, 
-  Search, 
   Settings,
   LogOut,
   Sun,
   Moon,
-  Menu
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -22,10 +22,22 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
+
+// Mock notification data
+const mockNotifications = [
+  { id: '1', type: 'fee', message: 'Fee payment due for John Doe', date: '2023-10-15' },
+  { id: '2', type: 'task', message: 'Prepare exam papers for Class 10', date: '2023-10-14' },
+  { id: '3', type: 'announcement', message: 'School closed on October 20th', date: '2023-10-13' },
+  { id: '4', type: 'fee', message: 'Fee payment due for Jane Smith', date: '2023-10-12' },
+];
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const hasUnreadNotifications = true; // This would be dynamic in a real app
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -42,8 +54,22 @@ const Navbar: React.FC = () => {
       .toUpperCase();
   };
 
+  // Function to get notification badge color
+  const getNotificationTypeColor = (type: string) => {
+    switch (type) {
+      case 'fee':
+        return 'bg-red-500';
+      case 'task':
+        return 'bg-yellow-500';
+      case 'announcement':
+        return 'bg-blue-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
   return (
-    <header className="navbar py-2 px-4">
+    <header className="navbar py-3 px-4 border-b bg-background sticky top-0 z-50 w-full">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center">
           <SidebarTrigger className="mr-4">
@@ -60,19 +86,35 @@ const Navbar: React.FC = () => {
           </div>
           
           <Link to="/dashboard" className="flex items-center text-xl font-semibold">
-            Music School <span className="ml-1 text-music-500">SMS</span>
+            <span className="text-music-500 font-bold">Music School</span> <span className="ml-1 text-muted-foreground">SMS</span>
           </Link>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-            <Search className="h-5 w-5" />
-          </Button>
-          
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-music-500"></span>
-          </Button>
+        <div className="flex items-center space-x-4">          
+          <Sheet open={notificationOpen} onOpenChange={setNotificationOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
+                <Bell className="h-5 w-5" />
+                {hasUnreadNotifications && <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-music-500"></span>}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="sheet-content-scrollable">
+              <SheetHeader>
+                <SheetTitle>Notifications</SheetTitle>
+              </SheetHeader>
+              <div className="mt-6 space-y-4">
+                {mockNotifications.map((notification) => (
+                  <div key={notification.id} className="flex items-start gap-3 p-3 rounded-md hover:bg-muted transition-colors">
+                    <div className={`w-2 h-2 mt-2 rounded-full ${getNotificationTypeColor(notification.type)}`} />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{notification.message}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{notification.date}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
           
           <Button 
             variant="ghost" 
