@@ -199,7 +199,7 @@ const Classes: React.FC = () => {
         
         <div className="flex gap-2">
           <Button 
-            className="bg-music-500 hover:bg-music-600"
+            className="bg-music-500 hover:bg-music-600 text-white font-medium"
             onClick={() => setIsAddingClass(true)}
           >
             <Plus className="mr-2 h-4 w-4" />
