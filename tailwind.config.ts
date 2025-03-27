@@ -73,7 +73,9 @@ export default {
 					700: 'hsl(var(--music-700))',
 					800: 'hsl(var(--music-800))',
 					900: 'hsl(var(--music-900))',
-				}
+				},
+				// Add the app-background color
+				'app-background': 'hsl(var(--app-background))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
