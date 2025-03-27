@@ -74,8 +74,22 @@ export default {
 					800: 'hsl(var(--music-800))',
 					900: 'hsl(var(--music-900))',
 				},
-				// Add the app-background color
 				'app-background': 'hsl(var(--app-background))',
+				'body': '#F1F5F9',
+				'bodydark': '#1D2144',
+				'boxdark': '#24303F',
+				'strokedark': '#2E3A47',
+				'meta-1': '#DC3545',
+				'meta-2': '#33C863',
+				'meta-3': '#4A6CF7',
+				'meta-4': '#F0950C',
+				'meta-5': '#6577F3',
+				'meta-6': '#8E15F8',
+				'meta-7': '#FF9797',
+				'meta-8': '#FFCE97',
+				'meta-9': '#97FFD3',
+				'meta-10': '#97E0FF',
+				'meta-11': '#c0d3ff',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -156,6 +170,11 @@ export default {
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'music-pattern': "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E\")",
+			},
+			boxShadow: {
+				'default': '0px 8px 13px -3px rgba(0, 0, 0, 0.07)',
+				'card': '0px 1px 3px rgba(0, 0, 0, 0.12)',
+				'card-2': '0px 1px 2px rgba(0, 0, 0, 0.05)',
 			},
 		}
 	},

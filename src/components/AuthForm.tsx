@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Music4 } from 'lucide-react';
+import { Music } from 'lucide-react';
 
 const AuthForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -46,22 +46,19 @@ const AuthForm: React.FC = () => {
   };
 
   return (
-    <div className="glass-card w-full max-w-md mx-auto overflow-hidden">
-      <div className="flex flex-col items-center justify-center p-8">
-        <div className="music-bars mb-2">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <h2 className="text-2xl font-bold text-center mb-1">Music School SMS</h2>
-        <p className="text-muted-foreground text-sm mb-6 text-center">
-          Sign in to access your account
-        </p>
-        
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+    <div className="minimal-login p-7">
+      <div className="flex justify-center mb-6">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-white">
+          <Music size={24} />
+        </span>
+      </div>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="mb-4">
+          <Label htmlFor="email" className="mb-2.5 block font-medium text-black dark:text-white">
+            Email
+          </Label>
+          <div className="relative">
             <Input
               id="email"
               type="email"
@@ -69,17 +66,16 @@ const AuthForm: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full"
+              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-strokedark dark:bg-boxdark"
             />
           </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <a href="#" className="text-xs text-music-500 hover:underline">
-                Forgot password?
-              </a>
-            </div>
+        </div>
+        
+        <div className="mb-6">
+          <Label htmlFor="password" className="mb-2.5 block font-medium text-black dark:text-white">
+            Password
+          </Label>
+          <div className="relative">
             <Input
               id="password"
               type="password"
@@ -87,21 +83,23 @@ const AuthForm: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full"
+              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-strokedark dark:bg-boxdark"
             />
           </div>
-          
+        </div>
+        
+        <div className="mb-5">
           <Button 
             type="submit" 
-            className="w-full bg-music-500 hover:bg-music-600"
+            className="w-full bg-primary hover:bg-opacity-90 text-white"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Signing in...' : 'Sign In'}
           </Button>
-        </form>
-      </div>
+        </div>
+      </form>
       
-      <div className="bg-muted/50 p-4 border-t">
+      <div className="mt-6 border-t border-stroke dark:border-strokedark pt-4">
         <p className="text-sm text-center text-muted-foreground mb-2">Demo Accounts</p>
         <div className="flex flex-wrap gap-2 justify-center">
           {demoCredentials.map((cred) => (

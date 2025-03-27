@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 231 100% 65%;
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
  
     --secondary: 210 40% 96.1%;
@@ -31,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 231 100% 65%;
+    --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
 
@@ -47,7 +47,7 @@
     --music-900: #312E81;
     --music-950: #1E1B4B;
     
-    --app-background: 220 14% 98%;
+    --app-background: 210 20% 98%;
   }
  
   .dark {
@@ -60,8 +60,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 231 100% 65%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
  
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -77,7 +77,7 @@
  
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 231 100% 65%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
  
@@ -86,11 +86,16 @@
     @apply border-border;
   }
   body {
-    @apply bg-app-background text-foreground;
+    @apply bg-body dark:bg-bodydark text-foreground font-sans;
   }
   
   .dark table {
-    @apply bg-card border-border;
+    @apply bg-boxdark border-strokedark;
+  }
+  
+  /* Minimal login styles */
+  .minimal-login {
+    @apply bg-white dark:bg-boxdark shadow-card rounded-sm border border-stroke dark:border-strokedark;
   }
 }
 
@@ -139,6 +144,35 @@
 
 /* Custom notification badge */
 .notification-badge {
-  @apply absolute top-0 right-0 h-2 w-2 rounded-full bg-music-500;
+  @apply absolute top-0 right-0 h-2 w-2 rounded-full bg-meta-1;
 }
 
+/* TailAdmin specific styles */
+.music-bars {
+  @apply flex h-4 items-end space-x-0.5;
+}
+
+.music-bars span {
+  @apply bg-music-500 w-1 rounded-sm animate-music-pulse;
+  height: 16px;
+}
+
+.music-bars span:nth-child(2) {
+  @apply animate-music-pulse-delay-1;
+  height: 12px;
+}
+
+.music-bars span:nth-child(3) {
+  @apply animate-music-pulse-delay-2;
+  height: 16px;
+}
+
+.music-bars span:nth-child(4) {
+  @apply animate-music-pulse-delay-3;
+  height: 10px;
+}
+
+/* Glass card effect */
+.glass-card {
+  @apply bg-white dark:bg-boxdark border border-stroke dark:border-strokedark shadow-default rounded-sm;
+}
