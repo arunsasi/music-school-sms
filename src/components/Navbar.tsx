@@ -10,7 +10,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/components/auth/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   DropdownMenu,

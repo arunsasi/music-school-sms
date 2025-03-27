@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/components/auth/AuthContext';
 
 interface DashboardHeaderProps {
   user: { name: string; role: string } | null;

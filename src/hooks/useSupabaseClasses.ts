@@ -54,12 +54,12 @@ export const useSupabaseClasses = () => {
     if (!jsonSchedule) return [];
     
     try {
-      // If it's already an array of ScheduleItem-like objects
+      // If it's already an array
       if (Array.isArray(jsonSchedule)) {
         return jsonSchedule.map(item => ({
-          day: item.day || '',
-          startTime: item.startTime || '',
-          endTime: item.endTime || ''
+          day: typeof item.day === 'string' ? item.day : '',
+          startTime: typeof item.startTime === 'string' ? item.startTime : '',
+          endTime: typeof item.endTime === 'string' ? item.endTime : ''
         }));
       }
       return [];

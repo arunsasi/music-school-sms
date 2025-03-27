@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/components/auth/AuthContext';
 import {
   Sidebar,
   SidebarContent,
@@ -83,7 +83,7 @@ const AppSidebar: React.FC = () => {
 
   // Filter navigation items based on user role
   const filteredNavItems = navItems.filter(item => 
-    user && hasPermission(item.allowedRoles as any[])
+    user && hasPermission(item.allowedRoles)
   );
 
   return (
