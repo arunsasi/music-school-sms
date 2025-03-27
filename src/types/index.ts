@@ -55,12 +55,16 @@ export interface Class {
 
 export type UserRole = 'admin' | 'teacher' | 'accounts' | 'student' | 'parent';
 
+// Extended User interface that includes properties from Supabase Auth User
 export interface User {
   id: string;
-  name: string;
-  email: string;
-  role: UserRole;
+  email?: string;
+  // Custom app properties
+  name?: string;
+  role?: UserRole;
   avatar?: string;
+  // Add any other properties that might be accessed
+  full_name?: string; // From Supabase profiles
 }
 
 export interface Teacher extends Employee {

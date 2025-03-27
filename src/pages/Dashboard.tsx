@@ -27,20 +27,29 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const isTeacher = user?.role === 'teacher';
   
+  // Get user display name, with fallbacks
+  const getUserDisplayName = () => {
+    if (user?.name) return user.name;
+    if (user?.full_name) return user.full_name;
+    return user?.email?.split('@')[0] || 'User';
+  };
+
+  const userDisplayName = getUserDisplayName();
+  
   // Create a compatible user object for DashboardHeader
   const headerUser = user ? {
-    name: user.name || 'User',
-    role: user.role
+    name: userDisplayName,
+    role: user.role || 'student'
   } : null;
   
   // Filter data for teacher role
-  const filteredClasses = isTeacher && user?.name
-    ? MOCK_UPCOMING_CLASSES.filter(cls => cls.teacher === user.name) 
+  const filteredClasses = isTeacher && userDisplayName
+    ? MOCK_UPCOMING_CLASSES.filter(cls => cls.teacher === userDisplayName) 
     : MOCK_UPCOMING_CLASSES;
   
   // Filter tasks for teacher role
-  const filteredTasks = isTeacher && user?.name
-    ? MOCK_TASKS.filter(task => task.assignedTo === user.name || task.assignedTo === 'All Teachers')
+  const filteredTasks = isTeacher && userDisplayName
+    ? MOCK_TASKS.filter(task => task.assignedTo === userDisplayName || task.assignedTo === 'All Teachers')
     : MOCK_TASKS;
   
   return (

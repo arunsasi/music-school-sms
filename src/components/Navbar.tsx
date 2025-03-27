@@ -54,6 +54,16 @@ const Navbar: React.FC = () => {
       .toUpperCase();
   };
 
+  // Get user display name, with fallbacks
+  const getUserDisplayName = () => {
+    if (user?.name) return user.name;
+    if (user?.full_name) return user.full_name;
+    return user?.email?.split('@')[0] || 'User';
+  };
+
+  const userDisplayName = getUserDisplayName();
+  const userEmail = user?.email || '';
+
   // Function to get notification badge color
   const getNotificationTypeColor = (type: string) => {
     switch (type) {
@@ -129,9 +139,9 @@ const Navbar: React.FC = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.avatar} alt={user?.name || 'User'} />
+                  <AvatarImage src={user?.avatar} alt={userDisplayName} />
                   <AvatarFallback className="bg-music-200 text-music-700">
-                    {user?.name ? getInitials(user.name) : 'U'}
+                    {getInitials(userDisplayName)}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -139,8 +149,8 @@ const Navbar: React.FC = () => {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="font-medium text-sm">{user?.name || 'User'}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <p className="font-medium text-sm">{userDisplayName}</p>
+                  <p className="text-xs text-muted-foreground">{userEmail}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />

@@ -54,19 +54,36 @@ export const useSupabaseClasses = () => {
     if (!jsonSchedule) return [];
     
     try {
-      // If it's already an array
+      // Handle case when jsonSchedule is an array
       if (Array.isArray(jsonSchedule)) {
         return jsonSchedule.map(item => {
-          // Handle both object and primitive types safely
+          // Safe access of properties using type guards
           if (typeof item === 'object' && item !== null) {
-            return {
-              day: typeof item.day === 'string' ? item.day : '',
-              startTime: typeof item.startTime === 'string' ? item.startTime : '',
-              endTime: typeof item.endTime === 'string' ? item.endTime : ''
-            };
+            const day = typeof item.day === 'string' ? item.day : '';
+            const startTime = typeof item.startTime === 'string' ? item.startTime : '';
+            const endTime = typeof item.endTime === 'string' ? item.endTime : '';
+            
+            return { day, startTime, endTime };
           }
           return { day: '', startTime: '', endTime: '' };
         });
+      } 
+      // Handle case when jsonSchedule is an object
+      else if (typeof jsonSchedule === 'object' && jsonSchedule !== null) {
+        const result: ScheduleItem[] = [];
+        for (const key in jsonSchedule) {
+          if (Object.prototype.hasOwnProperty.call(jsonSchedule, key)) {
+            const item = jsonSchedule[key];
+            if (typeof item === 'object' && item !== null) {
+              const day = typeof item.day === 'string' ? item.day : '';
+              const startTime = typeof item.startTime === 'string' ? item.startTime : '';
+              const endTime = typeof item.endTime === 'string' ? item.endTime : '';
+              
+              result.push({ day, startTime, endTime });
+            }
+          }
+        }
+        return result;
       }
       return [];
     } catch (err) {
@@ -77,7 +94,7 @@ export const useSupabaseClasses = () => {
 
   // Helper function to convert ScheduleItem[] to Json
   const convertScheduleToJson = (schedule: ScheduleItem[]): Json => {
-    return JSON.parse(JSON.stringify(schedule)) as Json;
+    return schedule as unknown as Json;
   };
 
   // Create a new class

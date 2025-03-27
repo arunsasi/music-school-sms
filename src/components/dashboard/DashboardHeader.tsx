@@ -18,8 +18,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
           {isTeacher 
-            ? `Welcome back, ${user?.name}! Here's an overview of your classes.` 
-            : `Welcome back, ${user?.name}! Here's what's happening today.`}
+            ? `Welcome back, ${user?.name || 'Teacher'}! Here's an overview of your classes.` 
+            : `Welcome back, ${user?.name || 'User'}! Here's what's happening today.`}
         </p>
       </div>
       
