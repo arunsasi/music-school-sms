@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { 
   ChevronDown, 
   Plus, 
@@ -20,6 +21,7 @@ import ClassForm from '@/components/ClassForm';
 import ClassesTable from '@/components/classes/ClassesTable';
 import ClassSchedule from '@/components/classes/ClassSchedule';
 import ClassStudents from '@/components/classes/ClassStudents';
+import { useSupabaseClasses } from '@/hooks/useSupabaseClasses';
 
 // Mock subjects for demo purposes
 const MOCK_SUBJECTS: Subject[] = [
@@ -37,84 +39,16 @@ const MOCK_TEACHERS: { [key: string]: string } = {
   '3': 'Michael Lee',
 };
 
-// Mock classes data
-const MOCK_CLASSES: Class[] = [
-  {
-    id: '1',
-    name: 'Beginning Piano',
-    subject: MOCK_SUBJECTS[0],
-    teacherId: '1',
-    schedule: [
-      { day: 'Monday', startTime: '09:00', endTime: '10:00' },
-      { day: 'Wednesday', startTime: '09:00', endTime: '10:00' }
-    ],
-    fee: 300,
-    students: ['1', '2', '5']
-  },
-  {
-    id: '2',
-    name: 'Advanced Guitar',
-    subject: MOCK_SUBJECTS[1],
-    teacherId: '2',
-    schedule: [
-      { day: 'Tuesday', startTime: '14:00', endTime: '15:30' },
-      { day: 'Thursday', startTime: '14:00', endTime: '15:30' }
-    ],
-    fee: 350,
-    students: ['3', '4', '7', '8']
-  },
-  {
-    id: '3',
-    name: 'Beginner Violin',
-    subject: MOCK_SUBJECTS[2],
-    teacherId: '3',
-    schedule: [
-      { day: 'Monday', startTime: '16:00', endTime: '17:00' },
-      { day: 'Friday', startTime: '16:00', endTime: '17:00' }
-    ],
-    fee: 320,
-    students: ['6']
-  },
-  {
-    id: '4',
-    name: 'Drum Fundamentals',
-    subject: MOCK_SUBJECTS[3],
-    teacherId: '1',
-    schedule: [
-      { day: 'Wednesday', startTime: '17:30', endTime: '18:30' },
-      { day: 'Saturday', startTime: '10:00', endTime: '11:00' }
-    ],
-    fee: 280,
-    students: ['3', '5', '8']
-  },
-  {
-    id: '5',
-    name: 'Vocal Training',
-    subject: MOCK_SUBJECTS[4],
-    teacherId: '2',
-    schedule: [
-      { day: 'Tuesday', startTime: '17:00', endTime: '18:30' },
-      { day: 'Thursday', startTime: '17:00', endTime: '18:30' }
-    ],
-    fee: 370,
-    students: ['1', '2', '4', '7']
-  },
-  {
-    id: '6',
-    name: 'Intermediate Piano',
-    subject: MOCK_SUBJECTS[0],
-    teacherId: '1',
-    schedule: [
-      { day: 'Monday', startTime: '11:00', endTime: '12:30' },
-      { day: 'Wednesday', startTime: '11:00', endTime: '12:30' }
-    ],
-    fee: 330,
-    students: ['4', '6', '8']
-  }
-];
-
 const Classes: React.FC = () => {
-  const [classes, setClasses] = useState<Class[]>(MOCK_CLASSES);
+  const { 
+    classes, 
+    loading, 
+    error, 
+    addClass, 
+    updateClass, 
+    deleteClass 
+  } = useSupabaseClasses();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddingClass, setIsAddingClass] = useState(false);
   const [editingClass, setEditingClass] = useState<Class | null>(null);
@@ -132,42 +66,36 @@ const Classes: React.FC = () => {
     return (
       cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cls.subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      MOCK_TEACHERS[cls.teacherId].toLowerCase().includes(searchTerm.toLowerCase())
+      MOCK_TEACHERS[cls.teacherId]?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
   
-  const addClass = (classData: Omit<Class, 'id'>) => {
-    const newClass: Class = {
-      ...classData,
-      id: (classes.length + 1).toString()
-    };
-    
-    setClasses([...classes, newClass]);
-    setIsAddingClass(false);
-    toast.success(`${newClass.name} class has been added successfully`);
+  const handleAddClass = (classData: Omit<Class, 'id'>) => {
+    addClass(classData)
+      .then(() => setIsAddingClass(false))
+      .catch(err => {
+        console.error('Error in handleAddClass:', err);
+        toast.error("Couldn't add class. Please try again.");
+      });
   };
   
-  const updateClass = (classData: Omit<Class, 'id'>) => {
+  const handleUpdateClass = (classData: Omit<Class, 'id'>) => {
     if (!editingClass) return;
     
-    const updatedClasses = classes.map(cls => 
-      cls.id === editingClass.id 
-        ? { ...classData, id: editingClass.id } 
-        : cls
-    );
-    
-    setClasses(updatedClasses);
-    setEditingClass(null);
-    toast.success(`${classData.name} class has been updated successfully`);
+    updateClass({ ...classData, id: editingClass.id })
+      .then(() => setEditingClass(null))
+      .catch(err => {
+        console.error('Error in handleUpdateClass:', err);
+        toast.error("Couldn't update class. Please try again.");
+      });
   };
   
-  const deleteClass = (id: string) => {
-    const classToDelete = classes.find(cls => cls.id === id);
-    if (!classToDelete) return;
-    
-    const updatedClasses = classes.filter(cls => cls.id !== id);
-    setClasses(updatedClasses);
-    toast.success(`${classToDelete.name} class has been removed`);
+  const handleDeleteClass = (id: string) => {
+    deleteClass(id)
+      .catch(err => {
+        console.error('Error in handleDeleteClass:', err);
+        toast.error("Couldn't delete class. Please try again.");
+      });
   };
   
   const viewSchedule = (cls: Class) => {
@@ -181,11 +109,35 @@ const Classes: React.FC = () => {
   };
   
   const handleUpdateClassStudents = (updatedClass: Class) => {
-    const updatedClasses = classes.map(cls => 
-      cls.id === updatedClass.id ? updatedClass : cls
-    );
-    setClasses(updatedClasses);
+    updateClass(updatedClass)
+      .catch(err => {
+        console.error('Error in handleUpdateClassStudents:', err);
+        toast.error("Couldn't update class students. Please try again.");
+      });
   };
+  
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full p-8">
+        <div className="music-bars">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p className="ml-3">Loading classes...</p>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-error-500 mb-4">Error loading classes</p>
+        <Button onClick={() => window.location.reload()}>Try Again</Button>
+      </div>
+    );
+  }
   
   return (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -249,7 +201,7 @@ const Classes: React.FC = () => {
         classes={filteredClasses}
         teacherNames={MOCK_TEACHERS}
         onEditClass={setEditingClass}
-        onDeleteClass={deleteClass}
+        onDeleteClass={handleDeleteClass}
         onViewSchedule={viewSchedule}
         onManageStudents={manageStudents}
       />
@@ -258,7 +210,7 @@ const Classes: React.FC = () => {
         <ClassForm
           isOpen={isAddingClass}
           onClose={() => setIsAddingClass(false)}
-          onSubmit={addClass}
+          onSubmit={handleAddClass}
         />
       )}
       
@@ -266,7 +218,7 @@ const Classes: React.FC = () => {
         <ClassForm
           isOpen={!!editingClass}
           onClose={() => setEditingClass(null)}
-          onSubmit={updateClass}
+          onSubmit={handleUpdateClass}
           initialData={editingClass}
         />
       )}
