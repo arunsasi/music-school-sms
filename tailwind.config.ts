@@ -78,6 +78,7 @@ export default {
 				'body': '#F1F5F9',
 				'bodydark': '#1D2144',
 				'boxdark': '#24303F',
+				'stroke': '#E2E8F0',
 				'strokedark': '#2E3A47',
 				'meta-1': '#DC3545',
 				'meta-2': '#33C863',
