@@ -57,27 +57,28 @@ export const useSupabaseClasses = () => {
       // Handle case when jsonSchedule is an array
       if (Array.isArray(jsonSchedule)) {
         return jsonSchedule.map(item => {
-          // Safe access of properties using type guards
-          if (typeof item === 'object' && item !== null) {
-            const day = typeof item.day === 'string' ? item.day : '';
-            const startTime = typeof item.startTime === 'string' ? item.startTime : '';
-            const endTime = typeof item.endTime === 'string' ? item.endTime : '';
-            
-            return { day, startTime, endTime };
-          }
-          return { day: '', startTime: '', endTime: '' };
+          // Safe access of properties using type assertions
+          const itemObj = item as any;
+          const day = typeof itemObj?.day === 'string' ? itemObj.day : '';
+          const startTime = typeof itemObj?.startTime === 'string' ? itemObj.startTime : '';
+          const endTime = typeof itemObj?.endTime === 'string' ? itemObj.endTime : '';
+          
+          return { day, startTime, endTime };
         });
       } 
       // Handle case when jsonSchedule is an object
       else if (typeof jsonSchedule === 'object' && jsonSchedule !== null) {
         const result: ScheduleItem[] = [];
-        for (const key in jsonSchedule) {
-          if (Object.prototype.hasOwnProperty.call(jsonSchedule, key)) {
-            const item = jsonSchedule[key];
+        const jsonObj = jsonSchedule as Record<string, any>;
+        
+        for (const key in jsonObj) {
+          if (Object.prototype.hasOwnProperty.call(jsonObj, key)) {
+            const item = jsonObj[key];
             if (typeof item === 'object' && item !== null) {
-              const day = typeof item.day === 'string' ? item.day : '';
-              const startTime = typeof item.startTime === 'string' ? item.startTime : '';
-              const endTime = typeof item.endTime === 'string' ? item.endTime : '';
+              const itemObj = item as any;
+              const day = typeof itemObj?.day === 'string' ? itemObj.day : '';
+              const startTime = typeof itemObj?.startTime === 'string' ? itemObj.startTime : '';
+              const endTime = typeof itemObj?.endTime === 'string' ? itemObj.endTime : '';
               
               result.push({ day, startTime, endTime });
             }

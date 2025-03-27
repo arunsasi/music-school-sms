@@ -5,12 +5,13 @@ import { Calendar } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthContext';
 
 interface DashboardHeaderProps {
-  user: { name: string; role: string } | null;
+  user: { name?: string; role?: string } | null;
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
   const { hasPermission } = useAuth();
   const isTeacher = user?.role === 'teacher';
+  const displayName = user?.name || 'User';
   
   return (
     <div className="flex justify-between items-center">
@@ -18,8 +19,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
           {isTeacher 
-            ? `Welcome back, ${user?.name || 'Teacher'}! Here's an overview of your classes.` 
-            : `Welcome back, ${user?.name || 'User'}! Here's what's happening today.`}
+            ? `Welcome back, ${displayName}! Here's an overview of your classes.` 
+            : `Welcome back, ${displayName}! Here's what's happening today.`}
         </p>
       </div>
       
