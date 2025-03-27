@@ -56,11 +56,17 @@ export const useSupabaseClasses = () => {
     try {
       // If it's already an array
       if (Array.isArray(jsonSchedule)) {
-        return jsonSchedule.map(item => ({
-          day: typeof item.day === 'string' ? item.day : '',
-          startTime: typeof item.startTime === 'string' ? item.startTime : '',
-          endTime: typeof item.endTime === 'string' ? item.endTime : ''
-        }));
+        return jsonSchedule.map(item => {
+          // Handle both object and primitive types safely
+          if (typeof item === 'object' && item !== null) {
+            return {
+              day: typeof item.day === 'string' ? item.day : '',
+              startTime: typeof item.startTime === 'string' ? item.startTime : '',
+              endTime: typeof item.endTime === 'string' ? item.endTime : ''
+            };
+          }
+          return { day: '', startTime: '', endTime: '' };
+        });
       }
       return [];
     } catch (err) {
@@ -71,7 +77,7 @@ export const useSupabaseClasses = () => {
 
   // Helper function to convert ScheduleItem[] to Json
   const convertScheduleToJson = (schedule: ScheduleItem[]): Json => {
-    return schedule as unknown as Json;
+    return JSON.parse(JSON.stringify(schedule)) as Json;
   };
 
   // Create a new class

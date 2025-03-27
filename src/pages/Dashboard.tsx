@@ -27,19 +27,25 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const isTeacher = user?.role === 'teacher';
   
+  // Create a compatible user object for DashboardHeader
+  const headerUser = user ? {
+    name: user.name || 'User',
+    role: user.role
+  } : null;
+  
   // Filter data for teacher role
-  const filteredClasses = isTeacher 
-    ? MOCK_UPCOMING_CLASSES.filter(cls => cls.teacher === user?.name) 
+  const filteredClasses = isTeacher && user?.name
+    ? MOCK_UPCOMING_CLASSES.filter(cls => cls.teacher === user.name) 
     : MOCK_UPCOMING_CLASSES;
   
   // Filter tasks for teacher role
-  const filteredTasks = isTeacher
-    ? MOCK_TASKS.filter(task => task.assignedTo === user?.name || task.assignedTo === 'All Teachers')
+  const filteredTasks = isTeacher && user?.name
+    ? MOCK_TASKS.filter(task => task.assignedTo === user.name || task.assignedTo === 'All Teachers')
     : MOCK_TASKS;
   
   return (
     <div className="space-y-6">
-      <DashboardHeader user={user} />
+      <DashboardHeader user={headerUser} />
       
       <Tabs defaultValue="overview" className="space-y-6" onValueChange={setActiveTab}>
         <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3">

@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthContext';
+import { UserRole } from '@/types';
 import {
   Sidebar,
   SidebarContent,
@@ -31,49 +32,49 @@ const navItems = [
     label: 'Dashboard',
     icon: Home,
     href: '/dashboard',
-    allowedRoles: ['admin', 'accounts', 'teacher'],
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
   },
   {
     label: 'Employees',
     icon: Users,
     href: '/employees',
-    allowedRoles: ['admin', 'accounts'],
+    allowedRoles: ['admin', 'accounts'] as UserRole[],
   },
   {
     label: 'Students',
     icon: GraduationCap,
     href: '/students',
-    allowedRoles: ['admin', 'accounts', 'teacher'],
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
   },
   {
     label: 'Classes',
     icon: Calendar,
     href: '/classes',
-    allowedRoles: ['admin', 'accounts', 'teacher'],
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
   },
   {
     label: 'Attendance',
     icon: Clock,
     href: '/attendance',
-    allowedRoles: ['admin', 'accounts', 'teacher'],
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
   },
   {
     label: 'Finance',
     icon: DollarSign,
     href: '/finance',
-    allowedRoles: ['admin', 'accounts'],
+    allowedRoles: ['admin', 'accounts'] as UserRole[],
   },
   {
     label: 'Reports',
     icon: BarChart3,
     href: '/reports',
-    allowedRoles: ['admin', 'accounts'],
+    allowedRoles: ['admin', 'accounts'] as UserRole[],
   },
   {
     label: 'Settings',
     icon: Settings,
     href: '/settings',
-    allowedRoles: ['admin'],
+    allowedRoles: ['admin'] as UserRole[],
   },
 ];
 
