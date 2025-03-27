@@ -37,8 +37,8 @@ export const MOCK_RECENT_PAYMENTS = [
 
 // Mock tasks
 export const MOCK_TASKS = [
-  { id: '1', title: 'Call student parents', completed: false, dueDate: '2023-06-15' },
-  { id: '2', title: 'Prepare for recital', completed: false, dueDate: '2023-06-20' },
-  { id: '3', title: 'Order new equipment', completed: true, dueDate: '2023-06-10' },
-  { id: '4', title: 'Review curriculum', completed: false, dueDate: '2023-06-25' },
+  { id: '1', title: 'Call student parents', completed: false, dueDate: '2023-06-15', assignedTo: 'All Teachers' },
+  { id: '2', title: 'Prepare for recital', completed: false, dueDate: '2023-06-20', assignedTo: 'John Smith' },
+  { id: '3', title: 'Order new equipment', completed: true, dueDate: '2023-06-10', assignedTo: 'Admin' },
+  { id: '4', title: 'Review curriculum', completed: false, dueDate: '2023-06-25', assignedTo: 'All Teachers' },
 ];

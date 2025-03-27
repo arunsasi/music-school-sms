@@ -14,6 +14,7 @@ interface Task {
   title: string;
   completed: boolean;
   dueDate: string;
+  assignedTo?: string; // Added the missing property
 }
 
 interface TasksRemindersProps {
