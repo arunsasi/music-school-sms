@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '@/components/auth/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import Navbar from './Navbar';
 import AppSidebar from './Sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';

@@ -4,8 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { User, UserRole } from '@/types';
 import { toast } from 'sonner';
 
+// Extend the User type to include additional properties
+interface ExtendedUser extends User {
+  name?: string;
+  full_name?: string;
+  avatar?: string;
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: ExtendedUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -16,7 +23,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock users for demo purposes
-const MOCK_USERS: User[] = [
+const MOCK_USERS: ExtendedUser[] = [
   {
     id: '1',
     name: 'Admin User',
@@ -44,7 +51,7 @@ const MOCK_USERS: User[] = [
 const MOCK_PASSWORD = 'password';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ExtendedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 

@@ -10,7 +10,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { useAuth } from '@/components/auth/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   DropdownMenu,
@@ -63,6 +63,7 @@ const Navbar: React.FC = () => {
 
   const userDisplayName = getUserDisplayName();
   const userEmail = user?.email || '';
+  const userAvatar = user?.avatar || '';
 
   // Function to get notification badge color
   const getNotificationTypeColor = (type: string) => {
@@ -139,7 +140,7 @@ const Navbar: React.FC = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.avatar} alt={userDisplayName} />
+                  <AvatarImage src={userAvatar} alt={userDisplayName} />
                   <AvatarFallback className="bg-music-200 text-music-700">
                     {getInitials(userDisplayName)}
                   </AvatarFallback>
