@@ -36,7 +36,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   // Don't show layout on the login page
   if (location.pathname === '/') {
-    return <>{children}</>;
+    return <div className="bg-gray-2">{children}</div>;
   }
 
   // Only show navbar and sidebar if authenticated
@@ -51,7 +51,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Navbar />
               
               <main className="container-main h-full bg-gray-2 dark:bg-boxdark-2">
-                <div className="mx-auto max-w-screen-2xl">{children}</div>
+                <div className="mx-auto">{children}</div>
               </main>
               
               <footer className="py-4 px-6 border-t text-center text-sm text-muted-foreground mt-auto">
@@ -65,7 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   // For unauthenticated users on non-login pages
-  return <>{children}</>;
+  return <div className="bg-gray-2">{children}</div>;
 };
 
 export default Layout;

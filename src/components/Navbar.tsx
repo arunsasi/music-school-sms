@@ -8,7 +8,6 @@ import {
   Sun,
   Moon,
   Menu,
-  X,
   Search
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -37,7 +36,6 @@ const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const hasUnreadNotifications = true; // This would be dynamic in a real app
 
   const toggleTheme = () => {
@@ -86,7 +84,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
           <SidebarTrigger>
             <Button variant="ghost" size="icon" className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden">
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5 text-bodydark dark:text-white" />
             </Button>
           </SidebarTrigger>
           
@@ -106,13 +104,13 @@ const Navbar: React.FC = () => {
         <div className="hidden sm:block">
           <form className="relative">
             <button className="absolute left-0 top-1/2 -translate-y-1/2">
-              <Search className="fill-body hover:fill-primary dark:fill-bodydark dark:hover:fill-primary h-5 w-5" />
+              <Search className="h-5 w-5 text-body hover:text-primary dark:text-bodydark dark:hover:fill-primary" />
             </button>
 
             <input
               type="text"
               placeholder="Search..."
-              className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-125"
+              className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none text-body dark:text-bodydark dark:placeholder:text-bodydark xl:w-125"
             />
           </form>
         </div>
@@ -173,7 +171,7 @@ const Navbar: React.FC = () => {
               <DropdownMenuLabel className="border-b border-stroke px-4.5 py-4 dark:border-strokedark">
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-black dark:text-white">{userDisplayName}</span>
-                  <span className="text-xs text-body">{userEmail}</span>
+                  <span className="text-xs text-body dark:text-bodydark">{userEmail}</span>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuItem className="flex items-center gap-3.5 px-4.5 py-3 text-sm font-medium duration-300 ease-in-out hover:bg-gray dark:hover:bg-meta-4/10">
@@ -190,32 +188,32 @@ const Navbar: React.FC = () => {
                     <p className="text-sm font-medium text-black dark:text-white">
                       My Profile
                     </p>
-                    <p className="text-xs text-body">View your profile details</p>
+                    <p className="text-xs text-body dark:text-bodydark">View your profile details</p>
                   </div>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center gap-3.5 px-4.5 py-3 text-sm font-medium duration-300 ease-in-out hover:bg-gray dark:hover:bg-meta-4/10">
                 <Link to="/settings" className="flex w-full items-center gap-3.5">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-meta-3/10">
-                    <Settings className="fill-meta-3 stroke-meta-3 h-5 w-5" />
+                    <Settings className="h-5 w-5 text-meta-3" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-black dark:text-white">
                       Account Settings
                     </p>
-                    <p className="text-xs text-body">Manage your account</p>
+                    <p className="text-xs text-body dark:text-bodydark">Manage your account</p>
                   </div>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="border-b border-stroke dark:border-strokedark" />
               <DropdownMenuItem className="flex items-center gap-3.5 px-4.5 py-3 text-sm font-medium text-danger duration-300 ease-in-out hover:bg-gray dark:hover:bg-meta-4/10">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-meta-1/10">
-                  <LogOut className="fill-meta-1 stroke-meta-1 h-5 w-5" />
+                  <LogOut className="h-5 w-5 text-meta-1" />
                 </div>
                 <div className="flex grow items-center justify-between" onClick={logout}>
                   <div>
                     <p className="text-sm font-medium">Log Out</p>
-                    <p className="text-xs text-body">Sign out of your account</p>
+                    <p className="text-xs text-body dark:text-bodydark">Sign out of your account</p>
                   </div>
                 </div>
               </DropdownMenuItem>

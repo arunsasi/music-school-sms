@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -87,8 +87,8 @@ const AppSidebar: React.FC = () => {
   );
 
   return (
-    <Sidebar className="dark:bg-boxdark flex h-screen w-72.5 flex-col overflow-y-auto duration-300 ease-linear lg:static lg:translate-x-0">
-      <SidebarHeader className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
+    <Sidebar className="flex flex-col overflow-y-auto bg-sidebar-background text-sidebar-foreground duration-300 ease-linear lg:static lg:translate-x-0 w-72.5 z-999999">
+      <SidebarHeader className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
           <div className="music-bars flex-shrink-0">
             <span></span>
@@ -97,24 +97,24 @@ const AppSidebar: React.FC = () => {
             <span></span>
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-bodydark">Music School</h1>
-            <p className="text-xs font-medium text-bodydark/70">Management System</p>
+            <h1 className="text-lg font-semibold text-white">Music School</h1>
+            <p className="text-xs font-medium text-white/70">Management System</p>
           </div>
         </div>
       </SidebarHeader>
       
-      <SidebarContent>
-        <SidebarMenu>
+      <SidebarContent className="flex flex-col overflow-y-auto duration-300 ease-linear">
+        <SidebarMenu className="flex flex-col gap-1.5 px-4 py-4">
           {filteredNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton asChild>
                 <Link
                   to={item.href}
                   className={cn(
-                    "group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark duration-300 ease-in-out hover:bg-graydark",
+                    "group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium duration-300 ease-in-out hover:bg-sidebar-accent text-sm",
                     location.pathname === item.href
-                      ? "bg-graydark text-white"
-                      : "text-bodydark"
+                      ? "bg-sidebar-accent"
+                      : ""
                   )}
                 >
                   <item.icon className="h-5 w-5" />
@@ -126,12 +126,12 @@ const AppSidebar: React.FC = () => {
         </SidebarMenu>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 mt-auto">
-        <div className="flex items-center gap-2 text-bodydark/80 hover:text-white transition-colors cursor-pointer">
+      <SidebarFooter className="p-4 mt-auto border-t border-sidebar-border">
+        <div className="flex items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer">
           <HelpCircle className="h-5 w-5" />
           <span>Help & Support</span>
         </div>
-        <div className="mt-4 text-xs text-bodydark/50 text-center">
+        <div className="mt-4 text-xs text-white/50 text-center">
           Version 1.0.0
         </div>
       </SidebarFooter>
