@@ -4,71 +4,187 @@
 @tailwind utilities;
 
 @layer base {
-  :root, :host {
-    --color-brand-50: #ecf3ff;
-    --color-brand-100: #dde9ff;
-    --color-brand-200: #c2d6ff;
-    --color-brand-300: #9cb9ff;
-    --color-brand-400: #7592ff;
-    --color-brand-500: #465fff;
-    --color-brand-600: #3641f5;
-    --color-brand-800: #252dae;
-    --color-brand-950: #161950;
-
-    --color-gray-50: #f9fafb;
-    --color-gray-100: #f2f4f7;
-    --color-gray-200: #e4e7ec;
-    --color-gray-300: #d0d5dd;
-    --color-gray-400: #98a2b3;
-    --color-gray-500: #667085;
-    --color-gray-600: #475467;
-    --color-gray-700: #344054;
-    --color-gray-800: #1d2939;
-    --color-gray-900: #101828;
-
-    --color-white: #ffffff;
-    --color-background: #f9fafb;
-    --color-text: #101828;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground;
-    background-color: var(--color-background);
-    color: var(--color-text);
+    @apply font-satoshi font-normal text-base text-body bg-whiten relative z-1;
   }
 }
 
-/* Restore default button and interactive element styles */
 @layer components {
+  .dropdown {
+    @apply z-40 bg-white shadow-1 rounded-sm max-w-[310px] p-5 border border-stroke;
+  }
+
+  .stroke-text {
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  }
+
+  .music-bars {
+    @apply flex h-12 items-end justify-center space-x-1;
+  }
+  
+  .music-bars span {
+    @apply h-5 w-2 bg-music-500 rounded-sm animate-music-pulse;
+  }
+  
+  .music-bars span:nth-child(2) {
+    @apply h-8 animate-music-pulse-delay-1;
+  }
+  
+  .music-bars span:nth-child(3) {
+    @apply h-10 animate-music-pulse-delay-2;
+  }
+  
+  .music-bars span:nth-child(4) {
+    @apply h-6 animate-music-pulse-delay-3;
+  }
+
+  .container-main {
+    @apply p-4 md:p-6 2xl:p-10;
+  }
+
+  /* Button styles */
   .btn {
-    @apply px-4 py-2 rounded-md transition-colors;
-    background-color: var(--color-brand-500);
-    color: white;
+    @apply inline-flex items-center justify-center rounded-md text-white px-6 py-2.5 text-center font-medium transition-all hover:shadow-1;
   }
 
-  .btn:hover {
-    background-color: var(--color-brand-600);
+  .btn-primary {
+    @apply bg-primary hover:bg-opacity-90;
   }
 
-  input, 
-  textarea, 
-  select {
-    @apply border border-gray-300 rounded-md px-3 py-2;
+  .btn-success {
+    @apply bg-success hover:bg-opacity-90;
+  }
+
+  .btn-danger {
+    @apply bg-danger hover:bg-opacity-90;
+  }
+
+  .btn-warning {
+    @apply bg-warning hover:bg-opacity-90;
+  }
+
+  /* Form components */
+  .form-input,
+  .form-textarea,
+  .form-select,
+  .form-multiselect {
+    @apply border border-stroke rounded-md py-2.5 px-5 text-black focus:border-primary focus-visible:outline-none;
+  }
+
+  .form-label {
+    @apply mb-2.5 block font-medium text-black;
+  }
+
+  /* Card styles */
+  .card {
+    @apply rounded-sm border border-stroke bg-white p-5 shadow-default;
+  }
+
+  .card-title {
+    @apply text-xl font-semibold text-black;
+  }
+
+  .card-subtitle {
+    @apply text-sm text-body;
   }
 }
 
-/* Add some basic responsive spacing and typography */
-.container {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+/* TailAdmin color variables */
+:root {
+  --primary: #3c50e0;
+  --secondary: #7c8db5;
+  --body: #64748b; 
+  --bodydark: #1d2144;
+  --graydark: #111927;
+  --black: #000;
+  --white: #fff;
+  --stroke: #e2e8f0;
+  --green: #3ca745;
+  --red: #d50100;
+
+  --bg-color: #f1f5f9;
+  --color-text: #101828;
+  
+  /* Sidebar colors */
+  --sidebar-background: #1a222c;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #3c50e0;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2e3a47;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2e3a47;
+  --sidebar-ring: #3c50e0;
+
+  /* Music school specific colors */
+  --music-100: #ecf3ff;
+  --music-200: #c2d6ff;
+  --music-300: #9cb9ff;
+  --music-400: #7592ff;
+  --music-500: #465fff;
+  --music-600: #3641f5;
+  --music-700: #2a34db;
+  --music-800: #252dae;
+  --music-900: #161950;
 }
 
-/* Optional: Add some default text sizing and line heights */
-body {
-  font-size: 16px;
-  line-height: 1.5;
+/* Shadcn compatibility */
+@layer base {
+  :root {
+    --background: #f1f5f9;
+    --foreground: #1d2144;
+    
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    
+    --popover: #ffffff;
+    --popover-foreground: #1d2144;
+    
+    --card: #ffffff;
+    --card-foreground: #1d2144;
+    
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    
+    --primary: #3c50e0;
+    --primary-foreground: #ffffff;
+    
+    --secondary: #f1f5f9;
+    --secondary-foreground: #1d2144;
+    
+    --accent: #f1f5f9;
+    --accent-foreground: #1d2144;
+    
+    --destructive: #d50100;
+    --destructive-foreground: #ffffff;
+    
+    --ring: #3c50e0;
+    
+    --radius: 0.5rem;
+  }
+}
+
+/* Font imports */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+/* Sheet content scrollable */
+.sheet-content-scrollable {
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+}
+
+/* Modal/Dialog content scrollable */
+.dialog-content-scrollable {
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+}
+
+/* Modal transition */
+.modal-transition {
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }

@@ -14,10 +14,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ user }) => {
   const displayName = user?.name || 'User';
   
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
+        <h2 className="text-title-lg font-bold text-black dark:text-white">Dashboard</h2>
+        <p className="text-sm text-body dark:text-bodydark">
           {isTeacher 
             ? `Welcome back, ${displayName}! Here's an overview of your classes.` 
             : `Welcome back, ${displayName}! Here's what's happening today.`}

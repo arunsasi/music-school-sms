@@ -57,11 +57,11 @@ const Dashboard: React.FC = () => {
       <DashboardHeader user={headerUser} />
       
       <Tabs defaultValue="overview" className="space-y-6" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          {!isTeacher && <TabsTrigger value="students">Students</TabsTrigger>}
-          <TabsTrigger value="classes">Classes</TabsTrigger>
-          {!isTeacher && <TabsTrigger value="finances">Finances</TabsTrigger>}
+        <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3 bg-white dark:bg-boxdark rounded-md p-1">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-white">Overview</TabsTrigger>
+          {!isTeacher && <TabsTrigger value="students" className="data-[state=active]:bg-primary data-[state=active]:text-white">Students</TabsTrigger>}
+          <TabsTrigger value="classes" className="data-[state=active]:bg-primary data-[state=active]:text-white">Classes</TabsTrigger>
+          {!isTeacher && <TabsTrigger value="finances" className="data-[state=active]:bg-primary data-[state=active]:text-white">Finances</TabsTrigger>}
         </TabsList>
         
         <TabsContent value="overview" className="space-y-6">

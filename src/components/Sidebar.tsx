@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -18,7 +18,6 @@ import {
   Users,
   GraduationCap,
   Calendar,
-  Inbox,
   Clock,
   DollarSign,
   BarChart3,
@@ -88,16 +87,20 @@ const AppSidebar: React.FC = () => {
   );
 
   return (
-    <Sidebar>
-      <SidebarHeader className="flex flex-col items-center justify-center py-6">
-        <div className="music-bars mb-2">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
+    <Sidebar className="dark:bg-boxdark flex h-screen w-72.5 flex-col overflow-y-auto duration-300 ease-linear lg:static lg:translate-x-0">
+      <SidebarHeader className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
+        <div className="flex items-center gap-2">
+          <div className="music-bars flex-shrink-0">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold text-bodydark">Music School</h1>
+            <p className="text-xs font-medium text-bodydark/70">Management System</p>
+          </div>
         </div>
-        <div className="text-lg font-bold text-white">Music School</div>
-        <div className="text-xs text-white/70 mt-1">Student Management System</div>
       </SidebarHeader>
       
       <SidebarContent>
@@ -108,10 +111,10 @@ const AppSidebar: React.FC = () => {
                 <Link
                   to={item.href}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+                    "group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark duration-300 ease-in-out hover:bg-graydark",
                     location.pathname === item.href
-                      ? "bg-sidebar-accent text-white"
-                      : "text-sidebar-foreground/70 hover:text-white hover:bg-sidebar-accent/50"
+                      ? "bg-graydark text-white"
+                      : "text-bodydark"
                   )}
                 >
                   <item.icon className="h-5 w-5" />
@@ -124,11 +127,11 @@ const AppSidebar: React.FC = () => {
       </SidebarContent>
       
       <SidebarFooter className="p-4 mt-auto">
-        <div className="flex items-center gap-2 text-sidebar-foreground/70 hover:text-white transition-colors">
+        <div className="flex items-center gap-2 text-bodydark/80 hover:text-white transition-colors cursor-pointer">
           <HelpCircle className="h-5 w-5" />
           <span>Help & Support</span>
         </div>
-        <div className="mt-4 text-xs text-sidebar-foreground/50 text-center">
+        <div className="mt-4 text-xs text-bodydark/50 text-center">
           Version 1.0.0
         </div>
       </SidebarFooter>
