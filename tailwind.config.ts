@@ -61,6 +61,14 @@ export default {
         success: "#3CA745",
         info: "#3BA2B8",
         brand: "#465fff",
+        "sidebar-background": "#1a222c",
+        "sidebar-foreground": "#ffffff",
+        "sidebar-primary": "#3c50e0",
+        "sidebar-primary-foreground": "#ffffff",
+        "sidebar-accent": "#2e3a47",
+        "sidebar-accent-foreground": "#ffffff",
+        "sidebar-border": "#2e3a47",
+        "sidebar-ring": "#3c50e0",
         music: {
           100: "#ecf3ff",
           200: "#c2d6ff",
@@ -301,19 +309,6 @@ export default {
         42.5: '10.625rem',
         47.5: '11.875rem',
         75: '18.75rem',
-      },
-      backgroundImage: {
-        video: "url('../images/video/video.png')",
-      },
-      content: {
-        'icon-copy': 'url("../images/icon/icon-copy-alt.svg")',
-      },
-      transitionProperty: {
-        width: 'width',
-        stroke: 'stroke',
-      },
-      borderWidth: {
-        6: '6px',
       },
     },
   },

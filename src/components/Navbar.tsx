@@ -86,8 +86,13 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
-          <Button variant="ghost" size="icon" onClick={toggleSidebar} className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden">
-            <Menu className="h-5 w-5 text-bodydark dark:text-white" />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleSidebar} 
+            className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden"
+          >
+            <Menu className="h-5 w-5 text-black dark:text-white" />
           </Button>
           
           <Link to="/dashboard" className="block flex-shrink-0 lg:hidden">
@@ -112,7 +117,7 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
             <input
               type="text"
               placeholder="Search..."
-              className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none text-body dark:text-bodydark dark:placeholder:text-bodydark xl:w-125"
+              className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none text-black dark:text-bodydark dark:placeholder:text-bodydark xl:w-125"
             />
           </form>
         </div>
@@ -124,7 +129,7 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
                 variant="ghost" 
                 size="icon" 
                 onClick={toggleTheme} 
-                className="text-body hover:text-primary dark:text-bodydark dark:hover:text-white"
+                className="text-black hover:text-primary dark:text-bodydark dark:hover:text-white"
               >
                 {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               </Button>
@@ -133,7 +138,7 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
             <li>
               <Sheet open={notificationOpen} onOpenChange={setNotificationOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-body hover:text-primary dark:text-bodydark dark:hover:text-white relative">
+                  <Button variant="ghost" size="icon" className="text-black hover:text-primary dark:text-bodydark dark:hover:text-white relative">
                     <Bell className="h-5 w-5" />
                     {hasUnreadNotifications && <span className="absolute -top-0.5 right-0 h-2 w-2 rounded-full bg-meta-1"></span>}
                   </Button>

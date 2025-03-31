@@ -116,9 +116,9 @@ const AppSidebar: React.FC = () => {
                       )}
                     >
                       <item.icon className="h-5 w-5" />
-                      <span>{item.label}</span>
+                      <span className="btn-text-visible">{item.label}</span>
                       {isActive && (
-                        <span className="absolute right-0 block h-full w-1 bg-sidebar-primary rounded-l-md"></span>
+                        <span className="absolute right-0 block h-full w-1 bg-primary rounded-l-md"></span>
                       )}
                     </Link>
                   </li>
@@ -133,7 +133,7 @@ const AppSidebar: React.FC = () => {
       <div className="mt-auto p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer">
           <HelpCircle className="h-5 w-5" />
-          <span>Help & Support</span>
+          <span className="btn-text-visible">Help & Support</span>
         </div>
         <div className="mt-4 text-xs text-white/50 text-center">
           Version 1.0.0

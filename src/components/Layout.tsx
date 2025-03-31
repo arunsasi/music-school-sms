@@ -12,7 +12,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   
   // Handle screen resizing for responsive sidebar
   useEffect(() => {
@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="dark:bg-boxdark-2 dark:text-bodydark">
         <div className="flex h-screen overflow-hidden">
           {/* Sidebar */}
-          <div className={`sidebar fixed left-0 top-0 z-9999 h-screen w-72.5 flex-shrink-0 bg-sidebar-background text-sidebar-foreground lg:static ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-linear`}>
+          <div className={`sidebar fixed left-0 top-0 z-10 h-screen w-72.5 flex-shrink-0 bg-sidebar-background text-sidebar-foreground lg:static ${sidebarOpen ? 'sidebar-visible' : 'sidebar-hidden'} lg:translate-x-0 transition-transform duration-300 ease-linear`}>
             <AppSidebar />
           </div>
           

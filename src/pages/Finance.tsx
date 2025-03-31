@@ -11,6 +11,8 @@ import PendingFeesReport from '@/components/finance/PendingFeesReport';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 const Finance: React.FC = () => {
   const { hasPermission } = useAuth();
@@ -60,15 +62,13 @@ const Finance: React.FC = () => {
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Financial Management</h1>
-        <AddTransactionDialog 
-          isOpen={isAddDialogOpen}
-          setIsOpen={setIsAddDialogOpen}
-          newPayment={newPayment}
-          setNewPayment={setNewPayment}
-          handleAddPayment={handleAddPayment}
-          students={mockStudents}
-          employees={mockEmployees}
-        />
+        <Button 
+          onClick={() => setIsAddDialogOpen(true)}
+          className="bg-primary hover:bg-primary/90 text-white"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Add Transaction
+        </Button>
       </div>
 
       <FinanceSummaryCards 
@@ -81,10 +81,14 @@ const Finance: React.FC = () => {
         pendingFeesCount={pendingFeesCount}
       />
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 md:w-auto">
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          <TabsTrigger value="pending-fees">Pending Fees</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="inline-flex rounded-md mb-4 w-full sm:w-auto bg-white dark:bg-boxdark p-1">
+          <TabsTrigger value="transactions" className="tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">
+            Transactions
+          </TabsTrigger>
+          <TabsTrigger value="pending-fees" className="tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">
+            Pending Fees
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="transactions" className="space-y-6">
@@ -115,6 +119,16 @@ const Finance: React.FC = () => {
           <PendingFeesReport />
         </TabsContent>
       </Tabs>
+
+      <AddTransactionDialog 
+        isOpen={isAddDialogOpen}
+        setIsOpen={setIsAddDialogOpen}
+        newPayment={newPayment}
+        setNewPayment={setNewPayment}
+        handleAddPayment={handleAddPayment}
+        students={mockStudents}
+        employees={mockEmployees}
+      />
 
       {editingPayment && (
         <EditTransactionDialog

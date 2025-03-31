@@ -249,6 +249,25 @@
   @apply px-4 py-5 pl-9 xl:pl-11;
 }
 
+/* Fix for active tab indicators */
+.tabs-trigger[data-state="active"] {
+  @apply bg-primary text-white;
+}
+
+/* Fix for Sidebar visibility */
+.sidebar-visible {
+  @apply translate-x-0;
+}
+
+.sidebar-hidden {
+  @apply -translate-x-full;
+}
+
+/* Button text visibility fix */
+.btn-text-visible {
+  @apply opacity-100 visible;
+}
+
 /* Custom Shadows */
 .shadow-default {
   @apply shadow-[0px_8px_13px_-3px_rgba(0,0,0,0.07)];
