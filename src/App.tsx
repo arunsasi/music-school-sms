@@ -29,7 +29,7 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <div className="font-satoshi text-base font-normal">
+      <div>
         <Toaster />
         <Sonner />
         <BrowserRouter>

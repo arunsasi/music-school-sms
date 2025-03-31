@@ -3,209 +3,18 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply font-satoshi font-normal text-base text-[#222] bg-gray-2 relative z-1;
-  }
+/* Reset some base styles that might interfere with Material UI */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  color: #222;
+  background-color: #f5f5f5;
 }
 
-@layer components {
-  .dropdown {
-    @apply z-40 bg-white shadow-default rounded-sm max-w-[310px] p-5 border border-stroke;
-  }
-
-  .stroke-text {
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  }
-
-  .music-bars {
-    @apply flex h-12 items-end justify-center space-x-1;
-  }
-  
-  .music-bars span {
-    @apply h-5 w-2 bg-music-500 rounded-sm animate-music-pulse;
-  }
-  
-  .music-bars span:nth-child(2) {
-    @apply h-8 animate-music-pulse-delay-1;
-  }
-  
-  .music-bars span:nth-child(3) {
-    @apply h-10 animate-music-pulse-delay-2;
-  }
-  
-  .music-bars span:nth-child(4) {
-    @apply h-6 animate-music-pulse-delay-3;
-  }
-
-  .container-main {
-    @apply p-4 md:p-6 2xl:p-10;
-  }
-
-  /* Button styles */
-  .btn {
-    @apply inline-flex items-center justify-center rounded-md text-white px-6 py-2.5 text-center font-medium transition-all hover:shadow-default;
-  }
-
-  .btn-primary {
-    @apply bg-primary hover:bg-opacity-90;
-  }
-
-  .btn-success {
-    @apply bg-success hover:bg-opacity-90;
-  }
-
-  .btn-danger {
-    @apply bg-danger hover:bg-opacity-90;
-  }
-
-  .btn-warning {
-    @apply bg-warning hover:bg-opacity-90;
-  }
-
-  /* Form components */
-  .form-input,
-  .form-textarea,
-  .form-select,
-  .form-multiselect {
-    @apply w-full border border-stroke bg-white py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2;
-  }
-
-  .form-label {
-    @apply mb-2.5 block font-medium text-black dark:text-white;
-  }
-
-  /* Card styles */
-  .card {
-    @apply rounded-sm border border-stroke bg-white p-5 shadow-default dark:border-strokedark dark:bg-boxdark;
-  }
-
-  .card-title {
-    @apply text-xl font-semibold text-black dark:text-white;
-  }
-
-  .card-subtitle {
-    @apply text-sm text-body dark:text-bodydark;
-  }
-  
-  /* Dashboard card styles */
-  .dashboard-card {
-    @apply bg-white shadow-default rounded-sm border border-stroke;
-  }
-}
-
-/* TailAdmin color variables */
-:root {
-  --color-primary: #3c50e0;
-  --color-secondary: #7c8db5;
-  --color-body: #64748b; 
-  --color-bodydark: #1d2144;
-  --color-graydark: #111927;
-  --color-black: #000;
-  --color-white: #fff;
-  --color-stroke: #e2e8f0;
-  --color-green: #3ca745;
-  --color-red: #d50100;
-
-  --color-bg-color: #f1f5f9;
-  --color-text: #222;
-  
-  /* Sidebar colors */
-  --color-sidebar-background: #1a222c;
-  --color-sidebar-foreground: #ffffff;
-  --color-sidebar-primary: #3c50e0;
-  --color-sidebar-primary-foreground: #ffffff;
-  --color-sidebar-accent: #2e3a47;
-  --color-sidebar-accent-foreground: #ffffff;
-  --color-sidebar-border: #2e3a47;
-  --color-sidebar-ring: #3c50e0;
-
-  /* Music school specific colors */
-  --color-music-100: #ecf3ff;
-  --color-music-200: #c2d6ff;
-  --color-music-300: #9cb9ff;
-  --color-music-400: #7592ff;
-  --color-music-500: #465fff;
-  --color-music-600: #3641f5;
-  --color-music-700: #2a34db;
-  --color-music-800: #252dae;
-  --color-music-900: #161950;
-}
-
-/* Shadcn compatibility */
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
-    
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    
-    --ring: 222.2 84% 54.5%;
-    
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
-/* Font imports */
-@font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi-Variable.woff2') format('woff2');
-  font-weight: 300 900;
-  font-display: swap;
-  font-style: normal;
+/* Maintain basic utility classes for page transition and layout */
+.container-main {
+  padding: 1rem;
 }
 
 /* Sheet content scrollable */
@@ -214,120 +23,21 @@
   overflow-y: auto;
 }
 
-/* Modal/Dialog content scrollable */
+/* Dialog content scrollable */
 .dialog-content-scrollable {
   max-height: calc(100vh - 8rem);
   overflow-y: auto;
 }
 
-/* Modal transition */
-.modal-transition {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+/* Basic utility classes that might still be needed in some components */
+.text-center {
+  text-align: center;
 }
 
-/* Table */
-.table-wrapper {
-  @apply max-w-full overflow-x-auto;
+.mt-auto {
+  margin-top: auto;
 }
 
-.table {
-  @apply w-full table-auto;
-}
-
-.table-thead {
-  @apply bg-gray-2 text-left dark:bg-meta-4;
-}
-
-.table-th {
-  @apply px-4 py-4 font-medium text-black dark:text-white xl:pl-11;
-}
-
-.table-tbody {
-  @apply bg-white dark:bg-boxdark;
-}
-
-.table-tr {
-  @apply border-b border-stroke hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4;
-}
-
-.table-td {
-  @apply px-4 py-5 pl-9 xl:pl-11;
-}
-
-/* Fix for active tab indicators */
-.tabs-trigger[data-state="active"] {
-  @apply bg-primary text-white;
-}
-
-/* Fix for Sidebar visibility */
-.sidebar-visible {
-  @apply translate-x-0;
-}
-
-.sidebar-hidden {
-  @apply -translate-x-full;
-}
-
-/* Button text visibility fix */
-.btn-text-visible {
-  @apply opacity-100 visible whitespace-nowrap;
-}
-
-/* Custom Shadows */
-.shadow-default {
-  @apply shadow-[0px_8px_13px_-3px_rgba(0,0,0,0.07)];
-}
-
-.shadow-card {
-  @apply shadow-[0px_1px_3px_rgba(0,0,0,0.12)];
-}
-
-.shadow-card-2 {
-  @apply shadow-[0px_1px_2px_rgba(0,0,0,0.05)];
-}
-
-.shadow-1 {
-  @apply shadow-[0px_1px_3px_rgba(0,0,0,0.08)];
-}
-
-.shadow-2 {
-  @apply shadow-[0px_1px_4px_rgba(0,0,0,0.12)];
-}
-
-.shadow-3 {
-  @apply shadow-[0px_1px_5px_rgba(0,0,0,0.14)];
-}
-
-.shadow-4 {
-  @apply shadow-[0px_4px_10px_rgba(0,0,0,0.12)];
-}
-
-.shadow-5 {
-  @apply shadow-[0px_1px_1px_rgba(0,0,0,0.15)];
-}
-
-.shadow-6 {
-  @apply shadow-[0px_3px_15px_rgba(0,0,0,0.1)];
-}
-
-/* Modal background and z-index fixes */
-.dialog-overlay {
-  @apply bg-black/60 backdrop-blur-sm z-50;
-}
-
-.sheet-overlay {
-  @apply bg-black/60 backdrop-blur-sm z-50;
-}
-
-/* Tabs accessibility improvements */
-.tabs-list {
-  @apply border-b border-stroke mb-4;
-}
-
-.attendance-tabs .tabs-trigger[data-state="active"] {
-  @apply bg-primary text-white relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary;
-}
-
-.attendance-tabs .tabs-trigger {
-  @apply text-body hover:text-primary transition-colors;
+.w-full {
+  width: 100%;
 }
