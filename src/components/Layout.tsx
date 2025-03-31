@@ -56,11 +56,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
             <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
             
-            <main className="container-main h-full bg-gray-2 dark:bg-boxdark-2">
+            <main className="container-main h-full flex-grow bg-gray-2 dark:bg-boxdark-2">
               <div className="mx-auto">{children}</div>
             </main>
             
-            <footer className="py-4 px-6 border-t text-center text-sm text-muted-foreground mt-auto">
+            <footer className="py-4 px-6 border-t bg-white text-center text-sm text-body mt-auto">
               <p>© {new Date().getFullYear()} Music School SMS. All rights reserved.</p>
             </footer>
           </div>

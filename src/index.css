@@ -87,6 +87,11 @@
   .card-subtitle {
     @apply text-sm text-body dark:text-bodydark;
   }
+  
+  /* Dashboard card styles */
+  .dashboard-card {
+    @apply bg-white shadow-default rounded-sm border border-stroke;
+  }
 }
 
 /* TailAdmin color variables */
@@ -265,7 +270,7 @@
 
 /* Button text visibility fix */
 .btn-text-visible {
-  @apply opacity-100 visible;
+  @apply opacity-100 visible whitespace-nowrap;
 }
 
 /* Custom Shadows */
