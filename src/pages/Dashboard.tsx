@@ -57,12 +57,14 @@ const Dashboard: React.FC = () => {
       <DashboardHeader user={headerUser} />
       
       <Tabs defaultValue="overview" className="space-y-6" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3 bg-white dark:bg-boxdark rounded-md p-1">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-white">Overview</TabsTrigger>
-          {!isTeacher && <TabsTrigger value="students" className="data-[state=active]:bg-primary data-[state=active]:text-white">Students</TabsTrigger>}
-          <TabsTrigger value="classes" className="data-[state=active]:bg-primary data-[state=active]:text-white">Classes</TabsTrigger>
-          {!isTeacher && <TabsTrigger value="finances" className="data-[state=active]:bg-primary data-[state=active]:text-white">Finances</TabsTrigger>}
-        </TabsList>
+        <div className="bg-white dark:bg-boxdark rounded-md p-1 overflow-hidden">
+          <TabsList className="inline-flex w-full md:w-auto">
+            <TabsTrigger value="overview" className="flex-1 md:flex-none data-[state=active]:bg-primary data-[state=active]:text-white">Overview</TabsTrigger>
+            {!isTeacher && <TabsTrigger value="students" className="flex-1 md:flex-none data-[state=active]:bg-primary data-[state=active]:text-white">Students</TabsTrigger>}
+            <TabsTrigger value="classes" className="flex-1 md:flex-none data-[state=active]:bg-primary data-[state=active]:text-white">Classes</TabsTrigger>
+            {!isTeacher && <TabsTrigger value="finances" className="flex-1 md:flex-none data-[state=active]:bg-primary data-[state=active]:text-white">Finances</TabsTrigger>}
+          </TabsList>
+        </div>
         
         <TabsContent value="overview" className="space-y-6">
           {/* Stats Cards - Show limited stats for teachers */}

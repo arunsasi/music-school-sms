@@ -20,7 +20,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
@@ -32,7 +31,12 @@ const mockNotifications = [
   { id: '4', type: 'fee', message: 'Fee payment due for Jane Smith', date: '2023-10-12' },
 ];
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
   const { user, logout } = useAuth();
   const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -82,11 +86,9 @@ const Navbar: React.FC = () => {
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
-          <SidebarTrigger>
-            <Button variant="ghost" size="icon" className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden">
-              <Menu className="h-5 w-5 text-bodydark dark:text-white" />
-            </Button>
-          </SidebarTrigger>
+          <Button variant="ghost" size="icon" onClick={toggleSidebar} className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden">
+            <Menu className="h-5 w-5 text-bodydark dark:text-white" />
+          </Button>
           
           <Link to="/dashboard" className="block flex-shrink-0 lg:hidden">
             <div className="flex items-center gap-2">

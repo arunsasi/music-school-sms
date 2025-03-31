@@ -5,15 +5,6 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { UserRole } from '@/types';
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from '@/components/ui/sidebar';
-import {
   Home,
   Users,
   GraduationCap,
@@ -87,46 +78,59 @@ const AppSidebar: React.FC = () => {
   );
 
   return (
-    <Sidebar className="flex flex-col overflow-y-auto bg-sidebar-background text-sidebar-foreground duration-300 ease-linear lg:static lg:translate-x-0 w-72.5 z-999999">
-      <SidebarHeader className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <div className="music-bars flex-shrink-0">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+    <div className="flex h-screen flex-col overflow-y-auto bg-sidebar-background duration-300">
+      {/* Sidebar Header */}
+      <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 border-b border-sidebar-border">
+        <Link to="/dashboard">
+          <div className="flex items-center gap-2">
+            <div className="music-bars flex-shrink-0">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-white">Music School</h1>
+              <p className="text-xs font-medium text-white/70">Management System</p>
+            </div>
           </div>
+        </Link>
+      </div>
+      
+      {/* Sidebar Menu */}
+      <div className="flex flex-col overflow-y-auto duration-300 ease-linear">
+        <nav className="mt-5 px-4 py-4">
           <div>
-            <h1 className="text-lg font-semibold text-white">Music School</h1>
-            <p className="text-xs font-medium text-white/70">Management System</p>
+            <h3 className="mb-4 ml-4 text-sm font-medium text-white/60">MENU</h3>
+            <ul className="mb-6 flex flex-col gap-1.5">
+              {filteredNavItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                
+                return (
+                  <li key={item.href}>
+                    <Link
+                      to={item.href}
+                      className={cn(
+                        "group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out hover:bg-sidebar-accent",
+                        isActive ? "bg-sidebar-accent text-white" : "text-white/80"
+                      )}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.label}</span>
+                      {isActive && (
+                        <span className="absolute right-0 block h-full w-1 bg-sidebar-primary rounded-l-md"></span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        </div>
-      </SidebarHeader>
+        </nav>
+      </div>
       
-      <SidebarContent className="flex flex-col overflow-y-auto duration-300 ease-linear">
-        <SidebarMenu className="flex flex-col gap-1.5 px-4 py-4">
-          {filteredNavItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton asChild>
-                <Link
-                  to={item.href}
-                  className={cn(
-                    "group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium duration-300 ease-in-out hover:bg-sidebar-accent text-sm",
-                    location.pathname === item.href
-                      ? "bg-sidebar-accent"
-                      : ""
-                  )}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarContent>
-      
-      <SidebarFooter className="p-4 mt-auto border-t border-sidebar-border">
+      {/* Sidebar Footer */}
+      <div className="mt-auto p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer">
           <HelpCircle className="h-5 w-5" />
           <span>Help & Support</span>
@@ -134,8 +138,8 @@ const AppSidebar: React.FC = () => {
         <div className="mt-4 text-xs text-white/50 text-center">
           Version 1.0.0
         </div>
-      </SidebarFooter>
-    </Sidebar>
+      </div>
+    </div>
   );
 };
 
