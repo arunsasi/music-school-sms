@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ClassForm from '@/components/ClassForm';
@@ -9,6 +9,7 @@ import ClassStudents from '@/components/classes/ClassStudents';
 import ClassesHeader from '@/components/classes/ClassesHeader';
 import ClassesFilterBar from '@/components/classes/ClassesFilterBar';
 import { useClassesData } from '@/hooks/useClassesData';
+import TablePagination from '@/components/common/TablePagination';
 
 const Classes: React.FC = () => {
   const { 
@@ -37,6 +38,28 @@ const Classes: React.FC = () => {
     MOCK_SUBJECTS,
     MOCK_TEACHERS
   } = useClassesData();
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
+  // Calculate total pages
+  const totalPages = Math.ceil(classes.length / itemsPerPage);
+  
+  // Get current page data
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentClasses = classes.slice(indexOfFirstItem, indexOfLastItem);
+  
+  // Change page
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+  
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, subjectFilter]);
   
   if (loading) {
     return (
@@ -73,14 +96,26 @@ const Classes: React.FC = () => {
         subjects={MOCK_SUBJECTS}
       />
       
-      <ClassesTable 
-        classes={classes}
-        teacherNames={MOCK_TEACHERS}
-        onEditClass={setEditingClass}
-        onDeleteClass={handleDeleteClass}
-        onViewSchedule={viewSchedule}
-        onManageStudents={manageStudents}
-      />
+      <div className="bg-white rounded-sm border border-stroke shadow-default">
+        <ClassesTable 
+          classes={currentClasses}
+          teacherNames={MOCK_TEACHERS}
+          onEditClass={setEditingClass}
+          onDeleteClass={handleDeleteClass}
+          onViewSchedule={viewSchedule}
+          onManageStudents={manageStudents}
+        />
+        
+        {totalPages > 1 && (
+          <div className="border-t border-stroke py-4 px-6">
+            <TablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        )}
+      </div>
       
       {isAddingClass && (
         <ClassForm

@@ -5,7 +5,7 @@
 
 @layer base {
   body {
-    @apply font-satoshi font-normal text-base text-body bg-gray-2 relative z-1;
+    @apply font-satoshi font-normal text-base text-[#222] bg-gray-2 relative z-1;
   }
 }
 
@@ -108,7 +108,7 @@
   --color-red: #d50100;
 
   --color-bg-color: #f1f5f9;
-  --color-text: #101828;
+  --color-text: #222;
   
   /* Sidebar colors */
   --color-sidebar-background: #1a222c;
@@ -308,4 +308,26 @@
 
 .shadow-6 {
   @apply shadow-[0px_3px_15px_rgba(0,0,0,0.1)];
+}
+
+/* Modal background and z-index fixes */
+.dialog-overlay {
+  @apply bg-black/60 backdrop-blur-sm z-50;
+}
+
+.sheet-overlay {
+  @apply bg-black/60 backdrop-blur-sm z-50;
+}
+
+/* Tabs accessibility improvements */
+.tabs-list {
+  @apply border-b border-stroke mb-4;
+}
+
+.attendance-tabs .tabs-trigger[data-state="active"] {
+  @apply bg-primary text-white relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary;
+}
+
+.attendance-tabs .tabs-trigger {
+  @apply text-body hover:text-primary transition-colors;
 }

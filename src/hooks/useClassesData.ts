@@ -1,35 +1,18 @@
 
-import { useState } from 'react';
-import { Class, Subject } from '@/types';
-import { useSupabaseClasses } from '@/hooks/useSupabaseClasses';
+import { useState, useCallback } from 'react';
+import { Class } from '@/types';
+import { useMockClassData } from '@/hooks/useMockClassData';
 import { toast } from 'sonner';
-
-// Mock subjects for demo purposes
-export const MOCK_SUBJECTS: Subject[] = [
-  { id: '1', name: 'Piano', description: 'Piano lessons for all levels' },
-  { id: '2', name: 'Guitar', description: 'Guitar lessons for beginners to advanced' },
-  { id: '3', name: 'Violin', description: 'Violin lessons for all ages' },
-  { id: '4', name: 'Drums', description: 'Drum lessons for rhythm enthusiasts' },
-  { id: '5', name: 'Vocals', description: 'Singing lessons for all levels' },
-];
-
-// Mock teacher names for demo
-export const MOCK_TEACHERS: { [key: string]: string } = {
-  '1': 'John Smith',
-  '2': 'Sarah Johnson',
-  '3': 'Michael Lee',
-};
 
 export const useClassesData = () => {
   const { 
-    classes, 
+    classes: mockClasses, 
     loading, 
-    error, 
-    addClass, 
-    updateClass, 
-    deleteClass 
-  } = useSupabaseClasses();
+    MOCK_SUBJECTS,
+    MOCK_TEACHERS
+  } = useMockClassData();
   
+  const [classes, setClasses] = useState<Class[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddingClass, setIsAddingClass] = useState(false);
   const [editingClass, setEditingClass] = useState<Class | null>(null);
@@ -38,6 +21,11 @@ export const useClassesData = () => {
   const [viewingClass, setViewingClass] = useState<Class | null>(null);
   const [isViewingSchedule, setIsViewingSchedule] = useState(false);
   const [isManagingStudents, setIsManagingStudents] = useState(false);
+
+  // Update classes when mock data is loaded
+  if (mockClasses.length > 0 && classes.length === 0) {
+    setClasses(mockClasses);
+  }
   
   const filteredClasses = classes.filter(cls => {
     if (subjectFilter && cls.subject.name !== subjectFilter) {
@@ -50,6 +38,49 @@ export const useClassesData = () => {
       MOCK_TEACHERS[cls.teacherId]?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+  
+  const addClass = useCallback((classData: Omit<Class, 'id'>) => {
+    const newClass: Class = {
+      ...classData,
+      id: `new-${Date.now()}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    
+    setClasses(prev => [newClass, ...prev]);
+    toast.success("Class added successfully");
+    
+    return Promise.resolve();
+  }, []);
+  
+  const updateClass = useCallback((updatedClass: Class) => {
+    setClasses(prev => 
+      prev.map(cls => cls.id === updatedClass.id ? { 
+        ...updatedClass,
+        updated_at: new Date().toISOString()
+      } : cls)
+    );
+    toast.success("Class updated successfully");
+    
+    return Promise.resolve();
+  }, []);
+  
+  const deleteClass = useCallback((id: string) => {
+    setClasses(prev => prev.filter(cls => cls.id !== id));
+    toast.success("Class deleted successfully");
+    
+    return Promise.resolve();
+  }, []);
+  
+  const viewSchedule = (cls: Class) => {
+    setViewingClass(cls);
+    setIsViewingSchedule(true);
+  };
+  
+  const manageStudents = (cls: Class) => {
+    setViewingClass(cls);
+    setIsManagingStudents(true);
+  };
   
   const handleAddClass = (classData: Omit<Class, 'id'>) => {
     addClass(classData)
@@ -79,16 +110,6 @@ export const useClassesData = () => {
       });
   };
   
-  const viewSchedule = (cls: Class) => {
-    setViewingClass(cls);
-    setIsViewingSchedule(true);
-  };
-  
-  const manageStudents = (cls: Class) => {
-    setViewingClass(cls);
-    setIsManagingStudents(true);
-  };
-  
   const handleUpdateClassStudents = (updatedClass: Class) => {
     updateClass(updatedClass)
       .catch(err => {
@@ -100,7 +121,7 @@ export const useClassesData = () => {
   return {
     classes: filteredClasses,
     loading,
-    error,
+    error: null,
     searchTerm,
     setSearchTerm,
     isAddingClass,

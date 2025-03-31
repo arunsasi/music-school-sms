@@ -53,14 +53,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <AppSidebar />
           </div>
           
-          <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+          <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden min-h-screen">
             <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
             
-            <main className="container-main h-full flex-grow bg-gray-2 dark:bg-boxdark-2">
+            <main className="container-main flex-grow bg-gray-2 dark:bg-boxdark-2 min-h-[calc(100vh-130px)]">
               <div className="mx-auto">{children}</div>
             </main>
             
-            <footer className="py-4 px-6 border-t bg-white text-center text-sm text-body mt-auto">
+            <footer className="py-4 px-6 border-t bg-white text-center text-sm text-body mt-auto w-full">
               <p>© {new Date().getFullYear()} Music School SMS. All rights reserved.</p>
             </footer>
           </div>
