@@ -41,9 +41,7 @@ export const useClassesData = () => {
   const addClass = useCallback((classData: Omit<Class, 'id'>) => {
     const newClass: Class = {
       ...classData,
-      id: `new-${Date.now()}`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      id: `new-${Date.now()}`
     };
     
     setClasses(prev => [newClass, ...prev]);
@@ -54,10 +52,7 @@ export const useClassesData = () => {
   
   const updateClass = useCallback((updatedClass: Class) => {
     setClasses(prev => 
-      prev.map(cls => cls.id === updatedClass.id ? { 
-        ...updatedClass,
-        updated_at: new Date().toISOString()
-      } : cls)
+      prev.map(cls => cls.id === updatedClass.id ? updatedClass : cls)
     );
     toast.success("Class updated successfully");
     
