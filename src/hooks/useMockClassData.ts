@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Class, Subject } from '@/types';
+import { Class, Subject, ScheduleItem } from '@/types';
 
 // Mock subjects for demo purposes
 export const MOCK_SUBJECTS: Subject[] = [
@@ -42,8 +41,9 @@ const TIME_SLOTS = [
   '05:00 PM - 06:00 PM',
 ];
 
-const generateMockSchedule = () => {
-  const schedule: Record<string, string[]> = {};
+// Fixing the generateMockSchedule function to return ScheduleItem[]
+const generateMockSchedule = (): ScheduleItem[] => {
+  const schedule: ScheduleItem[] = [];
   const numDays = Math.floor(Math.random() * 3) + 1; // 1-3 days per week
   
   // Select random days
@@ -58,7 +58,12 @@ const generateMockSchedule = () => {
   // Assign time slots to each day
   selectedDays.forEach(day => {
     const timeSlot = TIME_SLOTS[Math.floor(Math.random() * TIME_SLOTS.length)];
-    schedule[day] = [timeSlot];
+    const [startTime, endTime] = timeSlot.split(' - ');
+    schedule.push({
+      day,
+      startTime,
+      endTime
+    });
   });
   
   return schedule;
@@ -81,11 +86,9 @@ const generateRandomClass = (id: string): Class => {
     name,
     subject,
     teacherId,
-    maxStudents,
     schedule: generateMockSchedule(),
-    description: `${level} level ${subject.name} lessons for students of all ages.`,
-    created_at: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
-    updated_at: new Date(Date.now() - Math.floor(Math.random() * 1000000000)).toISOString(),
+    fee: Math.floor(Math.random() * 200) + 100,
+    students: [],
   };
 };
 
