@@ -83,10 +83,10 @@ const Finance: React.FC = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="inline-flex rounded-md mb-4 w-full sm:w-auto bg-white dark:bg-boxdark p-1">
-          <TabsTrigger value="transactions" className="tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">
+          <TabsTrigger value="transactions">
             Transactions
           </TabsTrigger>
-          <TabsTrigger value="pending-fees" className="tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">
+          <TabsTrigger value="pending-fees">
             Pending Fees
           </TabsTrigger>
         </TabsList>

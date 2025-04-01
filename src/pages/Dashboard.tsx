@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
 
 // Import dashboard components
@@ -12,6 +11,7 @@ import TasksReminders from '@/components/dashboard/TasksReminders';
 import StudentsTab from '@/components/dashboard/StudentsTab';
 import ClassesTab from '@/components/dashboard/ClassesTab';
 import FinancesTab from '@/components/dashboard/FinancesTab';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Import mock data
 import { 
@@ -59,10 +59,10 @@ const Dashboard: React.FC = () => {
       <Tabs defaultValue="overview" className="space-y-6" onValueChange={setActiveTab}>
         <div className="bg-white dark:bg-boxdark rounded-md p-1 overflow-hidden">
           <TabsList className="inline-flex w-full md:w-auto">
-            <TabsTrigger value="overview" className="flex-1 md:flex-none tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">Overview</TabsTrigger>
-            {!isTeacher && <TabsTrigger value="students" className="flex-1 md:flex-none tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">Students</TabsTrigger>}
-            <TabsTrigger value="classes" className="flex-1 md:flex-none tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">Classes</TabsTrigger>
-            {!isTeacher && <TabsTrigger value="finances" className="flex-1 md:flex-none tabs-trigger data-[state=active]:bg-primary data-[state=active]:text-white">Finances</TabsTrigger>}
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            {!isTeacher && <TabsTrigger value="students">Students</TabsTrigger>}
+            <TabsTrigger value="classes">Classes</TabsTrigger>
+            {!isTeacher && <TabsTrigger value="finances">Finances</TabsTrigger>}
           </TabsList>
         </div>
         
