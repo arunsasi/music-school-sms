@@ -10,7 +10,25 @@ export default {
   ],
   theme: {
     extend: {
-      // Minimal extensions for Tailwind, since we're mainly using Material UI
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+      colors: {
+        sidebar: {
+          background: "#1A1F2C",
+          border: "rgba(255,255,255,0.1)",
+          foreground: "#ffffff",
+          accent: "rgba(255,255,255,0.1)",
+          "accent-foreground": "#ffffff",
+        },
+        music: {
+          500: "#9b87f5",
+          600: "#7E69AB",
+        },
+        primary: {
+          DEFAULT: "#9b87f5",
+        }
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

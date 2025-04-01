@@ -94,18 +94,18 @@ const StudentForm: React.FC<StudentFormProps> = ({
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] flex flex-col p-0">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
         <DialogHeader className="p-6 border-b sticky top-0 bg-white z-10">
-          <DialogTitle className="text-xl">
+          <DialogTitle className="text-xl font-medium">
             {initialData ? 'Edit Student' : 'Add New Student'}
           </DialogTitle>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow px-6 py-4 max-h-[60vh]">
-          <form id="studentForm" onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
+        <ScrollArea className="flex-grow px-6 py-4 h-[calc(90vh-140px)]">
+          <form id="studentForm" onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="font-medium">Full Name</Label>
                 <Input
                   id="name"
                   name="name"
@@ -113,11 +113,12 @@ const StudentForm: React.FC<StudentFormProps> = ({
                   onChange={handleChange}
                   placeholder="Enter student's full name"
                   required
+                  className="bg-white border border-gray-200 h-11"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="age">Age</Label>
+                <Label htmlFor="age" className="font-medium">Age</Label>
                 <Input
                   id="age"
                   name="age"
@@ -127,11 +128,12 @@ const StudentForm: React.FC<StudentFormProps> = ({
                   placeholder="Enter age"
                   required
                   min={1}
+                  className="bg-white border border-gray-200 h-11"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="guardian">Parent/Guardian Name</Label>
+                <Label htmlFor="guardian" className="font-medium">Parent/Guardian Name</Label>
                 <Input
                   id="guardian"
                   name="guardian"
@@ -139,11 +141,12 @@ const StudentForm: React.FC<StudentFormProps> = ({
                   onChange={handleChange}
                   placeholder="Enter parent or guardian name"
                   required
+                  className="bg-white border border-gray-200 h-11"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="mobile">Contact Number</Label>
+                <Label htmlFor="mobile" className="font-medium">Contact Number</Label>
                 <Input
                   id="mobile"
                   name="mobile"
@@ -151,11 +154,12 @@ const StudentForm: React.FC<StudentFormProps> = ({
                   onChange={handleChange}
                   placeholder="Enter contact number"
                   required
+                  className="bg-white border border-gray-200 h-11"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address (Optional)</Label>
+                <Label htmlFor="email" className="font-medium">Email Address (Optional)</Label>
                 <Input
                   id="email"
                   name="email"
@@ -163,30 +167,18 @@ const StudentForm: React.FC<StudentFormProps> = ({
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter email address"
+                  className="bg-white border border-gray-200 h-11"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Textarea
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Enter full address"
-                  required
-                  rows={3}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Enrollment Date</Label>
+                <Label className="font-medium">Enrollment Date</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal bg-white border border-gray-200 h-11",
                         !date && "text-muted-foreground"
                       )}
                     >
@@ -206,12 +198,12 @@ const StudentForm: React.FC<StudentFormProps> = ({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor="status" className="font-medium">Status</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) => handleSelectChange('status', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white border border-gray-200 h-11">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -220,19 +212,38 @@ const StudentForm: React.FC<StudentFormProps> = ({
                   </SelectContent>
                 </Select>
               </div>
+              
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="address" className="font-medium">Address</Label>
+                <Textarea
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Enter full address"
+                  required
+                  rows={3}
+                  className="bg-white border border-gray-200 resize-none"
+                />
+              </div>
             </div>
           </form>
         </ScrollArea>
         
         <DialogFooter className="p-6 border-t sticky bottom-0 bg-white z-10 mt-auto">
-          <div className="flex gap-2 w-full justify-end">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="flex gap-3 w-full justify-end">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onClose}
+              className="bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
+            >
               Cancel
             </Button>
             <Button 
               type="submit" 
               form="studentForm"
-              className="bg-music-500 hover:bg-music-600"
+              className="bg-music-500 hover:bg-music-600 text-white"
             >
               {initialData ? 'Update' : 'Add'} Student
             </Button>

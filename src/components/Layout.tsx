@@ -62,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // Only show navbar and sidebar if authenticated
   if (isAuthenticated) {
     return (
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f5f7fa' }}>
         <CssBaseline />
         {/* Sidebar */}
         <Box
@@ -78,16 +78,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             transform: {
               xs: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
               lg: 'translateX(0)'
-            }
+            },
+            boxShadow: '4px 0 10px rgba(0, 0, 0, 0.05)'
           }}
         >
           <AppSidebar />
         </Box>
         
-        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Box sx={{ 
+          flexGrow: 1, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          minHeight: '100vh',
+          backgroundColor: '#f5f7fa',
+          ml: { xs: 0, lg: '0' }
+        }}>
           <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
           
-          <Main>
+          <Main sx={{ 
+            bgcolor: '#f5f7fa',
+            px: { xs: 2, sm: 3, md: 4 },
+            py: 3
+          }}>
             {children}
           </Main>
           

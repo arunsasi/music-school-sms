@@ -7,9 +7,9 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: "Inter", "Roboto", "Helvetica", "Arial", sans-serif;
   color: #222;
-  background-color: #f5f5f5;
+  background-color: #f5f7fa;
 }
 
 /* Maintain basic utility classes for page transition and layout */
@@ -29,6 +29,48 @@ body {
   overflow-y: auto;
 }
 
+/* Improved styling for the music bars in the logo */
+.music-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 20px;
+  padding: 2px;
+}
+
+.music-bars span {
+  display: block;
+  width: 3px;
+  border-radius: 1px;
+  background-color: #9b87f5;
+}
+
+.music-bars span:nth-child(1) {
+  height: 10px;
+  animation: musicbar 1.5s infinite ease-in-out alternate 0.2s;
+}
+
+.music-bars span:nth-child(2) {
+  height: 16px;
+  animation: musicbar 1.7s infinite ease-in-out alternate 0.4s;
+}
+
+.music-bars span:nth-child(3) {
+  height: 8px;
+  animation: musicbar 1.6s infinite ease-in-out alternate 0.1s;
+}
+
+.music-bars span:nth-child(4) {
+  height: 12px;
+  animation: musicbar 1.8s infinite ease-in-out alternate 0.3s;
+}
+
+@keyframes musicbar {
+  to {
+    height: 18px;
+  }
+}
+
 /* Basic utility classes that might still be needed in some components */
 .text-center {
   text-align: center;
@@ -40,4 +82,22 @@ body {
 
 .w-full {
   width: 100%;
+}
+
+/* Custom Button Classes */
+.btn-primary {
+  @apply bg-music-500 hover:bg-music-600 text-white rounded-md transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-white border-2 border-gray-200 hover:bg-gray-100 text-gray-700 rounded-md transition-colors;
+}
+
+.btn-accent {
+  @apply bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors;
+}
+
+/* Active state styling */
+.active-state {
+  @apply bg-music-500/10 border-l-4 border-music-500;
 }

@@ -78,7 +78,7 @@ const AppSidebar: React.FC = () => {
   );
 
   return (
-    <div className="flex h-screen flex-col overflow-y-auto bg-sidebar-background duration-300">
+    <div className="flex h-screen flex-col overflow-y-auto bg-sidebar-background border-r border-sidebar-border shadow-lg" style={{ backgroundColor: '#1A1F2C' }}>
       {/* Sidebar Header */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 border-b border-sidebar-border">
         <Link to="/dashboard">
@@ -102,7 +102,7 @@ const AppSidebar: React.FC = () => {
         <nav className="mt-5 px-4 py-4">
           <div>
             <h3 className="mb-4 ml-4 text-sm font-medium text-white/60">MENU</h3>
-            <ul className="mb-6 flex flex-col gap-1.5">
+            <ul className="mb-6 flex flex-col gap-2">
               {filteredNavItems.map((item) => {
                 const isActive = location.pathname === item.href;
                 
@@ -111,14 +111,16 @@ const AppSidebar: React.FC = () => {
                     <Link
                       to={item.href}
                       className={cn(
-                        "group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out hover:bg-sidebar-accent",
-                        isActive ? "bg-sidebar-accent text-white" : "text-white/80"
+                        "group relative flex items-center gap-3 rounded-md px-4 py-3 font-medium transition-all duration-200 ease-in-out",
+                        isActive 
+                          ? "bg-music-500/20 text-white" 
+                          : "text-white/70 hover:bg-sidebar-accent hover:text-white"
                       )}
                     >
-                      <item.icon className="h-5 w-5" />
+                      <item.icon className={cn("h-5 w-5", isActive ? "text-music-500" : "text-white/70")} />
                       <span className="btn-text-visible">{item.label}</span>
                       {isActive && (
-                        <span className="absolute right-0 block h-full w-1 bg-primary rounded-l-md"></span>
+                        <span className="absolute right-0 block h-full w-1 bg-music-500 rounded-l-md"></span>
                       )}
                     </Link>
                   </li>
@@ -131,7 +133,7 @@ const AppSidebar: React.FC = () => {
       
       {/* Sidebar Footer */}
       <div className="mt-auto p-4 border-t border-sidebar-border">
-        <div className="flex items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer">
+        <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer rounded-md p-2 hover:bg-sidebar-accent">
           <HelpCircle className="h-5 w-5" />
           <span className="btn-text-visible">Help & Support</span>
         </div>
