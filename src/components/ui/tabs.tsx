@@ -91,7 +91,12 @@ TabsList.displayName = "TabsList";
 
 const TabsTrigger = React.forwardRef<
   HTMLButtonElement,
-  { value: string, children: React.ReactNode, className?: string }
+  { 
+    value: string, 
+    children: React.ReactNode, 
+    className?: string,
+    // Remove disabled prop as it's causing TypeScript errors
+  }
 >(({ value, children, className, ...props }, ref) => {  
   return (
     <StyledTab
