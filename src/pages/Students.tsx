@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Student } from '@/types';
-import StudentForm from '@/components/StudentForm';
+import StudentForm from '@/components/students/forms/StudentForm';
 import StudentDetails from '@/components/students/StudentDetails';
 import StudentClasses from '@/components/students/StudentClasses';
 import StudentPayments from '@/components/students/StudentPayments';
