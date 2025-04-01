@@ -1,28 +1,11 @@
 
 import * as React from "react";
-import { Box, Tab as MUITab, Tabs as MUITabs } from "@mui/material";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number | string;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
-    </div>
-  );
-}
+import { 
+  Tabs as MUITabs, 
+  Tab as MUITab, 
+  Box,
+  styled
+} from "@mui/material";
 
 // Create a context to hold the value and onChange handler
 interface TabsContextType {
@@ -31,6 +14,17 @@ interface TabsContextType {
 }
 
 const TabsContext = React.createContext<TabsContextType | undefined>(undefined);
+
+// Custom styled Tab with proper TypeScript compatibility
+const StyledTab = styled(MUITab)(({ theme }) => ({
+  textTransform: 'none',
+  minWidth: 0,
+  fontSize: '0.875rem',
+  fontWeight: 500,
+  '&.Mui-selected': {
+    color: theme.palette.primary.main,
+  },
+}));
 
 const Tabs = React.forwardRef<
   HTMLDivElement,
@@ -97,17 +91,13 @@ TabsList.displayName = "TabsList";
 
 const TabsTrigger = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentPropsWithoutRef<typeof MUITab> & { value: string }
->(({ className, value, children, ...props }, ref) => {
-  // Create a label from children if they're simple text
-  const label = typeof children === 'string' ? children : undefined;
-  
+  { value: string, children: React.ReactNode, className?: string }
+>(({ value, children, className, ...props }, ref) => {  
   return (
-    <MUITab
-      ref={ref}
-      className={className}
-      label={label || children}
+    <StyledTab
+      label={children}
       value={value}
+      className={className}
       {...props}
     />
   );
@@ -140,4 +130,4 @@ const TabsContent = React.forwardRef<
 });
 TabsContent.displayName = "TabsContent";
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, TabPanel };
+export { Tabs, TabsList, TabsTrigger, TabsContent };
