@@ -1,9 +1,10 @@
 
-import { AttendanceRecord, Student } from '@/types';
+import { AttendanceRecord } from '@/types';
+import { MockStudent } from '@/data/mockAttendanceData';
 import { toast } from 'sonner';
 
 // Get students for selected class
-export const getStudentsForClass = (classId: string | 'all', students: Student[]) => {
+export const getStudentsForClass = (classId: string | 'all', students: MockStudent[]) => {
   if (classId === 'all') {
     return students;
   }
@@ -15,7 +16,7 @@ export const isAttendanceTaken = (
   classId: string,
   date: string,
   attendanceRecords: AttendanceRecord[],
-  getStudentsForClass: (classId: string) => Student[]
+  getStudentsForClass: (classId: string) => MockStudent[]
 ) => {
   if (classId === 'all') return false;
   
@@ -102,7 +103,7 @@ export const submitAttendance = (
   classId: string,
   currentDate: string,
   attendanceRecords: AttendanceRecord[],
-  getStudentsForClass: (classId: string) => Student[],
+  getStudentsForClass: (classId: string) => MockStudent[],
   markAttendanceHandler: (studentId: string, classId: string, status: 'Present' | 'Late' | 'Absent', remark: string) => void,
   canTakeAttendance: () => boolean
 ) => {
@@ -142,7 +143,7 @@ export const getStudentAttendanceHistory = (studentId: string, attendanceRecords
 
 // Filter students based on selected class and search term
 export const filterStudents = (
-  students: Student[],
+  students: MockStudent[],
   selectedClass: string,
   selectedStudent: string,
   searchTerm: string

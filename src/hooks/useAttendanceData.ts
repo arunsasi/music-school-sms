@@ -5,7 +5,9 @@ import { AttendanceRecord } from '@/types';
 import { 
   mockClasses, 
   mockStudents, 
-  initialAttendanceRecords 
+  initialAttendanceRecords,
+  MockClass,
+  MockStudent
 } from '@/data/mockAttendanceData';
 import { 
   getStudentsForClass, 

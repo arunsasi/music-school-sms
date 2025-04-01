@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card,
@@ -17,21 +16,12 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { AttendanceRecord } from '@/types';
+import { MockClass, MockStudent } from '@/data/mockAttendanceData';
 
 interface AttendanceHistoryProps {
   filteredRecords: AttendanceRecord[];
-  mockStudents: {
-    id: string;
-    name: string;
-    classId: string;
-  }[];
-  mockClasses: {
-    id: string;
-    name: string;
-    weekday: string;
-    time: string;
-    teacherId: string;
-  }[];
+  mockStudents: MockStudent[];
+  mockClasses: MockClass[];
 }
 
 const AttendanceHistory: React.FC<AttendanceHistoryProps> = ({

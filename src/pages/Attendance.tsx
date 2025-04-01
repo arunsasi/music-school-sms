@@ -3,7 +3,6 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAttendanceData } from '@/hooks/useAttendanceData';
 import { useAuth } from '@/context/AuthContext';
-import { Navigate } from 'react-router-dom';
 import AttendanceHeader from '@/components/attendance/AttendanceHeader';
 import AttendanceFilters from '@/components/attendance/AttendanceFilters';
 import TodayAttendance from '@/components/attendance/TodayAttendance';

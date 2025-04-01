@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   CheckCircle2, 
@@ -24,14 +23,11 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { AttendanceRecord } from '@/types';
+import { MockClass, MockStudent } from '@/data/mockAttendanceData';
 import { toast } from 'sonner';
 
 interface TodayAttendanceProps {
-  filteredStudents: {
-    id: string;
-    name: string;
-    classId: string;
-  }[];
+  filteredStudents: MockStudent[];
   selectedClass: string;
   getAttendanceStatus: (studentId: string, date: string) => "Present" | "Late" | "Absent" | undefined;
   markAttendance: (studentId: string, classId: string, status: 'Present' | 'Late' | 'Absent', remark?: string) => void;
@@ -40,13 +36,7 @@ interface TodayAttendanceProps {
   canEditAttendance: boolean;
   submitAttendance: (classId: string) => void;
   attendanceSubmitted: boolean;
-  mockClasses: {
-    id: string;
-    name: string;
-    weekday: string;
-    time: string;
-    teacherId: string;
-  }[];
+  mockClasses: MockClass[];
 }
 
 const TodayAttendance: React.FC<TodayAttendanceProps> = ({
@@ -65,12 +55,8 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
   const isPastDate = currentDate < today;
   const isFutureDate = currentDate > today;
   
-  // Check if attendance can be taken
   const canTakeOrEditAttendance = () => {
-    // Admin/accounts can edit anytime
     if (canEditAttendance) return true;
-    
-    // Teachers can only take for today and if not submitted
     return canTakeAttendance() && !attendanceSubmitted && !isPastDate && !isFutureDate;
   };
 
@@ -88,7 +74,6 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
     submitAttendance(selectedClass);
   };
 
-  // Get class name
   const getClassName = (classId: string) => {
     const cls = mockClasses.find(c => c.id === classId);
     return cls ? cls.name : 'Unknown Class';

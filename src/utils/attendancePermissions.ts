@@ -1,5 +1,6 @@
 
 import { UserRole } from '@/types';
+import { MockClass } from '@/data/mockAttendanceData';
 
 // Check if attendance can be edited (only admin/accounts can edit)
 export const canEditAttendance = (userRole?: UserRole) => {
@@ -13,7 +14,7 @@ export const canTakeAttendanceForDate = (currentDate: string, userRole?: UserRol
 };
 
 // Filter classes based on teacher if user is a teacher
-export const filterClassesByTeacher = (classes: any[], userId?: string, userRole?: UserRole) => {
+export const filterClassesByTeacher = (classes: MockClass[], userId?: string, userRole?: UserRole) => {
   if (userRole === 'teacher') {
     return classes.filter(cls => cls.teacherId === userId);
   }

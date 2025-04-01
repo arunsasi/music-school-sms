@@ -18,6 +18,7 @@ export interface Student {
   address: string;
   enrollmentDate: string;
   status: 'Active' | 'Inactive';
+  classId?: string; // Added for attendance feature
 }
 
 export interface Employee {
@@ -51,6 +52,8 @@ export interface Class {
   schedule: ScheduleItem[];
   fee: number;
   students: string[];
+  weekday?: string; // Added for attendance feature
+  time?: string; // Added for attendance feature
 }
 
 export type UserRole = 'admin' | 'teacher' | 'accounts' | 'student' | 'parent';

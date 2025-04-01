@@ -1,8 +1,23 @@
 
-import { AttendanceRecord, Class, Student } from '@/types';
+import { AttendanceRecord } from '@/types';
+
+// Define simplified interfaces for mock data to avoid type conflicts
+export interface MockClass {
+  id: string;
+  name: string;
+  weekday: string;
+  time: string;
+  teacherId: string;
+}
+
+export interface MockStudent {
+  id: string;
+  name: string;
+  classId: string;
+}
 
 // Mock data for classes
-export const mockClasses: Class[] = [
+export const mockClasses: MockClass[] = [
   { id: '1', name: 'Piano Beginners', weekday: 'Monday', time: '4:00 PM - 5:00 PM', teacherId: '3' },
   { id: '2', name: 'Violin Intermediate', weekday: 'Tuesday', time: '5:00 PM - 6:30 PM', teacherId: '3' },
   { id: '3', name: 'Guitar Advanced', weekday: 'Wednesday', time: '6:00 PM - 7:30 PM', teacherId: '4' },
@@ -11,7 +26,7 @@ export const mockClasses: Class[] = [
 ];
 
 // Mock data for students
-export const mockStudents: Student[] = [
+export const mockStudents: MockStudent[] = [
   { id: '1', name: 'Emily Johnson', classId: '1' },
   { id: '2', name: 'Michael Chen', classId: '1' },
   { id: '3', name: 'Sarah Williams', classId: '1' },
