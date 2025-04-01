@@ -1,138 +1,70 @@
 
-import * as React from "react";
-import { 
-  Tabs as MUITabs, 
-  Tab as MUITab, 
-  Box,
-  styled
-} from "@mui/material";
+import * as React from "react"
+import * as TabsPrimitive from "@radix-ui/react-tabs"
 
-// Create a context to hold the value and onChange handler
-interface TabsContextType {
-  value: string;
-  onChange: (event: React.SyntheticEvent, newValue: string) => void;
-}
-
-const TabsContext = React.createContext<TabsContextType | undefined>(undefined);
-
-// Custom styled Tab with proper TypeScript compatibility
-const StyledTab = styled(MUITab)(({ theme }) => ({
-  textTransform: 'none',
-  minWidth: 0,
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  '&.Mui-selected': {
-    color: theme.palette.primary.main,
-  },
-}));
+import { cn } from "@/lib/utils"
 
 const Tabs = React.forwardRef<
-  HTMLDivElement,
-  {
-    defaultValue?: string;
-    value?: string;
-    onValueChange?: (value: string) => void;
-    className?: string;
-    children: React.ReactNode;
-  }
->(({ defaultValue, value, onValueChange, className, children, ...props }, ref) => {
-  const [tabValue, setTabValue] = React.useState(value || defaultValue || "");
-
-  const handleChange = (_: React.SyntheticEvent, newValue: string) => {
-    setTabValue(newValue);
-    onValueChange?.(newValue);
-  };
-
-  // Update controlled value
-  React.useEffect(() => {
-    if (value !== undefined) {
-      setTabValue(value);
-    }
-  }, [value]);
-
-  return (
-    <TabsContext.Provider
-      value={{
-        value: tabValue,
-        onChange: handleChange,
-      }}
-    >
-      <div ref={ref} className={className} {...props}>
-        {children}
-      </div>
-    </TabsContext.Provider>
-  );
-});
-Tabs.displayName = "Tabs";
+  React.ElementRef<typeof TabsPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Root
+    ref={ref}
+    className={cn(
+      "data-[orientation=vertical]:flex data-[orientation=vertical]:flex-row",
+      className
+    )}
+    {...props}
+  />
+))
+Tabs.displayName = TabsPrimitive.Root.displayName
 
 const TabsList = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentPropsWithoutRef<"div">
->(({ className, children, ...props }, ref) => {
-  const context = React.useContext(TabsContext);
-  
-  if (!context) {
-    throw new Error("TabsList must be used within a Tabs component");
-  }
-
-  return (
-    <Box ref={ref} className={className} sx={{ borderBottom: 1, borderColor: 'divider' }} {...props}>
-      <MUITabs 
-        value={context.value} 
-        onChange={context.onChange}
-        aria-label="tabs"
-      >
-        {children}
-      </MUITabs>
-    </Box>
-  );
-});
-TabsList.displayName = "TabsList";
+  React.ElementRef<typeof TabsPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.List
+    ref={ref}
+    className={cn(
+      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+      className
+    )}
+    {...props}
+  />
+))
+TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = React.forwardRef<
-  HTMLButtonElement,
-  { 
-    value: string, 
-    children: React.ReactNode, 
-    className?: string,
-    // Remove disabled prop as it's causing TypeScript errors
+  React.ElementRef<typeof TabsPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & { 
+    disabled?: boolean 
   }
->(({ value, children, className, ...props }, ref) => {  
-  return (
-    <StyledTab
-      label={children}
-      value={value}
-      className={className}
-      {...props}
-    />
-  );
-});
-TabsTrigger.displayName = "TabsTrigger";
+>(({ className, disabled, ...props }, ref) => (
+  <TabsPrimitive.Trigger
+    ref={ref}
+    className={cn(
+      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+      className
+    )}
+    disabled={disabled}
+    {...props}
+  />
+))
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
 const TabsContent = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentPropsWithoutRef<"div"> & { value: string }
->(({ className, value, children, ...props }, ref) => {
-  const context = React.useContext(TabsContext);
-  
-  if (!context) {
-    throw new Error("TabsContent must be used within a Tabs component");
-  }
-  
-  return (
-    <div
-      ref={ref}
-      role="tabpanel"
-      hidden={value !== context.value}
-      id={`tabpanel-${value}`}
-      aria-labelledby={`tab-${value}`}
-      className={className}
-      {...props}
-    >
-      {value === context.value && children}
-    </div>
-  );
-});
-TabsContent.displayName = "TabsContent";
+  React.ElementRef<typeof TabsPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Content
+    ref={ref}
+    className={cn(
+      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      className
+    )}
+    {...props}
+  />
+))
+TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsList, TabsTrigger, TabsContent }
