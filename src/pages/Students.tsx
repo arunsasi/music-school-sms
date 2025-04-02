@@ -1,13 +1,14 @@
 
 import React, { useState } from 'react';
 import { Student } from '@/types';
-import StudentForm from '@/components/students/forms/StudentForm';
+import { StudentForm } from '@/components/students/forms';
 import StudentDetails from '@/components/students/StudentDetails';
 import StudentClasses from '@/components/students/StudentClasses';
 import StudentPayments from '@/components/students/StudentPayments';
 import StudentsHeader from '@/components/students/StudentsHeader';
 import StudentsList from '@/components/students/StudentsList';
 import { useStudents } from '@/hooks/useStudents';
+import { toast } from '@/hooks/use-toast';
 
 const Students: React.FC = () => {
   const {
@@ -38,7 +39,20 @@ const Students: React.FC = () => {
   };
   
   const handleDeleteStudent = (id: string) => {
-    deleteStudent(id);
+    try {
+      deleteStudent(id);
+      toast({
+        title: "Student deleted",
+        description: "The student has been successfully deleted.",
+        variant: "default",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was a problem deleting the student. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
   
   const handleSubmitStudent = (studentData: Omit<Student, 'id'>) => {

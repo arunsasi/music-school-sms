@@ -3,33 +3,97 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Reset some base styles that might interfere with Material UI */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Inter", "Roboto", "Helvetica", "Arial", sans-serif;
-  color: #222;
-  background-color: #f5f7fa;
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.141 0.005 285.823);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.141 0.005 285.823);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.141 0.005 285.823);
+    --primary: oklch(0.623 0.214 259.815);
+    --primary-foreground: oklch(0.97 0.014 254.604);
+    --secondary: oklch(0.967 0.001 286.375);
+    --secondary-foreground: oklch(0.21 0.006 285.885);
+    --muted: oklch(0.967 0.001 286.375);
+    --muted-foreground: oklch(0.552 0.016 285.938);
+    --accent: oklch(0.967 0.001 286.375);
+    --accent-foreground: oklch(0.21 0.006 285.885);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.92 0.004 286.32);
+    --input: oklch(0.92 0.004 286.32);
+    --ring: oklch(0.623 0.214 259.815);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.141 0.005 285.823);
+    --sidebar-primary: oklch(0.623 0.214 259.815);
+    --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
+    --sidebar-accent: oklch(0.967 0.001 286.375);
+    --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+    --sidebar-border: oklch(0.92 0.004 286.32);
+    --sidebar-ring: oklch(0.623 0.214 259.815);
+  }
+
+  .dark {
+    --background: oklch(0.141 0.005 285.823);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.21 0.006 285.885);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.21 0.006 285.885);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.546 0.245 262.881);
+    --primary-foreground: oklch(0.379 0.146 265.522);
+    --secondary: oklch(0.274 0.006 286.033);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.274 0.006 286.033);
+    --muted-foreground: oklch(0.705 0.015 286.067);
+    --accent: oklch(0.274 0.006 286.033);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.488 0.243 264.376);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.21 0.006 285.885);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.546 0.245 262.881);
+    --sidebar-primary-foreground: oklch(0.379 0.146 265.522);
+    --sidebar-accent: oklch(0.274 0.006 286.033);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.488 0.243 264.376);
+  }
 }
 
-/* Maintain basic utility classes for page transition and layout */
+/* Reset some base styles */
+body {
+  font-family: "Inter", sans-serif;
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+/* Container utility */
 .container-main {
   padding: 1rem;
 }
 
-/* Sheet content scrollable */
-.sheet-content-scrollable {
-  max-height: calc(100vh - 4rem);
-  overflow-y: auto;
-}
-
-/* Dialog content scrollable */
+/* Sheet and dialog content scrollable */
+.sheet-content-scrollable,
 .dialog-content-scrollable {
   max-height: calc(100vh - 8rem);
   overflow-y: auto;
 }
 
-/* Improved styling for the music bars in the logo */
+/* Music bars animation for logo */
 .music-bars {
   display: flex;
   align-items: flex-end;
@@ -42,7 +106,7 @@ body {
   display: block;
   width: 3px;
   border-radius: 1px;
-  background-color: #9b87f5;
+  background-color: var(--primary);
 }
 
 .music-bars span:nth-child(1) {
@@ -65,39 +129,20 @@ body {
   animation: musicbar 1.8s infinite ease-in-out alternate 0.3s;
 }
 
-@keyframes musicbar {
-  to {
-    height: 18px;
-  }
-}
-
-/* Basic utility classes that might still be needed in some components */
-.text-center {
-  text-align: center;
-}
-
-.mt-auto {
-  margin-top: auto;
-}
-
-.w-full {
-  width: 100%;
-}
-
 /* Custom Button Classes */
 .btn-primary {
-  @apply bg-music-500 hover:bg-music-600 text-white rounded-md transition-colors;
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors;
 }
 
 .btn-secondary {
-  @apply bg-white border-2 border-gray-200 hover:bg-gray-100 text-gray-700 rounded-md transition-colors;
+  @apply bg-secondary border-2 border-border hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors;
 }
 
 .btn-accent {
-  @apply bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors;
+  @apply bg-accent hover:bg-accent/80 text-accent-foreground rounded-md transition-colors;
 }
 
 /* Active state styling */
 .active-state {
-  @apply bg-music-500/10 border-l-4 border-music-500;
+  @apply bg-primary/10 border-l-4 border-primary;
 }

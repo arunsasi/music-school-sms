@@ -20,6 +20,10 @@ interface SelectFieldProps {
   value: string;
   options: SelectOption[];
   onChange: (value: string) => void;
+  required?: boolean;
+  tooltip?: string;
+  error?: string;
+  placeholder?: string;
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({
@@ -27,18 +31,31 @@ const SelectField: React.FC<SelectFieldProps> = ({
   label,
   value,
   options,
-  onChange
+  onChange,
+  required = false,
+  tooltip,
+  error,
+  placeholder
 }) => {
   return (
-    <FormField id={id} label={label}>
+    <FormField 
+      id={id} 
+      label={label} 
+      required={required} 
+      tooltip={tooltip}
+      error={error}
+    >
       <Select
         value={value}
         onValueChange={onChange}
       >
-        <SelectTrigger className="bg-white border border-gray-200 h-11">
-          <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+        <SelectTrigger 
+          id={id}
+          className="bg-background border border-input h-11 w-full focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        >
+          <SelectValue placeholder={placeholder || `Select ${label.toLowerCase()}`} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper" className="bg-popover text-popover-foreground">
           {options.map(option => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}

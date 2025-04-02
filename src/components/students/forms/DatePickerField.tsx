@@ -17,22 +17,35 @@ interface DatePickerFieldProps {
   label: string;
   date: Date | undefined;
   onDateChange: (date: Date | undefined) => void;
+  required?: boolean;
+  tooltip?: string;
+  error?: string;
 }
 
 const DatePickerField: React.FC<DatePickerFieldProps> = ({
   id,
   label,
   date,
-  onDateChange
+  onDateChange,
+  required = false,
+  tooltip,
+  error
 }) => {
   return (
-    <FormField id={id} label={label}>
+    <FormField 
+      id={id} 
+      label={label} 
+      required={required}
+      tooltip={tooltip}
+      error={error}
+    >
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
+            id={id}
             className={cn(
-              "w-full justify-start text-left font-normal bg-white border border-gray-200 h-11",
+              "w-full justify-start text-left font-normal bg-background border border-input h-11",
               !date && "text-muted-foreground"
             )}
           >
@@ -40,12 +53,13 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
             {date ? format(date, "PPP") : "Select date"}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-0 bg-popover">
           <Calendar
             mode="single"
             selected={date}
             onSelect={onDateChange}
             initialFocus
+            className="pointer-events-auto"
           />
         </PopoverContent>
       </Popover>
