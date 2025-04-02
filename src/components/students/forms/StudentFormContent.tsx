@@ -45,7 +45,19 @@ const StudentFormContent: React.FC<StudentFormContentProps> = ({
   ];
 
   const handleFormSubmit = (data: StudentFormValues) => {
-    onSubmit(data);
+    // Cast the potentially optional fields from StudentFormValues to required fields for Student
+    const studentData: Omit<Student, 'id'> = {
+      name: data.name,
+      age: data.age,
+      guardian: data.guardian,
+      mobile: data.mobile,
+      email: data.email || '',  // Ensure email is never undefined
+      address: data.address,
+      enrollmentDate: data.enrollmentDate,
+      status: data.status
+    };
+    
+    onSubmit(studentData);
   };
 
   return (
