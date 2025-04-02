@@ -10,6 +10,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 interface EmployeeFormProps {
   isOpen: boolean;
@@ -24,7 +29,7 @@ const employeeFormSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
   mobile: z.string().min(10, { message: 'Mobile number should have at least 10 digits' }),
   salary: z.coerce.number().min(1, { message: 'Salary must be greater than 0' }),
-  joiningDate: z.string().min(1, { message: 'Joining date is required' }),
+  joiningDate: z.date({ required_error: 'Joining date is required' }),
   status: z.enum(['Active', 'Inactive'], { required_error: 'Please select a status' })
 });
 
@@ -36,23 +41,27 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, 
     handleSubmit,
     reset,
     setValue,
+    watch,
+    control,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: initialData ? {
       ...initialData,
       salary: initialData.salary,
-      joiningDate: new Date(initialData.joiningDate).toISOString().split('T')[0]
+      joiningDate: new Date(initialData.joiningDate)
     } : {
       name: '',
       role: 'teacher',
       email: '',
       mobile: '',
       salary: 0,
-      joiningDate: new Date().toISOString().split('T')[0],
+      joiningDate: new Date(),
       status: 'Active'
     }
   });
+
+  const joiningDate = watch('joiningDate');
 
   const onFormSubmit = (data: EmployeeFormValues) => {
     try {
@@ -63,7 +72,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, 
         email: data.email,
         mobile: data.mobile,
         salary: data.salary,
-        joiningDate: data.joiningDate,
+        joiningDate: format(data.joiningDate, 'yyyy-MM-dd'),
         status: data.status
       };
       
@@ -79,12 +88,12 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[600px] p-6">
-        <DialogHeader>
+        <DialogHeader className="pb-4">
           <DialogTitle className="text-xl font-semibold">
             {initialData ? 'Edit Employee' : 'Add New Employee'}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5 pt-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5 pt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
@@ -148,11 +157,30 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, 
             
             <div className="space-y-2">
               <Label htmlFor="joiningDate">Joining Date</Label>
-              <Input
-                id="joiningDate"
-                type="date"
-                {...register('joiningDate')}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    id="joiningDate"
+                    className={cn(
+                      "w-full justify-start text-left font-normal h-11",
+                      !joiningDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {joiningDate ? format(joiningDate, "PPP") : "Select date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={joiningDate}
+                    onSelect={(date) => setValue('joiningDate', date!)}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
               {errors.joiningDate && <p className="text-sm text-destructive">{errors.joiningDate.message}</p>}
             </div>
             
@@ -174,7 +202,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, 
             </div>
           </div>
           
-          <DialogFooter className="mt-6 flex justify-end gap-2">
+          <DialogFooter className="mt-8 pt-2 border-t">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>

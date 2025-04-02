@@ -127,15 +127,15 @@ const ClassForm: React.FC<ClassFormProps> = ({
   };
   
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md p-6">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-xl font-semibold">
             {initialData ? 'Edit Class' : 'Add New Class'}
           </DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
+        <form onSubmit={handleSubmit} className="space-y-4 py-2">
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Class Name</Label>
@@ -282,11 +282,11 @@ const ClassForm: React.FC<ClassFormProps> = ({
             </div>
           </div>
           
-          <DialogFooter className="mt-6">
+          <DialogFooter className="mt-6 pt-2 border-t">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-music-500 hover:bg-music-600">
+            <Button type="submit" className="bg-primary hover:bg-primary/90">
               {initialData ? 'Update' : 'Add'} Class
             </Button>
           </DialogFooter>
