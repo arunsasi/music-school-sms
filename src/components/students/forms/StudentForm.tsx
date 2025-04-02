@@ -82,7 +82,7 @@ const StudentForm: React.FC<StudentFormProps> = ({
             <Button 
               type="submit" 
               form="studentForm"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="bg-music-500 text-white hover:bg-music-600"
             >
               {initialData ? 'Update' : 'Add'} Student
             </Button>

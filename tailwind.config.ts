@@ -96,4 +96,10 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: [
+    'hover:bg-primary/90',
+    'hover:bg-secondary/80',
+    'hover:bg-accent/80',
+    'bg-primary/10',
+  ],
 } satisfies Config;

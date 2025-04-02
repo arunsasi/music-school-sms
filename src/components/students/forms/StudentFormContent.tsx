@@ -27,7 +27,16 @@ const StudentFormContent: React.FC<StudentFormContentProps> = ({
     formState: { errors },
   } = useForm<StudentFormValues>({
     resolver: zodResolver(studentSchema),
-    defaultValues: initialData
+    defaultValues: {
+      name: initialData.name,
+      age: initialData.age,
+      guardian: initialData.guardian,
+      mobile: initialData.mobile,
+      email: initialData.email || '',
+      address: initialData.address,
+      enrollmentDate: initialData.enrollmentDate,
+      status: initialData.status
+    }
   });
 
   const statusOptions = [

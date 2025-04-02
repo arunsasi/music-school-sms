@@ -129,20 +129,22 @@ body {
   animation: musicbar 1.8s infinite ease-in-out alternate 0.3s;
 }
 
-/* Custom Button Classes */
-.btn-primary {
-  @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors;
-}
+@layer components {
+  /* Custom Button Classes */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors;
+  }
 
-.btn-secondary {
-  @apply bg-secondary border-2 border-border hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors;
-}
+  .btn-secondary {
+    @apply bg-secondary border-2 border-border hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors;
+  }
 
-.btn-accent {
-  @apply bg-accent hover:bg-accent/80 text-accent-foreground rounded-md transition-colors;
-}
+  .btn-accent {
+    @apply bg-accent hover:bg-accent/80 text-accent-foreground rounded-md transition-colors;
+  }
 
-/* Active state styling */
-.active-state {
-  @apply bg-primary/10 border-l-4 border-primary;
+  /* Active state styling */
+  .active-state {
+    @apply bg-primary/10 border-l-4 border-primary;
+  }
 }
