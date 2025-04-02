@@ -34,9 +34,9 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({
   handleDeleteEmployee
 }) => {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border bg-white shadow-sm">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-muted/50">
           <TableRow>
             <TableHead 
               className="w-[200px] cursor-pointer"

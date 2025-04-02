@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Bell, 
   Settings,
@@ -8,7 +8,16 @@ import {
   Sun,
   Moon,
   Menu,
-  Search
+  Search,
+  Home,
+  Users,
+  GraduationCap,
+  Calendar,
+  Clock,
+  DollarSign,
+  BarChart3,
+  HelpCircle,
+  User
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -22,6 +31,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
+import { UserRole } from '@/types';
 
 // Mock notification data
 const mockNotifications = [
@@ -31,16 +51,76 @@ const mockNotifications = [
   { id: '4', type: 'fee', message: 'Fee payment due for Jane Smith', date: '2023-10-12' },
 ];
 
-interface NavbarProps {
-  sidebarOpen: boolean;
-  toggleSidebar: () => void;
-}
+// Define the navigation items with access control
+const navItems = [
+  {
+    label: 'Dashboard',
+    icon: Home,
+    href: '/dashboard',
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+  },
+  {
+    label: 'Employees',
+    icon: Users,
+    href: '/employees',
+    allowedRoles: ['admin', 'accounts'] as UserRole[],
+  },
+  {
+    label: 'Students',
+    icon: GraduationCap,
+    href: '/students',
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+  },
+  {
+    label: 'Classes',
+    icon: Calendar,
+    href: '/classes',
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+  },
+  {
+    label: 'Attendance',
+    icon: Clock,
+    href: '/attendance',
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+  },
+  {
+    label: 'Finance',
+    icon: DollarSign,
+    href: '/finance',
+    allowedRoles: ['admin', 'accounts'] as UserRole[],
+  },
+  {
+    label: 'Reports',
+    icon: BarChart3,
+    href: '/reports',
+    allowedRoles: ['admin', 'accounts'] as UserRole[],
+  },
+  {
+    label: 'Settings',
+    icon: Settings,
+    href: '/settings',
+    allowedRoles: ['admin'] as UserRole[],
+  },
+  {
+    label: 'Profile',
+    icon: User,
+    href: '/profile',
+    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+  },
+];
 
-const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
-  const { user, logout } = useAuth();
+const Navbar: React.FC = () => {
+  const { user, logout, hasPermission } = useAuth();
+  const location = useLocation();
   const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const hasUnreadNotifications = true; // This would be dynamic in a real app
+
+  // Filter navigation items based on user role
+  const filteredNavItems = navItems.filter(item => 
+    user && hasPermission(item.allowedRoles)
+  );
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -83,47 +163,79 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
   };
 
   return (
-    <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
-      <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
-        <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleSidebar} 
-            className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden"
-          >
-            <Menu className="h-5 w-5 text-black dark:text-white" />
-          </Button>
-          
-          <Link to="/dashboard" className="block flex-shrink-0 lg:hidden">
-            <div className="flex items-center gap-2">
-              <div className="music-bars h-10">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-              <span className="text-xl font-semibold text-primary dark:text-white">Music School</span>
+    <header className="sticky top-0 z-50 w-full bg-white shadow-md dark:bg-boxdark dark:shadow-none">
+      <div className="flex flex-wrap items-center justify-between px-4 py-2 md:px-6 lg:px-8">
+        {/* Logo and Brand */}
+        <div className="flex items-center">
+          <Link to="/dashboard" className="flex items-center gap-2">
+            <div className="music-bars flex-shrink-0">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
+            <span className="hidden text-xl font-semibold md:block">Music School</span>
           </Link>
         </div>
 
-        <div className="hidden sm:block">
-          <form className="relative">
-            <button className="absolute left-0 top-1/2 -translate-y-1/2">
-              <Search className="h-5 w-5 text-body hover:text-primary dark:text-bodydark dark:hover:fill-primary" />
-            </button>
-
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none text-black dark:text-bodydark dark:placeholder:text-bodydark xl:w-125"
-            />
-          </form>
+        {/* Mobile Menu Button */}
+        <div className="flex md:hidden">
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[250px] pt-10">
+              <div className="flex flex-col space-y-1 py-2">
+                {filteredNavItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center px-3 py-2 rounded-md text-sm font-medium",
+                      location.pathname === item.href 
+                        ? "bg-primary/10 text-primary" 
+                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <item.icon className="mr-2 h-4 w-4" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
-        <div className="flex items-center gap-3 2xsm:gap-7">
-          <ul className="flex items-center gap-2 2xsm:gap-4">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex">
+          <NavigationMenu>
+            <NavigationMenuList>
+              {filteredNavItems.map((item) => (
+                <NavigationMenuItem key={item.href}>
+                  <Link to={item.href}>
+                    <NavigationMenuLink 
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        location.pathname === item.href && "bg-accent text-accent-foreground"
+                      )}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.label}
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+
+        {/* Right Side Items */}
+        <div className="flex items-center gap-3">
+          <ul className="flex items-center gap-2">
+            {/* Theme Toggle */}
             <li>
               <Button 
                 variant="ghost" 
@@ -135,6 +247,7 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
               </Button>
             </li>
 
+            {/* Notifications */}
             <li>
               <Sheet open={notificationOpen} onOpenChange={setNotificationOpen}>
                 <SheetTrigger asChild>
@@ -163,12 +276,13 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
             </li>
           </ul>
 
+          {/* User Profile Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="relative cursor-pointer">
-                <Avatar className="h-12 w-12 rounded-full">
+                <Avatar className="h-10 w-10 rounded-full">
                   <AvatarImage src={userAvatar} alt={userDisplayName} />
-                  <AvatarFallback className="bg-music-500 text-white">
+                  <AvatarFallback className="bg-primary text-white">
                     {getInitials(userDisplayName)}
                   </AvatarFallback>
                 </Avatar>
@@ -186,7 +300,7 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarOpen, toggleSidebar }) => {
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-meta-2/10">
                     <Avatar className="h-full w-full rounded-full">
                       <AvatarImage src={userAvatar} alt={userDisplayName} />
-                      <AvatarFallback className="bg-music-500 text-white">
+                      <AvatarFallback className="bg-primary text-white">
                         {getInitials(userDisplayName)}
                       </AvatarFallback>
                     </Avatar>

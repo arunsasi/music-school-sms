@@ -1,206 +1,157 @@
 
 import React, { useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Employee } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue 
-} from '@/components/ui/select';
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter 
-} from '@/components/ui/dialog';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { 
-  Popover,
-  PopoverContent,
-  PopoverTrigger 
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 interface EmployeeFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (employee: Omit<Employee, 'id'>) => void;
+  onSubmit: (data: Omit<Employee, 'id'>) => void;
   initialData?: Employee;
 }
 
-const EmployeeForm: React.FC<EmployeeFormProps> = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  initialData
-}) => {
-  const [formData, setFormData] = useState<Omit<Employee, 'id'>>({
-    name: initialData?.name || '',
-    role: initialData?.role || 'Teacher',
-    mobile: initialData?.mobile || '',
-    email: initialData?.email || '',
-    joiningDate: initialData?.joiningDate || format(new Date(), 'yyyy-MM-dd'),
-    salary: initialData?.salary || 0,
-    status: initialData?.status || 'Active'
+const employeeFormSchema = z.object({
+  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+  role: z.string({ required_error: 'Please select a role' }),
+  email: z.string().email({ message: 'Please enter a valid email address' }),
+  mobile: z.string().min(10, { message: 'Mobile number should have at least 10 digits' }),
+  salary: z.coerce.number().min(1, { message: 'Salary must be greater than 0' }),
+  joiningDate: z.string().min(1, { message: 'Joining date is required' }),
+  status: z.enum(['Active', 'Inactive'], { required_error: 'Please select a status' })
+});
+
+type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
+
+const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, initialData }) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<EmployeeFormValues>({
+    resolver: zodResolver(employeeFormSchema),
+    defaultValues: initialData ? {
+      ...initialData,
+      salary: initialData.salary,
+      joiningDate: new Date(initialData.joiningDate).toISOString().split('T')[0]
+    } : {
+      name: '',
+      role: 'teacher',
+      email: '',
+      mobile: '',
+      salary: 0,
+      joiningDate: new Date().toISOString().split('T')[0],
+      status: 'Active'
+    }
   });
-  
-  const [date, setDate] = useState<Date | undefined>(
-    initialData?.joiningDate 
-      ? new Date(initialData.joiningDate) 
-      : new Date()
-  );
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'salary' ? Number(value) : value
-    }));
-  };
-  
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleDateChange = (date: Date | undefined) => {
-    if (date) {
-      setDate(date);
-      setFormData(prev => ({
-        ...prev,
-        joiningDate: format(date, 'yyyy-MM-dd')
-      }));
+
+  const onFormSubmit = (data: EmployeeFormValues) => {
+    try {
+      onSubmit(data);
+      reset();
+      toast.success(`Employee ${initialData ? 'updated' : 'added'} successfully!`);
+    } catch (error) {
+      toast.error('There was an error. Please try again.');
+      console.error(error);
     }
   };
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-  
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[600px] p-6">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
             {initialData ? 'Edit Employee' : 'Add New Employee'}
           </DialogTitle>
         </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="grid grid-cols-1 gap-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter full name"
-                required
+                {...register('name')}
+                placeholder="John Doe"
               />
+              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select
-                value={formData.role}
-                onValueChange={(value) => handleSelectChange('role', value)}
+              <Select 
+                defaultValue={initialData?.role || "teacher"} 
+                onValueChange={(value) => setValue('role', value)}
               >
-                <SelectTrigger>
+                <SelectTrigger id="role">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Principal">Principal</SelectItem>
-                  <SelectItem value="Management">Management</SelectItem>
-                  <SelectItem value="Teacher">Teacher</SelectItem>
-                  <SelectItem value="Accountant">Accountant</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="teacher">Teacher</SelectItem>
+                  <SelectItem value="accounts">Accounts</SelectItem>
+                  <SelectItem value="admin">Administrator</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.role && <p className="text-sm text-destructive">{errors.role.message}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                {...register('email')}
+                placeholder="john.doe@example.com"
+              />
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="mobile">Mobile Number</Label>
               <Input
                 id="mobile"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                placeholder="Enter mobile number"
-                required
+                {...register('mobile')}
+                placeholder="1234567890"
               />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter email address"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Joining Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : "Select date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={handleDateChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              {errors.mobile && <p className="text-sm text-destructive">{errors.mobile.message}</p>}
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="salary">Salary</Label>
               <Input
                 id="salary"
-                name="salary"
                 type="number"
-                value={formData.salary}
-                onChange={handleChange}
-                placeholder="Enter salary amount"
-                required
-                min={0}
+                {...register('salary')}
+                placeholder="0.00"
               />
+              {errors.salary && <p className="text-sm text-destructive">{errors.salary.message}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="joiningDate">Joining Date</Label>
+              <Input
+                id="joiningDate"
+                type="date"
+                {...register('joiningDate')}
+              />
+              {errors.joiningDate && <p className="text-sm text-destructive">{errors.joiningDate.message}</p>}
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange('status', value)}
+              <Select 
+                defaultValue={initialData?.status || "Active"} 
+                onValueChange={(value) => setValue('status', value as 'Active' | 'Inactive')}
               >
-                <SelectTrigger>
+                <SelectTrigger id="status">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -208,15 +159,16 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                   <SelectItem value="Inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.status && <p className="text-sm text-destructive">{errors.status.message}</p>}
             </div>
           </div>
           
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <DialogFooter className="mt-6 flex justify-end gap-2">
+            <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-music-500 hover:bg-music-600">
-              {initialData ? 'Update' : 'Add'} Employee
+            <Button type="submit">
+              {initialData ? 'Save Changes' : 'Add Employee'}
             </Button>
           </DialogFooter>
         </form>
