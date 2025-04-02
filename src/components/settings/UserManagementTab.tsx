@@ -38,12 +38,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserRole } from '@/types';
 
+// Define a restricted set of roles for the form
+type FormUserRole = 'admin' | 'accounts' | 'teacher';
+
 // Define mock users - would come from API in real app
 const mockUsers = [
-  { id: '1', name: 'Admin User', email: 'admin@musicschool.com', role: 'admin' as UserRole, active: true },
-  { id: '2', name: 'Accounts User', email: 'accounts@musicschool.com', role: 'accounts' as UserRole, active: true },
-  { id: '3', name: 'Teacher User', email: 'teacher@musicschool.com', role: 'teacher' as UserRole, active: true },
-  { id: '4', name: 'Inactive User', email: 'inactive@musicschool.com', role: 'teacher' as UserRole, active: false },
+  { id: '1', name: 'Admin User', email: 'admin@musicschool.com', role: 'admin' as FormUserRole, active: true },
+  { id: '2', name: 'Accounts User', email: 'accounts@musicschool.com', role: 'accounts' as FormUserRole, active: true },
+  { id: '3', name: 'Teacher User', email: 'teacher@musicschool.com', role: 'teacher' as FormUserRole, active: true },
+  { id: '4', name: 'Inactive User', email: 'inactive@musicschool.com', role: 'teacher' as FormUserRole, active: false },
 ];
 
 // Form schema for user creation/editing
@@ -321,7 +324,7 @@ const UserManagementTab = () => {
                 <Label htmlFor="role">Role</Label>
                 <Select 
                   defaultValue={selectedUser?.role || 'teacher'} 
-                  onValueChange={(value) => setValue('role', value as UserRole)}
+                  onValueChange={(value) => setValue('role', value as FormUserRole)}
                 >
                   <SelectTrigger id="role">
                     <SelectValue placeholder="Select role" />

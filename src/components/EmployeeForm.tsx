@@ -56,7 +56,18 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, 
 
   const onFormSubmit = (data: EmployeeFormValues) => {
     try {
-      onSubmit(data);
+      // Ensure all required fields are present in the data object
+      const employeeData: Omit<Employee, 'id'> = {
+        name: data.name,
+        role: data.role,
+        email: data.email,
+        mobile: data.mobile,
+        salary: data.salary,
+        joiningDate: data.joiningDate,
+        status: data.status
+      };
+      
+      onSubmit(employeeData);
       reset();
       toast.success(`Employee ${initialData ? 'updated' : 'added'} successfully!`);
     } catch (error) {
