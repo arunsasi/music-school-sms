@@ -9,6 +9,7 @@ interface FormFieldProps {
   children: React.ReactNode;
   className?: string;
   colSpan?: "full" | "half";
+  required?: boolean;
 }
 
 const FormField: React.FC<FormFieldProps> = ({ 
@@ -16,15 +17,19 @@ const FormField: React.FC<FormFieldProps> = ({
   label, 
   children, 
   className,
-  colSpan = "half" 
+  colSpan = "half",
+  required = false
 }) => {
   return (
     <div className={cn(
-      "space-y-2", 
+      "space-y-2 font-inter", 
       colSpan === "full" ? "md:col-span-2" : "",
       className
     )}>
-      <Label htmlFor={id} className="font-medium">{label}</Label>
+      <Label htmlFor={id} className="font-medium">
+        {label}
+        {required && <span className="text-destructive ml-1">*</span>}
+      </Label>
       {children}
     </div>
   );
