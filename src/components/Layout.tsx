@@ -22,7 +22,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   if (isAuthenticated) {
     return (
       <div className="flex h-screen overflow-hidden bg-background">
-        <AppSidebar />
+        <div className="flex-shrink-0 bg-sidebar border-r border-sidebar-border">
+          <AppSidebar />
+        </div>
         <div className="flex flex-col flex-1 overflow-hidden">
           <Navbar />
           <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6">

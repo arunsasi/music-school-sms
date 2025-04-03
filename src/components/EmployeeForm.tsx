@@ -87,7 +87,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ isOpen, onClose, onSubmit, 
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[600px] p-6">
+      <DialogContent className="sm:max-w-[600px] p-6 bg-background">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-xl font-semibold">
             {initialData ? 'Edit Employee' : 'Add New Employee'}

@@ -7,8 +7,8 @@
 /* Reset some base styles */
 body {
   font-family: "Inter", sans-serif;
-  color: oklch(var(--foreground));
-  background-color: oklch(var(--background));
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
 }
 
 /* Container utility */
@@ -36,7 +36,7 @@ body {
   display: block;
   width: 3px;
   border-radius: 1px;
-  background-color: oklch(var(--primary));
+  background-color: hsl(var(--primary));
 }
 
 .music-bars span:nth-child(1) {
@@ -89,6 +89,6 @@ body {
   
   /* Tables with background */
   .table-container {
-    @apply rounded-md border bg-white;
+    @apply rounded-md border bg-card;
   }
 }

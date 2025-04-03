@@ -11,7 +11,7 @@ const StudentsHeader: React.FC<StudentsHeaderProps> = ({ onAddStudent }) => {
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 className="text-2xl font-bold text-black dark:text-white">Students</h2>
+        <h2 className="text-2xl font-bold text-foreground">Students</h2>
         <p className="text-sm text-muted-foreground">
           Manage your enrolled students
         </p>
@@ -22,10 +22,7 @@ const StudentsHeader: React.FC<StudentsHeaderProps> = ({ onAddStudent }) => {
           <Download className="mr-2 h-4 w-4" />
           Export
         </Button>
-        <Button 
-          className="bg-music-500 hover:bg-music-600"
-          onClick={onAddStudent}
-        >
+        <Button onClick={onAddStudent}>
           <Plus className="mr-2 h-4 w-4" />
           Add Student
         </Button>
