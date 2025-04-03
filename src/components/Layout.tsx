@@ -2,7 +2,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Box, CssBaseline } from '@mui/material';
+import { Box } from '@mui/material';
 import Navbar from './Navbar';
 import AppSidebar from './AppSidebar';
 
