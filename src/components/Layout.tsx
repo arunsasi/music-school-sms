@@ -2,7 +2,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Box } from '@mui/material';
 import Navbar from './Navbar';
 import AppSidebar from './AppSidebar';
 
@@ -16,7 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   // Don't show layout on the login page
   if (location.pathname === '/') {
-    return <Box sx={{ bgcolor: 'grey.100' }}>{children}</Box>;
+    return <div className="bg-background min-h-screen">{children}</div>;
   }
 
   // Only show navbar and sidebar if authenticated
@@ -38,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   // For unauthenticated users on non-login pages
-  return <Box sx={{ bgcolor: 'grey.100' }}>{children}</Box>;
+  return <div className="bg-background min-h-screen">{children}</div>;
 };
 
 export default Layout;

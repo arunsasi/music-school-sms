@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from "@/components/ui/button";
@@ -35,8 +35,8 @@ const classFormSchema = z.object({
   endTime: z.string({ required_error: "End time is required" }),
   daysOfWeek: z.array(z.string()).min(1, { message: "At least one day of week must be selected" }),
   category: z.string().min(1, { message: "Category is required" }),
-  maxStudents: z.string().transform(val => parseInt(val, 10)),
-  fee: z.string().transform(val => parseFloat(val)),
+  maxStudents: z.coerce.number().min(1, { message: "Maximum students must be at least 1" }),
+  fee: z.coerce.number().min(0, { message: "Fee must be non-negative" }),
 });
 
 type ClassFormValues = z.infer<typeof classFormSchema>;
@@ -76,34 +76,35 @@ interface ClassFormProps {
   defaultValues?: Partial<ClassFormValues>;
   onSubmit: (data: ClassFormValues) => void;
   isSubmitting?: boolean;
-  isOpen?: boolean; // Add isOpen prop
-  onClose?: () => void; // Add onClose prop
-  initialData?: any; // Add initialData prop
+  isOpen?: boolean;
+  onClose?: () => void;
+  initialData?: any;
 }
 
 const ClassForm: React.FC<ClassFormProps> = ({
-  defaultValues = {
-    className: '',
-    description: '',
-    teacher: '',
-    room: '',
-    startDate: new Date(),
-    endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-    startTime: '09:00',
-    endTime: '10:00',
-    daysOfWeek: [], // Fix: initialize as empty array, not undefined array
-    category: '',
-    maxStudents: '15', // Keep as string, will be transformed by zod
-    fee: '500', // Keep as string, will be transformed by zod
-  },
+  defaultValues,
   onSubmit,
   isSubmitting = false,
-  isOpen = false, // Default value for isOpen
-  onClose = () => {}, // Default function for onClose
+  isOpen = false,
+  onClose = () => {},
+  initialData
 }) => {
   const form = useForm<ClassFormValues>({
     resolver: zodResolver(classFormSchema),
-    defaultValues,
+    defaultValues: initialData || {
+      className: '',
+      description: '',
+      teacher: '',
+      room: '',
+      startDate: new Date(),
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+      startTime: '09:00',
+      endTime: '10:00',
+      daysOfWeek: [], 
+      category: '',
+      maxStudents: 15,
+      fee: 500,
+    },
   });
 
   // If the form is not open, don't render anything
