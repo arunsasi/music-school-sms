@@ -23,7 +23,7 @@ const AttendanceActions: React.FC<AttendanceActionsProps> = ({
       <Button 
         variant="outline" 
         size="sm" 
-        className={status === 'Present' ? 'bg-green-100' : ''}
+        className={`flex-1 ${status === 'Present' ? 'bg-green-100' : ''}`}
         onClick={() => markAttendance(studentId, classId, 'Present')}
         disabled={disabled}
       >
@@ -33,7 +33,7 @@ const AttendanceActions: React.FC<AttendanceActionsProps> = ({
       <Button 
         variant="outline" 
         size="sm"
-        className={status === 'Late' ? 'bg-yellow-100' : ''}
+        className={`flex-1 ${status === 'Late' ? 'bg-yellow-100' : ''}`}
         onClick={() => markAttendance(studentId, classId, 'Late', 'Arrived late')}
         disabled={disabled}
       >
@@ -43,7 +43,7 @@ const AttendanceActions: React.FC<AttendanceActionsProps> = ({
       <Button 
         variant="outline" 
         size="sm"
-        className={status === 'Absent' ? 'bg-red-100' : ''}
+        className={`flex-1 ${status === 'Absent' ? 'bg-red-100' : ''}`}
         onClick={() => markAttendance(studentId, classId, 'Absent')}
         disabled={disabled}
       >
