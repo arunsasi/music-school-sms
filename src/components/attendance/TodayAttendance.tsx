@@ -40,6 +40,7 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
   const isPastDate = currentDate < today;
   const isFutureDate = currentDate > today;
   
+  // This function returns a boolean, matching the expected type
   const canTakeOrEditAttendance = () => {
     if (canEditAttendance) return true;
     return canTakeAttendance() && !attendanceSubmitted && !isPastDate && !isFutureDate;
@@ -64,7 +65,6 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
     return cls ? cls.name : 'Unknown Class';
   };
 
-  // Quick mark multiple students as present
   const markAllPresent = () => {
     if (!canTakeOrEditAttendance()) {
       toast.error("You don't have permission to mark attendance");
@@ -88,7 +88,7 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
         currentDate={currentDate}
         today={today}
         attendanceSubmitted={attendanceSubmitted}
-        canTakeOrEditAttendance={canTakeOrEditAttendance()}
+        canTakeOrEditAttendance={canTakeOrEditAttendance}
         markAllPresent={markAllPresent}
         handleSubmitAttendance={handleSubmitAttendance}
         isMobile={isMobile}
@@ -123,7 +123,7 @@ const TodayAttendance: React.FC<TodayAttendanceProps> = ({
             getAttendanceStatus={getAttendanceStatus}
             markAttendance={markAttendance}
             currentDate={currentDate}
-            canTakeOrEditAttendance={canTakeOrEditAttendance()}
+            canTakeOrEditAttendance={canTakeOrEditAttendance}
           />
         ) : (
           <DesktopStudentTable

@@ -9,7 +9,7 @@ interface MobileStudentListProps {
   getAttendanceStatus: (studentId: string, date: string) => "Present" | "Late" | "Absent" | undefined;
   markAttendance: (studentId: string, classId: string, status: 'Present' | 'Late' | 'Absent', remark?: string) => void;
   currentDate: string;
-  canTakeOrEditAttendance: boolean;
+  canTakeOrEditAttendance: () => boolean;
 }
 
 const MobileStudentList: React.FC<MobileStudentListProps> = ({
@@ -37,7 +37,7 @@ const MobileStudentList: React.FC<MobileStudentListProps> = ({
               className={getClassName(student.classId)}
               status={status}
               markAttendance={markAttendance}
-              canTakeOrEditAttendance={canTakeOrEditAttendance}
+              canTakeOrEditAttendance={canTakeOrEditAttendance()}
             />
           );
         })
