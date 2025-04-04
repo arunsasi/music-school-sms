@@ -3,6 +3,7 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAttendanceData } from '@/hooks/useAttendanceData';
 import { useAuth } from '@/context/AuthContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import AttendanceHeader from '@/components/attendance/AttendanceHeader';
 import AttendanceFilters from '@/components/attendance/AttendanceFilters';
 import TodayAttendance from '@/components/attendance/TodayAttendance';
@@ -10,6 +11,8 @@ import AttendanceHistory from '@/components/attendance/AttendanceHistory';
 
 const Attendance: React.FC = () => {
   const { hasPermission } = useAuth();
+  const isMobile = useIsMobile();
+  
   const {
     selectedClass,
     setSelectedClass,
@@ -59,10 +62,10 @@ const Attendance: React.FC = () => {
       />
 
       <Tabs defaultValue="today" value={selectedTab} onValueChange={setSelectedTab}>
-        <div className="flex justify-between items-center">
-          <TabsList>
-            <TabsTrigger value="today">Today's Attendance</TabsTrigger>
-            <TabsTrigger value="history">Attendance History</TabsTrigger>
+        <div className={`${isMobile ? 'flex flex-col gap-4' : 'flex justify-between items-center'}`}>
+          <TabsList className={isMobile ? 'w-full' : ''}>
+            <TabsTrigger value="today" className={isMobile ? 'flex-1' : ''}>Today's Attendance</TabsTrigger>
+            <TabsTrigger value="history" className={isMobile ? 'flex-1' : ''}>Attendance History</TabsTrigger>
           </TabsList>
           
           <AttendanceFilters
@@ -78,7 +81,7 @@ const Attendance: React.FC = () => {
           />
         </div>
 
-        <TabsContent value="today" className="space-y-4">
+        <TabsContent value="today" className="space-y-4 mt-4">
           <TodayAttendance
             filteredStudents={filteredStudents}
             selectedClass={selectedClass}
@@ -93,7 +96,7 @@ const Attendance: React.FC = () => {
           />
         </TabsContent>
 
-        <TabsContent value="history" className="space-y-4">
+        <TabsContent value="history" className="space-y-4 mt-4">
           <AttendanceHistory
             filteredRecords={getFilteredAttendanceRecords()}
             mockStudents={mockStudents}
