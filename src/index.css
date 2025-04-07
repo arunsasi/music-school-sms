@@ -17,10 +17,43 @@ body {
 }
 
 /* Sheet and dialog content scrollable */
-.sheet-content-scrollable,
-.dialog-content-scrollable {
-  max-height: calc(100vh - 8rem);
+.sheet-content-scrollable {
+  height: 100dvh;
   overflow-y: auto;
+}
+
+.dialog-content-scrollable {
+  max-height: calc(100dvh - 8rem);
+  overflow-y: auto;
+}
+
+/* Fix z-index issues with overlays */
+.sheet-overlay, 
+.dialog-overlay {
+  z-index: 50 !important;
+}
+
+.dialog-content,
+.sheet-content {
+  z-index: 51 !important;
+}
+
+/* Fix table background in dark mode */
+.dark .bg-background table,
+.dark .bg-card table {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+}
+
+.dark .bg-background tbody tr,
+.dark .bg-card tbody tr {
+  border-color: hsl(var(--border));
+}
+
+.dark .bg-background thead,
+.dark .bg-card thead {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
 }
 
 /* Music bars animation for logo */
@@ -89,6 +122,6 @@ body {
   
   /* Tables with background */
   .table-container {
-    @apply rounded-md border bg-card;
+    @apply rounded-md border bg-card text-card-foreground;
   }
 }

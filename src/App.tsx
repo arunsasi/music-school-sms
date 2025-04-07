@@ -19,11 +19,16 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
+// Create QueryClient with better error handling
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      onError: (error) => {
+        console.error("Query error:", error);
+      },
     },
   },
 });
@@ -34,7 +39,7 @@ const App = () => (
       <SidebarProvider>
         <div className="min-h-screen w-full">
           <Toaster />
-          <Sonner />
+          <Sonner position="top-right" closeButton />
           <BrowserRouter>
             <AuthProvider>
               <Layout>

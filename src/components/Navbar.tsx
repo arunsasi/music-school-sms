@@ -20,6 +20,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Link } from 'react-router-dom';
+import AppSidebar from './AppSidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Mock notification data
 const mockNotifications = [
@@ -33,7 +36,9 @@ const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const hasUnreadNotifications = true; // This would be dynamic in a real app
+  const isMobile = useIsMobile();
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -79,7 +84,20 @@ const Navbar: React.FC = () => {
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4">
         <div className="flex items-center">
-          <SidebarTrigger className="mr-2" />
+          {!isMobile && <SidebarTrigger className="mr-2" />}
+          
+          {isMobile && (
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[80%] p-0 max-w-[300px]">
+                <AppSidebar />
+              </SheetContent>
+            </Sheet>
+          )}
         </div>
 
         {/* Right Side Items */}
@@ -106,7 +124,7 @@ const Navbar: React.FC = () => {
                     {hasUnreadNotifications && <span className="absolute -top-0.5 right-0 h-2 w-2 rounded-full bg-destructive"></span>}
                   </Button>
                 </SheetTrigger>
-                <SheetContent className="overflow-y-auto">
+                <SheetContent className="h-[100dvh] overflow-y-auto">
                   <SheetHeader>
                     <SheetTitle>Notifications</SheetTitle>
                   </SheetHeader>

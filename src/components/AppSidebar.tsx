@@ -123,10 +123,16 @@ const AppSidebar: React.FC = () => {
                   tooltip={item.label}
                 >
                   <Link to={item.href} className={cn(
-                    "flex items-center gap-3",
-                    isActive && "text-primary"
+                    "flex items-center gap-3 relative",
+                    isActive ? "text-primary font-medium" : "text-sidebar-foreground"
                   )}>
-                    <item.icon className="h-5 w-5" />
+                    {isActive && (
+                      <span className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
+                    )}
+                    <item.icon className={cn(
+                      "h-5 w-5",
+                      isActive ? "text-primary" : "text-sidebar-foreground"
+                    )} />
                     <span>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>

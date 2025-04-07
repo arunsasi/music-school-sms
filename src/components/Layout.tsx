@@ -5,6 +5,37 @@ import { useAuth } from '@/context/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Navbar from './Navbar';
 import AppSidebar from './AppSidebar';
+import TodayScheduleModal from './schedule/TodayScheduleModal';
+import { Calendar } from 'lucide-react';
+import { Button } from './ui/button';
+
+// Mock schedule data - in a real app, this would come from an API or context
+const todaySchedule = [
+  {
+    id: '1',
+    title: 'Piano Lesson - Beginner',
+    time: '9:00 AM - 10:00 AM',
+    teacher: 'John Smith',
+    location: 'Room 101',
+    status: 'completed' as const
+  },
+  {
+    id: '2',
+    title: 'Guitar Group Class',
+    time: '11:30 AM - 12:30 PM',
+    teacher: 'Maria Rodriguez',
+    location: 'Studio B',
+    status: 'ongoing' as const
+  },
+  {
+    id: '3',
+    title: 'Violin Lesson - Advanced',
+    time: '2:00 PM - 3:30 PM',
+    teacher: 'David Chen',
+    location: 'Room 205',
+    status: 'upcoming' as const
+  }
+];
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -34,8 +65,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <main className={`flex-1 overflow-y-auto bg-background ${isMobile ? 'p-2' : 'p-4 md:p-6'}`}>
             {children}
           </main>
-          <footer className={`py-2 ${isMobile ? 'px-2' : 'px-6'} text-center border-t border-border`}>
+          <footer className={`py-2 ${isMobile ? 'px-2' : 'px-6'} flex justify-between items-center border-t border-border`}>
             <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Music School SMS. All rights reserved.</p>
+            <div className="flex items-center">
+              <TodayScheduleModal 
+                scheduleItems={todaySchedule}
+                trigger={
+                  <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Today's Schedule
+                  </Button>
+                }
+              />
+            </div>
           </footer>
         </div>
       </div>
