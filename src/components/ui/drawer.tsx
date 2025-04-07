@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
@@ -5,10 +6,18 @@ import { cn } from "@/lib/utils"
 
 const Drawer = ({
   shouldScaleBackground = true,
+  onOpenChange,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
   <DrawerPrimitive.Root
     shouldScaleBackground={shouldScaleBackground}
+    onOpenChange={(open) => {
+      // When drawer closes, clean up body styles
+      if (!open) {
+        document.body.removeAttribute('style');
+      }
+      if (onOpenChange) onOpenChange(open);
+    }}
     {...props}
   />
 )

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -45,6 +45,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const isMobile = useIsMobile();
+  
+  // Global effect to clean up any remaining body styles on navigation
+  useEffect(() => {
+    document.body.removeAttribute('style');
+    
+    // Also clean up on unmount
+    return () => {
+      document.body.removeAttribute('style');
+    };
+  }, [location.pathname]);
   
   // Don't show layout on the login page
   if (location.pathname === '/') {

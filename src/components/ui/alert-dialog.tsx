@@ -39,7 +39,9 @@ const AlertDialogContent = React.forwardRef<
         className
       )}
       onCloseAutoFocus={(e) => {
-        e.preventDefault(); // Prevent focus from returning, which can cause interaction issues
+        e.preventDefault(); // Prevent focus from returning
+        // Clean up pointer-events style
+        document.body.removeAttribute('style');
       }}
       {...props}
     />

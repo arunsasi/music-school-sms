@@ -62,7 +62,9 @@ const SheetContent = React.forwardRef<
       ref={ref}
       className={cn(sheetVariants({ side }), "sheet-content", className)}
       onCloseAutoFocus={(e) => {
-        e.preventDefault(); // Prevent focus issues that might cause interaction problems
+        e.preventDefault(); // Still prevent default focus behavior
+        // Remove any potential style from body
+        document.body.removeAttribute('style');
       }}
       {...props}
     >

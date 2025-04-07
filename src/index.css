@@ -1,4 +1,3 @@
-
 @import './styles/colors.css';
 @tailwind base;
 @tailwind components;
@@ -9,6 +8,11 @@ body {
   font-family: "Inter", sans-serif;
   color: hsl(var(--foreground));
   background-color: hsl(var(--background));
+}
+
+/* Clean up unwanted pointer-events style that might get stuck */
+body[style*="pointer-events: none"] {
+  pointer-events: auto !important;
 }
 
 /* Container utility */

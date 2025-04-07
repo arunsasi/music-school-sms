@@ -41,7 +41,9 @@ const DialogContent = React.forwardRef<
         className
       )}
       onCloseAutoFocus={(e) => {
-        e.preventDefault(); // Prevent focus issues that might cause interaction problems
+        e.preventDefault(); // Prevent focus issues
+        // Clean up any pointer-events: none style on body
+        document.body.removeAttribute('style');
       }}
       {...props}
     >

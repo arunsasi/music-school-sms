@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MapPin, User } from 'lucide-react';
@@ -53,6 +53,13 @@ const TodayScheduleModal: React.FC<TodayScheduleModalProps> = ({
     day: 'numeric'
   });
 
+  // Ensure body styles are cleaned up when component unmounts
+  useEffect(() => {
+    return () => {
+      document.body.removeAttribute('style');
+    };
+  }, []);
+
   // Group schedule items by status
   const groupedItems = {
     ongoing: scheduleItems.filter(item => item.status === 'ongoing'),
@@ -61,7 +68,12 @@ const TodayScheduleModal: React.FC<TodayScheduleModalProps> = ({
   };
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={(open) => {
+      if (!open) {
+        // When dialog closes, ensure body styles are cleaned
+        document.body.removeAttribute('style');
+      }
+    }}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[550px] dialog-content-scrollable">
         <DialogHeader>
