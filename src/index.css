@@ -1,3 +1,4 @@
+
 @import './styles/colors.css';
 @tailwind base;
 @tailwind components;
@@ -40,6 +41,20 @@ body[style*="pointer-events: none"] {
 .dialog-content,
 .sheet-content {
   z-index: 51 !important;
+}
+
+/* Ensure dropdown menus are visible and have proper z-index */
+[data-radix-popper-content-wrapper] {
+  z-index: 100 !important;
+}
+
+/* Ensure dropdown backgrounds are solid, not transparent */
+.radix-dropdown-content,
+[data-radix-select-content] {
+  background-color: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Fix table background in dark mode */

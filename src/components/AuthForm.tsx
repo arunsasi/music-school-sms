@@ -6,14 +6,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AtSign, Lock, LogIn, UserPlus } from 'lucide-react';
+import { AtSign, Lock, LogIn, UserPlus, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const AuthForm: React.FC = () => {
+  // Common state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+  
   // Login form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   
   // Signup form state
   const [signupName, setSignupName] = useState('');
@@ -21,13 +25,14 @@ const AuthForm: React.FC = () => {
   const [signupPassword, setSignupPassword] = useState('');
   const [signupPasswordConfirm, setSignupPasswordConfirm] = useState('');
   
-  const { login } = useAuth();
+  const { login, signup } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
     if (!email || !password) {
-      toast.error('Please enter both email and password');
+      setError('Please enter both email and password');
       return;
     }
     
@@ -35,9 +40,9 @@ const AuthForm: React.FC = () => {
     
     try {
       await login(email, password);
-    } catch (error) {
-      // Error is already handled in the auth context
+    } catch (error: any) {
       console.error('Login failed:', error);
+      setError(error.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsSubmitting(false);
     }
@@ -45,16 +50,40 @@ const AuthForm: React.FC = () => {
   
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
-    // In a real implementation, this would connect to your signup API
-    // For now, we'll just show a toast message
-    toast.info('Signup functionality will be implemented with Supabase integration');
+    if (!signupName || !signupEmail || !signupPassword || !signupPasswordConfirm) {
+      setError('Please fill in all fields');
+      return;
+    }
     
-    // Reset form
-    setSignupName('');
-    setSignupEmail('');
-    setSignupPassword('');
-    setSignupPasswordConfirm('');
+    if (signupPassword !== signupPasswordConfirm) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    if (signupPassword.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      await signup(signupEmail, signupPassword, signupName);
+      // Reset form fields after successful signup
+      setSignupName('');
+      setSignupEmail('');
+      setSignupPassword('');
+      setSignupPasswordConfirm('');
+      // Switch to login tab
+      setActiveTab('login');
+    } catch (error: any) {
+      console.error('Signup failed:', error);
+      setError(error.message || 'Signup failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Demo credentials for easy access
@@ -75,6 +104,13 @@ const AuthForm: React.FC = () => {
         <TabsTrigger value="login">Sign In</TabsTrigger>
         <TabsTrigger value="signup">Sign Up</TabsTrigger>
       </TabsList>
+      
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       
       <TabsContent value="login" className="space-y-4">
         <div className="text-center mb-6">
@@ -223,11 +259,19 @@ const AuthForm: React.FC = () => {
           <Button 
             type="submit" 
             className="w-full"
+            disabled={isSubmitting}
           >
-            <span className="flex items-center gap-2">
-              <UserPlus className="h-4 w-4" />
-              Sign Up
-            </span>
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
+                Signing up...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Sign Up
+              </span>
+            )}
           </Button>
           
           <p className="text-xs text-center text-muted-foreground">
