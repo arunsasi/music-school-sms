@@ -3,7 +3,7 @@ import { AttendanceRecord } from '@/types';
 import { MockStudent } from '@/data/mockAttendanceData';
 import { toast } from 'sonner';
 
-// Get students for selected class
+// Function to get all students for a specific class
 export const getStudentsForClass = (classId: string | 'all', students: MockStudent[]) => {
   if (classId === 'all') {
     return students;
@@ -11,164 +11,181 @@ export const getStudentsForClass = (classId: string | 'all', students: MockStude
   return students.filter(student => student.classId === classId);
 };
 
-// Check if attendance is already taken for current class and date
+// Function to check if attendance for a class on a specific date is already taken
 export const isAttendanceTaken = (
-  classId: string,
+  classId: string, 
   date: string,
   attendanceRecords: AttendanceRecord[],
-  getStudentsForClass: (classId: string) => MockStudent[]
+  getStudentsForClass: (classId: string | 'all') => MockStudent[]
 ) => {
+  // If classId is "all", we consider it not taken to allow marking
   if (classId === 'all') return false;
   
-  const records = attendanceRecords.filter(
-    record => record.classId === classId && record.date === date
-  );
-  
   const studentsInClass = getStudentsForClass(classId);
+  if (studentsInClass.length === 0) return false;
   
-  return records.length >= studentsInClass.length;
+  // For each student in the class, check if there's an attendance record for the date
+  const studentsWithAttendance = studentsInClass.filter(student => {
+    return attendanceRecords.some(record => 
+      record.studentId === student.id && 
+      record.classId === classId && 
+      record.date === date
+    );
+  });
+  
+  // If all students have attendance records, consider it taken
+  return studentsWithAttendance.length === studentsInClass.length;
 };
 
-// Get attendance status for a student on a specific date
-export const getAttendanceStatus = (studentId: string, date: string, attendanceRecords: AttendanceRecord[]) => {
+// Function to get attendance status for a specific student on a specific date
+export const getAttendanceStatus = (
+  studentId: string, 
+  date: string,
+  attendanceRecords: AttendanceRecord[]
+): "Present" | "Late" | "Absent" | undefined => {
   const record = attendanceRecords.find(
-    r => r.studentId === studentId && r.date === date
+    (r) => r.studentId === studentId && r.date === date
   );
-  return record ? record.status : undefined;
+  
+  return record?.status;
 };
 
-// Mark attendance function
+// Function to mark attendance for a specific student
 export const markAttendance = (
   studentId: string,
   classId: string,
   status: 'Present' | 'Late' | 'Absent',
-  currentDate: string,
+  date: string,
   attendanceRecords: AttendanceRecord[],
-  userId: string | undefined,
-  canEditAttendance: boolean,
-  canTakeAttendance: () => boolean,
-  studentName: string,
-  remark: string = ''
+  userId?: string,
+  canEditAttendance?: boolean,
+  canTakeAttendance?: () => boolean,
+  studentName?: string,
+  remark?: string
 ) => {
-  if (!canTakeAttendance()) {
-    toast.error("Attendance can only be taken for the current day");
+  // Check if the user has permission to mark attendance
+  if (!canTakeAttendance?.() && !canEditAttendance) {
+    toast.error("You don't have permission to mark attendance");
     return null;
   }
-
-  // Check if there's an existing record for this student on this date
+  
   const existingRecordIndex = attendanceRecords.findIndex(
-    record => record.studentId === studentId && record.date === currentDate && record.classId === classId
+    (r) => r.studentId === studentId && r.date === date
   );
-
-  let updatedRecords = [...attendanceRecords];
-
+  
+  const updatedRecords = [...attendanceRecords];
+  
   if (existingRecordIndex !== -1) {
     // Update existing record
-    
-    // If not admin/accounts, prevent editing
-    if (!canEditAttendance && updatedRecords[existingRecordIndex].takenBy !== userId) {
-      toast.error("You don't have permission to edit this attendance record");
-      return null;
-    }
-    
     updatedRecords[existingRecordIndex] = {
       ...updatedRecords[existingRecordIndex],
       status,
-      remark,
+      remark: remark || updatedRecords[existingRecordIndex].remark,
       editedBy: userId,
       editedAt: new Date().toISOString()
     };
+    
+    toast.success(`Updated ${studentName || 'student'}'s attendance to ${status}`);
   } else {
     // Create new record
     const newRecord: AttendanceRecord = {
-      id: `${Date.now()}`,
+      id: `${studentId}-${date}`,
       studentId,
       classId,
-      date: currentDate,
+      date,
       status,
-      remark,
-      takenBy: userId || '0'
+      remark: remark || '',
+      takenBy: userId || 'unknown'
     };
-    updatedRecords = [...attendanceRecords, newRecord];
+    
+    updatedRecords.push(newRecord);
+    toast.success(`Marked ${studentName || 'student'} as ${status}`);
   }
-
-  // Show toast notification
-  toast.success(`Marked ${status} for ${studentName}`);
   
   return updatedRecords;
 };
 
-// Submit attendance for a class
+// Function to submit attendance for an entire class
 export const submitAttendance = (
   classId: string,
-  currentDate: string,
+  date: string,
   attendanceRecords: AttendanceRecord[],
-  getStudentsForClass: (classId: string) => MockStudent[],
-  markAttendanceHandler: (studentId: string, classId: string, status: 'Present' | 'Late' | 'Absent', remark: string) => void,
-  canTakeAttendance: () => boolean
+  getStudentsForClass: (classId: string | 'all') => MockStudent[],
+  markAttendanceFunc: (studentId: string, classId: string, status: 'Present' | 'Late' | 'Absent', remark?: string) => void,
+  canTakeAttendance?: () => boolean
 ) => {
-  if (!canTakeAttendance()) {
-    toast.error("Attendance can only be taken for the current day");
+  if (!canTakeAttendance?.()) {
+    toast.error("You don't have permission to take attendance");
     return false;
   }
   
-  // Check if all students have attendance marked
-  const studentsInClass = getStudentsForClass(classId);
-  const recordsForToday = attendanceRecords.filter(
-    r => r.classId === classId && r.date === currentDate
-  );
-  
-  // Find which students don't have attendance marked
-  const unmarkedStudents = studentsInClass.filter(student => 
-    !recordsForToday.some(record => record.studentId === student.id)
-  );
-  
-  if (unmarkedStudents.length > 0) {
-    // Mark remaining as absent by default
-    unmarkedStudents.forEach(student => {
-      markAttendanceHandler(student.id, classId, 'Absent', 'Marked absent by default on submission');
-    });
+  if (classId === 'all') {
+    toast.error("Please select a specific class to submit attendance");
+    return false;
   }
   
-  toast.success("Attendance submitted successfully");
+  const studentsInClass = getStudentsForClass(classId);
+  
+  // For any student without an attendance record, mark as absent
+  const studentsWithoutAttendance = studentsInClass.filter(student => {
+    return !attendanceRecords.some(record => 
+      record.studentId === student.id && 
+      record.classId === classId && 
+      record.date === date
+    );
+  });
+  
+  studentsWithoutAttendance.forEach(student => {
+    markAttendanceFunc(student.id, classId, 'Absent', 'Automatically marked as absent on submission');
+  });
+  
+  toast.success(`Attendance submitted for ${studentsInClass.length} students`);
   return true;
 };
 
-// Get the student's attendance history
-export const getStudentAttendanceHistory = (studentId: string, attendanceRecords: AttendanceRecord[]) => {
-  return attendanceRecords
-    .filter(record => record.studentId === studentId)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+// Function to get attendance history for a specific student
+export const getStudentAttendanceHistory = (
+  studentId: string,
+  attendanceRecords: AttendanceRecord[]
+) => {
+  return attendanceRecords.filter((r) => r.studentId === studentId);
 };
 
-// Filter students based on selected class and search term
+// Function to filter students based on selected class, selected student, and search term
 export const filterStudents = (
   students: MockStudent[],
   selectedClass: string,
   selectedStudent: string,
-  searchTerm: string
+  searchTerm: string,
+  teacherClassIds?: string[]
 ) => {
-  return students.filter(student => {
-    const matchesClass = selectedClass === "all" || student.classId === selectedClass;
-    const matchesStudent = selectedStudent === "all" || student.id === selectedStudent;
-    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase());
+  // First filter by teacher's classes if applicable
+  let filtered = students;
+  if (teacherClassIds && teacherClassIds.length > 0) {
+    filtered = students.filter(s => s.classId && teacherClassIds.includes(s.classId));
+  }
+  
+  // Then apply other filters
+  return filtered.filter(student => {
+    const matchesClass = selectedClass === 'all' || student.classId === selectedClass;
+    const matchesStudent = selectedStudent === 'all' || student.id === selectedStudent;
+    const matchesSearch = searchTerm === '' || 
+      student.name.toLowerCase().includes(searchTerm.toLowerCase());
     
     return matchesClass && matchesStudent && matchesSearch;
   });
 };
 
-// Get all attendance records filtered by date and/or class
+// Function to get filtered attendance records
 export const getFilteredAttendanceRecords = (
   attendanceRecords: AttendanceRecord[],
   selectedClass: string,
   selectedStudent: string
 ) => {
-  return attendanceRecords
-    .filter(record => {
-      const matchesClass = selectedClass === "all" || record.classId === selectedClass;
-      const matchesStudent = selectedStudent === "all" || record.studentId === selectedStudent;
-      
-      return matchesClass && matchesStudent;
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return attendanceRecords.filter(record => {
+    const matchesClass = selectedClass === 'all' || record.classId === selectedClass;
+    const matchesStudent = selectedStudent === 'all' || record.studentId === selectedStudent;
+    
+    return matchesClass && matchesStudent;
+  });
 };

@@ -22,7 +22,8 @@ import {
 import {
   canEditAttendance as checkEditPermission,
   canTakeAttendanceForDate,
-  filterClassesByTeacher
+  filterClassesByTeacher,
+  canAccessAttendance
 } from '@/utils/attendancePermissions';
 
 export const useAttendanceData = () => {
@@ -47,6 +48,14 @@ export const useAttendanceData = () => {
 
   // Get students for selected class (wrapper function)
   const getStudentsForSelectedClass = (classId: string | 'all') => {
+    // For teachers, only return students from their classes
+    if (user?.role === 'teacher' && classId === 'all') {
+      // Get all students from teacher's classes
+      const teacherClassIds = filteredClasses.map(c => c.id);
+      return mockStudents.filter(student => 
+        teacherClassIds.includes(student.classId || '')
+      );
+    }
     return getStudentsForClass(classId, mockStudents);
   };
 
@@ -54,6 +63,24 @@ export const useAttendanceData = () => {
   const isAttendanceTakenForClass = (classId: string, date: string) => {
     return isAttendanceTaken(classId, date, attendanceRecords, getStudentsForSelectedClass);
   };
+
+  // Check if user has permission to access this class
+  const hasAccessToClass = (classId: string) => {
+    if (classId === 'all') return true;
+    return canAccessAttendance(classId, filteredClasses, user?.role);
+  };
+
+  // When changing selected class, ensure user has access to it
+  useEffect(() => {
+    if (selectedClass !== 'all' && !hasAccessToClass(selectedClass)) {
+      // Reset to 'all' or first allowed class if no access
+      if (filteredClasses.length > 0) {
+        setSelectedClass(filteredClasses[0].id);
+      } else {
+        setSelectedClass('all');
+      }
+    }
+  }, [selectedClass, user]);
 
   useEffect(() => {
     // Check if attendance is submitted for current selection
@@ -69,11 +96,18 @@ export const useAttendanceData = () => {
     mockStudents,
     selectedClass,
     selectedStudent,
-    searchTerm
+    searchTerm,
+    user?.role === 'teacher' ? filteredClasses.map(c => c.id) : undefined
   );
 
   // Mark attendance function (wrapper function)
   const markAttendance = (studentId: string, classId: string, status: 'Present' | 'Late' | 'Absent', remark: string = '') => {
+    // Check if the user has access to this class
+    if (!hasAccessToClass(classId)) {
+      console.error("No permission to mark attendance for this class");
+      return;
+    }
+
     const studentName = mockStudents.find(s => s.id === studentId)?.name || 'Student';
     const updatedRecords = markAttendanceUtil(
       studentId,
@@ -95,6 +129,12 @@ export const useAttendanceData = () => {
 
   // Submit attendance for a class (wrapper function)
   const submitAttendance = (classId: string) => {
+    // Check if the user has access to this class
+    if (!hasAccessToClass(classId)) {
+      console.error("No permission to submit attendance for this class");
+      return false;
+    }
+
     const success = submitAttendanceUtil(
       classId,
       currentDate,
@@ -107,6 +147,7 @@ export const useAttendanceData = () => {
     if (success) {
       setAttendanceSubmitted(true);
     }
+    return success;
   };
 
   // Get attendance status for a student on a specific date (wrapper function)
@@ -116,6 +157,15 @@ export const useAttendanceData = () => {
 
   // Get filtered attendance records (wrapper function)
   const getFilteredRecords = () => {
+    // For teachers, only show records for their classes
+    if (user?.role === 'teacher') {
+      const teacherClassIds = filteredClasses.map(c => c.id);
+      return getFilteredAttendanceRecords(
+        attendanceRecords,
+        selectedClass,
+        selectedStudent
+      ).filter(record => teacherClassIds.includes(record.classId));
+    }
     return getFilteredAttendanceRecords(
       attendanceRecords,
       selectedClass,
@@ -150,6 +200,7 @@ export const useAttendanceData = () => {
     submitAttendance,
     attendanceSubmitted,
     isAttendanceTaken: isAttendanceTakenForClass,
+    hasAccessToClass,
     mockClasses,
     mockStudents
   };
