@@ -56,6 +56,10 @@ body {
   color: hsl(var(--muted-foreground));
 }
 
+.dark table {
+  --tw-border-opacity: 0.1;
+}
+
 /* Music bars animation for logo */
 .music-bars {
   display: flex;
@@ -101,6 +105,14 @@ body {
   }
 }
 
+/* Authentication page styles */
+.auth-gradient {
+  background: linear-gradient(to right bottom, 
+    hsl(var(--background)), 
+    hsl(var(--background) / 0.8), 
+    hsl(var(--primary) / 0.2));
+}
+
 @layer components {
   /* Custom Button Classes */
   .btn-primary {
@@ -123,5 +135,10 @@ body {
   /* Tables with background */
   .table-container {
     @apply rounded-md border bg-card text-card-foreground;
+  }
+  
+  /* Card hover effect */
+  .hover-card {
+    @apply transition-all duration-200 hover:shadow-md hover:border-primary/40;
   }
 }

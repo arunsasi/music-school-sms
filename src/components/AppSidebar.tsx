@@ -14,7 +14,8 @@ import {
   BarChart3,
   Settings,
   HelpCircle,
-  User
+  User,
+  LogOut
 } from 'lucide-react';
 import {
   Sidebar,
@@ -25,6 +26,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // Define the navigation items with access control
 const navItems = [
@@ -85,18 +87,37 @@ const navItems = [
 ];
 
 const AppSidebar: React.FC = () => {
-  const { user, hasPermission } = useAuth();
+  const { user, hasPermission, logout } = useAuth();
   const location = useLocation();
 
   // Filter navigation items based on user role
   const filteredNavItems = navItems.filter(item => 
     user && hasPermission(item.allowedRoles)
   );
+  
+  // Extract initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase();
+  };
+
+  // Get user display name, with fallbacks
+  const getUserDisplayName = () => {
+    if (user?.name) return user.name;
+    if (user?.full_name) return user.full_name;
+    return user?.email?.split('@')[0] || 'User';
+  };
+
+  const userDisplayName = getUserDisplayName();
+  const userAvatar = user?.avatar || '';
 
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-4 py-3">
+        <div className="flex items-center gap-2 px-4 py-5">
           <div className="music-bars flex-shrink-0">
             <span></span>
             <span></span>
@@ -108,9 +129,25 @@ const AppSidebar: React.FC = () => {
             <p className="text-xs text-muted-foreground">Management System</p>
           </div>
         </div>
+        
+        {/* User info */}
+        <div className="px-4 py-3 border-y border-sidebar-border">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={userAvatar} alt={userDisplayName} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {getInitials(userDisplayName)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <span className="font-medium text-sm">{userDisplayName}</span>
+              <span className="text-xs text-muted-foreground capitalize">{user?.role || 'User'}</span>
+            </div>
+          </div>
+        </div>
       </SidebarHeader>
       
-      <SidebarContent>
+      <SidebarContent className="py-4">
         <SidebarMenu>
           {filteredNavItems.map((item) => {
             const isActive = location.pathname === item.href;
@@ -123,17 +160,19 @@ const AppSidebar: React.FC = () => {
                   tooltip={item.label}
                 >
                   <Link to={item.href} className={cn(
-                    "flex items-center gap-3 relative",
-                    isActive ? "text-primary font-medium" : "text-sidebar-foreground"
+                    "flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors",
+                    isActive 
+                      ? "bg-primary/10 text-primary font-medium" 
+                      : "text-sidebar-foreground hover:bg-sidebar-muted"
                   )}>
-                    {isActive && (
-                      <span className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
-                    )}
                     <item.icon className={cn(
                       "h-5 w-5",
                       isActive ? "text-primary" : "text-sidebar-foreground"
                     )} />
                     <span>{item.label}</span>
+                    {isActive && (
+                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
+                    )}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -147,8 +186,12 @@ const AppSidebar: React.FC = () => {
           <HelpCircle className="h-5 w-5" />
           <span>Help & Support</span>
         </div>
-        <div className="p-4 text-xs text-muted-foreground text-center">
-          Version 1.0.0
+        <div 
+          onClick={logout}
+          className="flex items-center gap-2 p-4 text-destructive hover:bg-destructive/10 transition-colors cursor-pointer rounded-md mx-2 mb-2"
+        >
+          <LogOut className="h-5 w-5" />
+          <span>Log out</span>
         </div>
       </SidebarFooter>
     </Sidebar>
