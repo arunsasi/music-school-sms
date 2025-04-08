@@ -22,6 +22,9 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { TimePickerField } from './TimePickerField';
+import { useSubjects } from '@/hooks/useSubjects';
+import { useScheduleDays } from '@/hooks/useScheduleDays';
+import { Skeleton } from './ui/skeleton';
 
 // Define the schema for form validation
 const classFormSchema = z.object({
@@ -34,7 +37,7 @@ const classFormSchema = z.object({
   startTime: z.string({ required_error: "Start time is required" }),
   endTime: z.string({ required_error: "End time is required" }),
   daysOfWeek: z.array(z.string()).min(1, { message: "At least one day of week must be selected" }),
-  category: z.string().min(1, { message: "Category is required" }),
+  subject: z.string().min(1, { message: "Subject is required" }),
   maxStudents: z.coerce.number().min(1, { message: "Maximum students must be at least 1" }),
   fee: z.coerce.number().min(0, { message: "Fee must be non-negative" }),
 });
@@ -54,24 +57,6 @@ const MOCK_ROOMS = [
   { id: '3', name: 'Room 201' },
 ];
 
-const MOCK_CATEGORIES = [
-  { id: 'piano', name: 'Piano' },
-  { id: 'guitar', name: 'Guitar' },
-  { id: 'violin', name: 'Violin' },
-  { id: 'vocals', name: 'Vocals' },
-  { id: 'drums', name: 'Drums' },
-];
-
-const DAYS_OF_WEEK = [
-  { value: 'monday', label: 'Monday' },
-  { value: 'tuesday', label: 'Tuesday' },
-  { value: 'wednesday', label: 'Wednesday' },
-  { value: 'thursday', label: 'Thursday' },
-  { value: 'friday', label: 'Friday' },
-  { value: 'saturday', label: 'Saturday' },
-  { value: 'sunday', label: 'Sunday' },
-];
-
 interface ClassFormProps {
   defaultValues?: Partial<ClassFormValues>;
   onSubmit: (data: ClassFormValues) => void;
@@ -89,6 +74,9 @@ const ClassForm: React.FC<ClassFormProps> = ({
   onClose = () => {},
   initialData
 }) => {
+  const { subjects, loading: loadingSubjects } = useSubjects();
+  const { scheduleDays, loading: loadingDays } = useScheduleDays();
+  
   const form = useForm<ClassFormValues>({
     resolver: zodResolver(classFormSchema),
     defaultValues: initialData || {
@@ -101,7 +89,7 @@ const ClassForm: React.FC<ClassFormProps> = ({
       startTime: '09:00',
       endTime: '10:00',
       daysOfWeek: [], 
-      category: '',
+      subject: '',
       maxStudents: 15,
       fee: 500,
     },
@@ -216,22 +204,30 @@ const ClassForm: React.FC<ClassFormProps> = ({
 
               <FormField
                 control={form.control}
-                name="category"
+                name="subject"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>Subject</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
+                          <SelectValue placeholder="Select a subject" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {MOCK_CATEGORIES.map(category => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
+                        {loadingSubjects ? (
+                          <div className="p-2">
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-5 w-full mt-2" />
+                            <Skeleton className="h-5 w-full mt-2" />
+                          </div>
+                        ) : (
+                          subjects.map(subject => (
+                            <SelectItem key={subject.id} value={subject.id}>
+                              {subject.name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -345,22 +341,28 @@ const ClassForm: React.FC<ClassFormProps> = ({
                   <FormItem>
                     <FormLabel>Days of Week</FormLabel>
                     <div className="flex flex-wrap gap-2">
-                      {DAYS_OF_WEEK.map((day) => (
-                        <Button
-                          key={day.value}
-                          type="button"
-                          variant={field.value.includes(day.value) ? "default" : "outline"}
-                          onClick={() => {
-                            const updatedDays = field.value.includes(day.value)
-                              ? field.value.filter(d => d !== day.value)
-                              : [...field.value, day.value];
-                            field.onChange(updatedDays);
-                          }}
-                          className="rounded-full px-3 py-1 text-xs"
-                        >
-                          {day.label}
-                        </Button>
-                      ))}
+                      {loadingDays ? (
+                        Array.from({ length: 7 }).map((_, i) => (
+                          <Skeleton key={i} className="h-8 w-16 rounded-full" />
+                        ))
+                      ) : (
+                        scheduleDays.map((day) => (
+                          <Button
+                            key={day.id}
+                            type="button"
+                            variant={field.value.includes(day.id) ? "default" : "outline"}
+                            onClick={() => {
+                              const updatedDays = field.value.includes(day.id)
+                                ? field.value.filter(d => d !== day.id)
+                                : [...field.value, day.id];
+                              field.onChange(updatedDays);
+                            }}
+                            className="rounded-full px-3 py-1 text-xs"
+                          >
+                            {day.name}
+                          </Button>
+                        ))
+                      )}
                     </div>
                     <FormMessage />
                   </FormItem>

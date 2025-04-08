@@ -11,22 +11,24 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Subject } from '@/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useSubjects } from '@/hooks/useSubjects';
 
 interface ClassesFilterBarProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   subjectFilter: string;
   setSubjectFilter: (subject: string) => void;
-  subjects: Subject[];
 }
 
 const ClassesFilterBar: React.FC<ClassesFilterBarProps> = ({
   searchTerm,
   setSearchTerm,
   subjectFilter,
-  setSubjectFilter,
-  subjects
+  setSubjectFilter
 }) => {
+  const { subjects, loading } = useSubjects();
+  
   return (
     <div className="mb-6 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
       <div className="relative w-full md:w-1/2">
@@ -52,15 +54,24 @@ const ClassesFilterBar: React.FC<ClassesFilterBarProps> = ({
             All Subjects
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {subjects.map(subject => (
-            <DropdownMenuItem 
-              key={subject.id}
-              onClick={() => setSubjectFilter(subject.name)}
-              className="cursor-pointer"
-            >
-              {subject.name}
-            </DropdownMenuItem>
-          ))}
+          
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="px-2 py-1.5">
+                <Skeleton className="h-4 w-32" />
+              </div>
+            ))
+          ) : (
+            subjects.map(subject => (
+              <DropdownMenuItem 
+                key={subject.id}
+                onClick={() => setSubjectFilter(subject.name)}
+                className="cursor-pointer"
+              >
+                {subject.name}
+              </DropdownMenuItem>
+            ))
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

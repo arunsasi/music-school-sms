@@ -212,6 +212,48 @@ export type Database = {
         }
         Relationships: []
       }
+      schedule_days: {
+        Row: {
+          display_order: number
+          id: string
+          name: string
+        }
+        Insert: {
+          display_order: number
+          id?: string
+          name: string
+        }
+        Update: {
+          display_order?: number
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

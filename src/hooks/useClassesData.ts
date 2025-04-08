@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { Class } from '@/types';
 import { useMockClassData } from '@/hooks/useMockClassData';
@@ -7,7 +8,6 @@ export const useClassesData = () => {
   const { 
     classes: mockClasses, 
     loading, 
-    MOCK_SUBJECTS,
     MOCK_TEACHERS
   } = useMockClassData();
   
@@ -135,7 +135,6 @@ export const useClassesData = () => {
     viewSchedule,
     manageStudents,
     handleUpdateClassStudents,
-    MOCK_SUBJECTS,
     MOCK_TEACHERS
   };
 };

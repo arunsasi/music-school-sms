@@ -35,7 +35,6 @@ const Classes: React.FC = () => {
     viewSchedule,
     manageStudents,
     handleUpdateClassStudents,
-    MOCK_SUBJECTS,
     MOCK_TEACHERS
   } = useClassesData();
   
@@ -93,7 +92,6 @@ const Classes: React.FC = () => {
         setSearchTerm={setSearchTerm}
         subjectFilter={subjectFilter}
         setSubjectFilter={setSubjectFilter}
-        subjects={MOCK_SUBJECTS}
       />
       
       <div className="bg-white rounded-sm border border-stroke shadow-default">
