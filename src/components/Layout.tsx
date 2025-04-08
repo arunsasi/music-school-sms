@@ -8,6 +8,7 @@ import AppSidebar from './AppSidebar';
 import TodayScheduleModal from './schedule/TodayScheduleModal';
 import { Calendar } from 'lucide-react';
 import { Button } from './ui/button';
+import { SidebarProvider } from './ui/sidebar';
 
 // Mock schedule data - in a real app, this would come from an API or context
 const todaySchedule = [
@@ -60,33 +61,35 @@ const Layout: React.FC = () => {
   // Only show navbar and sidebar if authenticated
   if (isAuthenticated) {
     return (
-      <div className="flex h-screen overflow-hidden bg-background">
-        {!isMobile && (
-          <div className="flex-shrink-0 bg-sidebar border-r border-sidebar-border">
-            <AppSidebar />
-          </div>
-        )}
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <Navbar />
-          <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6">
-            <Outlet />
-          </main>
-          <footer className="py-2 px-4 md:px-6 flex justify-between items-center border-t border-border">
-            <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Music School SMS. All rights reserved.</p>
-            <div className="flex items-center">
-              <TodayScheduleModal 
-                scheduleItems={todaySchedule}
-                trigger={
-                  <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    Today's Schedule
-                  </Button>
-                }
-              />
+      <SidebarProvider>
+        <div className="flex h-screen overflow-hidden bg-background w-full">
+          {!isMobile && (
+            <div className="flex-shrink-0 bg-sidebar border-r border-sidebar-border">
+              <AppSidebar />
             </div>
-          </footer>
+          )}
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <Navbar />
+            <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6">
+              <Outlet />
+            </main>
+            <footer className="py-2 px-4 md:px-6 flex justify-between items-center border-t border-border">
+              <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Music School SMS. All rights reserved.</p>
+              <div className="flex items-center">
+                <TodayScheduleModal 
+                  scheduleItems={todaySchedule}
+                  trigger={
+                    <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      Today's Schedule
+                    </Button>
+                  }
+                />
+              </div>
+            </footer>
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     );
   }
 

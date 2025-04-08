@@ -23,6 +23,13 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { ScrollArea } from './ui/scroll-area';
 import { toast } from 'sonner';
+import { 
+  Sidebar, 
+  SidebarContent, 
+  SidebarMenu, 
+  SidebarMenuItem, 
+  SidebarMenuButton 
+} from './ui/sidebar';
 
 // Define the sidebar items
 const sidebarItems = [
@@ -80,7 +87,6 @@ interface AppSidebarProps {
 const AppSidebar: React.FC<AppSidebarProps> = ({ className }) => {
   const location = useLocation();
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [isCollapsed, setIsCollapsed] = useState(!isMobile);
   const { logout } = useAuth();
 
   const handleLogout = () => {
@@ -88,82 +94,50 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ className }) => {
     toast.success('Logged out successfully');
   };
 
-  // Toggle collapse only if not on mobile
-  const toggleCollapse = () => {
-    if (!isMobile) {
-      setIsCollapsed(!isCollapsed);
-    }
-  };
-
-  // Collapse on mobile
-  const collapseOnMobile = () => {
-    if (isMobile) {
-      setIsCollapsed(true);
-    }
-  };
-
   return (
-    <div
-      className={cn(
-        "flex flex-col h-screen bg-secondary border-r border-r-border",
-        isCollapsed ? 'w-16' : 'w-60',
-        className
-      )}
-    >
+    <Sidebar className={cn("h-full", className)}>
       <div className="flex items-center justify-between py-3 px-4">
-        {!isCollapsed && (
-          <div className="flex items-center gap-2">
-            <div className="music-bars">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <h1 className="text-lg font-bold">Music School</h1>
+        <div className="flex items-center gap-2">
+          <div className="music-bars">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
-        )}
-        <Button variant="ghost" size="icon" onClick={toggleCollapse}>
-          {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
-        </Button>
+          <h1 className="text-lg font-bold">Music School</h1>
+        </div>
       </div>
 
-      <ScrollArea className="flex-1">
-        <div className="py-2">
+      <SidebarContent>
+        <SidebarMenu>
           {sidebarItems.map((item) => (
-            <Link
-              to={item.path}
-              key={item.path}
-              onClick={collapseOnMobile}
-            >
-              <Button
-                variant="ghost"
-                className={cn(
-                  "justify-start px-4 mb-1 w-full font-normal",
-                  location.pathname === item.path ? "bg-primary/10 text-primary" : "text-muted-foreground",
-                  isCollapsed && "px-2.5"
-                )}
+            <SidebarMenuItem key={item.path}>
+              <SidebarMenuButton 
+                asChild 
+                isActive={location.pathname === item.path}
+                tooltip={item.title}
               >
-                <div className="flex items-center">
+                <Link to={item.path} className="flex items-center">
                   {item.icon}
-                  {!isCollapsed && <span className="ml-2">{item.title}</span>}
-                </div>
-              </Button>
-            </Link>
+                  <span className="ml-2">{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           ))}
-        </div>
-      </ScrollArea>
+        </SidebarMenu>
+      </SidebarContent>
 
-      <div className="p-3">
+      <div className="mt-auto p-3">
         <Button
           variant="outline"
           className="w-full"
           onClick={handleLogout}
         >
           <LogOut size={16} className="mr-2" />
-          {!isCollapsed && <span>Logout</span>}
+          <span>Logout</span>
         </Button>
       </div>
-    </div>
+    </Sidebar>
   );
 };
 
