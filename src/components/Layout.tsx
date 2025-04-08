@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Navbar from './Navbar';
@@ -37,11 +37,7 @@ const todaySchedule = [
   }
 ];
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -58,7 +54,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   // Don't show layout on the login page
   if (location.pathname === '/') {
-    return <div className="bg-background min-h-screen">{children}</div>;
+    return <Outlet />;
   }
 
   // Only show navbar and sidebar if authenticated
@@ -73,7 +69,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex flex-col flex-1 overflow-hidden">
           <Navbar />
           <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6">
-            {children}
+            <Outlet />
           </main>
           <footer className="py-2 px-4 md:px-6 flex justify-between items-center border-t border-border">
             <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Music School SMS. All rights reserved.</p>
@@ -95,7 +91,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   // For unauthenticated users on non-login pages
-  return <div className="bg-background min-h-screen">{children}</div>;
+  return <Outlet />;
 };
 
 export default Layout;

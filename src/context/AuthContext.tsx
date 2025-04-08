@@ -10,6 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,6 +42,15 @@ const mockUsers = [
     avatar: '/placeholder.svg'
   }
 ];
+
+// Mock permissions based on roles
+const rolePermissions: Record<UserRole, string[]> = {
+  admin: ['manage_students', 'manage_classes', 'manage_employees', 'manage_finances', 'view_reports', 'manage_settings'],
+  teacher: ['view_students', 'manage_attendance', 'view_classes'],
+  accounts: ['manage_finances', 'view_reports'],
+  student: ['view_classes', 'view_attendance'],
+  parent: ['view_student_info']
+};
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -96,12 +106,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     toast.success('Logged out successfully');
   };
 
+  const hasPermission = (permission: string): boolean => {
+    if (!user || !user.role) return false;
+    
+    // Get permissions for the user's role
+    const permissions = rolePermissions[user.role] || [];
+    
+    // Admin has all permissions
+    if (user.role === 'admin') return true;
+    
+    return permissions.includes(permission);
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
     login,
     logout,
-    loading
+    loading,
+    hasPermission
   };
 
   return (
