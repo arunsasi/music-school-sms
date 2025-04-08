@@ -15,15 +15,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-// Define a restricted set of roles for the form
-type FormUserRole = 'admin' | 'accounts' | 'teacher';
+import { UserRole } from '@/types';
 
 // Form schema for user creation/editing
 const userFormSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
-  role: z.enum(['admin', 'accounts', 'teacher'], { required_error: 'Please select a role.' }),
+  role: z.enum(['admin', 'teacher', 'accounts', 'student', 'parent'], { required_error: 'Please select a role.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters.' }).optional(),
   active: z.boolean().default(true),
 });
@@ -34,7 +32,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: FormUserRole;
+  role: UserRole;
   active: boolean;
 };
 
@@ -43,29 +41,43 @@ interface UserFormDialogProps {
   onClose: () => void;
   onSubmit: (data: UserFormValues) => void;
   selectedUser: User | null;
+  isSubmitting: boolean;
 }
 
 const UserFormDialog: React.FC<UserFormDialogProps> = ({ 
   isOpen, 
   onClose, 
   onSubmit, 
-  selectedUser 
+  selectedUser,
+  isSubmitting
 }) => {
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
+    reset
   } = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
       name: selectedUser?.name || '',
       email: selectedUser?.email || '',
-      role: selectedUser?.role || 'teacher',
+      role: selectedUser?.role || 'student',
       password: '',
-      active: selectedUser?.active || true,
+      active: selectedUser?.active ?? true,
     },
   });
+
+  // Reset form when selectedUser changes
+  React.useEffect(() => {
+    reset({
+      name: selectedUser?.name || '',
+      email: selectedUser?.email || '',
+      role: selectedUser?.role || 'student',
+      password: '',
+      active: selectedUser?.active ?? true,
+    });
+  }, [selectedUser, reset]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -104,8 +116,8 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
               <Select 
-                defaultValue={selectedUser?.role || 'teacher'} 
-                onValueChange={(value) => setValue('role', value as FormUserRole)}
+                defaultValue={selectedUser?.role || 'student'} 
+                onValueChange={(value) => setValue('role', value as UserRole)}
               >
                 <SelectTrigger id="role">
                   <SelectValue placeholder="Select role" />
@@ -114,6 +126,8 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   <SelectItem value="admin">Administrator</SelectItem>
                   <SelectItem value="accounts">Accounts</SelectItem>
                   <SelectItem value="teacher">Teacher</SelectItem>
+                  <SelectItem value="student">Student</SelectItem>
+                  <SelectItem value="parent">Parent</SelectItem>
                 </SelectContent>
               </Select>
               {errors.role && (
@@ -151,8 +165,11 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              {selectedUser ? 'Save Changes' : 'Create User'}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 
+                'Saving...' : 
+                selectedUser ? 'Save Changes' : 'Create User'
+              }
             </Button>
           </DialogFooter>
         </form>
