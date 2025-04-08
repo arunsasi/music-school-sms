@@ -80,9 +80,6 @@ const SelectContent = React.forwardRef<
         className
       )}
       position={position}
-      onOpenAutoFocus={(e) => {
-        e.preventDefault();
-      }}
       onCloseAutoFocus={(e) => {
         e.preventDefault();
         // Clean up any pointer-events: none style on body
