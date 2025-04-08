@@ -20,7 +20,6 @@ export const useScheduleDays = () => {
         setLoading(true);
         setError(null);
         
-        // Using a more generic query to avoid type errors
         const { data, error } = await supabase
           .from('schedule_days')
           .select('*')

@@ -18,7 +18,13 @@ export const useSupabaseClasses = () => {
       
       const { data, error } = await supabase
         .from('classes')
-        .select('*');
+        .select(`
+          *,
+          teacher:teacher_id (
+            id, 
+            full_name
+          )
+        `);
       
       if (error) throw error;
       

@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { User, UserRole } from '@/types';
 import { toast } from 'sonner';
 
@@ -8,7 +9,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  signup: (email: string, password: string, fullName: string, role?: UserRole) => Promise<void>;
+  logout: () => Promise<void>;
   loading: boolean;
   hasPermission: (permission: string | string[]) => boolean;
 }
@@ -23,27 +25,7 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 
-// Mock user data
-const mockUsers = [
-  {
-    id: '1',
-    email: 'admin@example.com',
-    password: 'password123', // In a real app, this would be hashed
-    name: 'Admin User',
-    role: 'admin' as UserRole,
-    avatar: '/placeholder.svg'
-  },
-  {
-    id: '2',
-    email: 'teacher@example.com',
-    password: 'password123', // In a real app, this would be hashed
-    name: 'Teacher User',
-    role: 'teacher' as UserRole,
-    avatar: '/placeholder.svg'
-  }
-];
-
-// Mock permissions based on roles
+// Role permissions mapping
 const rolePermissions: Record<UserRole, string[]> = {
   admin: ['manage_students', 'manage_classes', 'manage_employees', 'manage_finances', 'view_reports', 'manage_settings'],
   teacher: ['view_students', 'manage_attendance', 'view_classes'],
@@ -59,51 +41,145 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const navigate = useNavigate();
 
-  // Check if user is already logged in
+  // Setup auth state listener
   useEffect(() => {
-    const storedUser = localStorage.getItem('musicSchoolUser');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser) as User;
-        setUser(parsedUser);
-      } catch (e) {
-        console.error('Failed to parse stored user:', e);
-        localStorage.removeItem('musicSchoolUser');
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          try {
+            const { data: profile, error } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+              
+            if (error) throw error;
+            
+            if (profile) {
+              const userData: User = {
+                id: session.user.id,
+                email: session.user.email,
+                name: profile.full_name,
+                role: profile.role as UserRole,
+                avatar: '/placeholder.svg'
+              };
+              
+              setUser(userData);
+              setUserRole(profile.role as UserRole);
+            }
+          } catch (error) {
+            console.error('Error fetching user profile:', error);
+            setUser(null);
+            setUserRole(null);
+          }
+        } else {
+          setUser(null);
+          setUserRole(null);
+        }
       }
-    }
-    setLoading(false);
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (error) throw error;
+          
+          if (profile) {
+            const userData: User = {
+              id: session.user.id,
+              email: session.user.email,
+              name: profile.full_name,
+              role: profile.role as UserRole,
+              avatar: '/placeholder.svg'
+            };
+            
+            setUser(userData);
+            setUserRole(profile.role as UserRole);
+          }
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+        }
+      }
+      
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
       
-      const foundUser = mockUsers.find(u => 
-        u.email.toLowerCase() === email.toLowerCase() && u.password === password
-      );
+      if (error) throw error;
       
-      if (foundUser) {
-        const { password: _, ...userWithoutPassword } = foundUser;
-        setUser(userWithoutPassword);
-        localStorage.setItem('musicSchoolUser', JSON.stringify(userWithoutPassword));
-        navigate('/dashboard');
-      } else {
-        throw new Error('Invalid email or password');
-      }
+      navigate('/dashboard');
+      toast.success('Logged in successfully');
+    } catch (error: any) {
+      console.error('Error logging in:', error.message);
+      toast.error('Login failed. Please check your credentials.');
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = (): void => {
-    localStorage.removeItem('musicSchoolUser');
-    setUser(null);
-    navigate('/');
-    toast.success('Logged out successfully');
+  const signup = async (email: string, password: string, fullName: string, role: UserRole = 'student'): Promise<void> => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            role: role
+          }
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast.success('Account created successfully');
+    } catch (error: any) {
+      console.error('Error signing up:', error.message);
+      toast.error('Registration failed. Please try again.');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      setUser(null);
+      navigate('/');
+      toast.success('Logged out successfully');
+    } catch (error: any) {
+      console.error('Error logging out:', error.message);
+      toast.error('Failed to log out');
+      throw error;
+    }
   };
 
   const hasPermission = (permission: string | string[]): boolean => {
@@ -128,6 +204,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     isAuthenticated: !!user,
     login,
+    signup,
     logout,
     loading,
     hasPermission
