@@ -10,6 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { studentSchema, StudentFormValues } from '@/lib/validations/student';
 import { Student } from '@/types';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 interface StudentFormContentProps {
   initialData: Omit<Student, 'id'>;
@@ -32,6 +34,9 @@ const StudentFormContent: React.FC<StudentFormContentProps> = ({
       age: initialData.age,
       guardian: initialData.guardian,
       mobile: initialData.mobile,
+      secondaryMobile: initialData.secondaryMobile || '',
+      smsNotifications: initialData.smsNotifications || false,
+      secondarySmsNotifications: initialData.secondarySmsNotifications || false,
       email: initialData.email || '',
       address: initialData.address,
       enrollmentDate: initialData.enrollmentDate,
@@ -51,6 +56,9 @@ const StudentFormContent: React.FC<StudentFormContentProps> = ({
       age: data.age,
       guardian: data.guardian,
       mobile: data.mobile,
+      secondaryMobile: data.secondaryMobile || '',
+      smsNotifications: data.smsNotifications || false,
+      secondarySmsNotifications: data.secondarySmsNotifications || false,
       email: data.email || '',  // Ensure email is never undefined
       address: data.address,
       enrollmentDate: data.enrollmentDate,
@@ -111,20 +119,62 @@ const StudentFormContent: React.FC<StudentFormContentProps> = ({
             />
           </FormField>
           
-          <FormField 
-            id="mobile" 
-            label="Contact Number" 
-            required
-            error={errors.mobile?.message}
-            tooltip="Primary contact number"
-          >
-            <Input
-              id="mobile"
-              {...register("mobile")}
-              placeholder="Enter contact number"
-              className="bg-background border border-input h-11 w-full focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            />
-          </FormField>
+          <div className="space-y-5">
+            <FormField 
+              id="mobile" 
+              label="Primary Contact Number" 
+              required
+              error={errors.mobile?.message}
+              tooltip="Primary contact number"
+            >
+              <div className="space-y-2">
+                <Input
+                  id="mobile"
+                  {...register("mobile")}
+                  placeholder="Enter primary contact number"
+                  className="bg-background border border-input h-11 w-full focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                />
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="smsNotifications" 
+                    {...register("smsNotifications")} 
+                  />
+                  <Label htmlFor="smsNotifications" className="text-sm cursor-pointer">
+                    Send SMS notifications to this number
+                  </Label>
+                </div>
+              </div>
+            </FormField>
+          </div>
+          
+          <div className="space-y-5">
+            <FormField 
+              id="secondaryMobile" 
+              label="Secondary Contact Number" 
+              error={errors.secondaryMobile?.message}
+              tooltip="Alternative contact number"
+            >
+              <div className="space-y-2">
+                <Input
+                  id="secondaryMobile"
+                  {...register("secondaryMobile")}
+                  placeholder="Enter secondary contact number (optional)"
+                  className="bg-background border border-input h-11 w-full focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                />
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="secondarySmsNotifications" 
+                    {...register("secondarySmsNotifications")}
+                  />
+                  <Label htmlFor="secondarySmsNotifications" className="text-sm cursor-pointer">
+                    Send SMS notifications to this number
+                  </Label>
+                </div>
+              </div>
+            </FormField>
+          </div>
           
           <FormField 
             id="email" 

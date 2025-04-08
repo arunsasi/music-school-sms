@@ -132,6 +132,11 @@ body[style*="pointer-events: none"] {
     hsl(var(--primary) / 0.2));
 }
 
+/* Fix for Radix popover components */
+:where(body) {
+  pointer-events: auto !important;
+}
+
 @layer components {
   /* Custom Button Classes */
   .btn-primary {

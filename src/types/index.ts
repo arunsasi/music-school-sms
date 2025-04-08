@@ -14,6 +14,9 @@ export interface Student {
   age: number;
   guardian: string;
   mobile: string;
+  secondaryMobile?: string;
+  smsNotifications?: boolean;
+  secondarySmsNotifications?: boolean;
   email: string;
   address: string;
   enrollmentDate: string;
@@ -84,4 +87,14 @@ export interface AttendanceRecord {
   takenBy: string;
   editedBy?: string;
   editedAt?: string;
+}
+
+export interface SmsMessage {
+  id: string;
+  studentId: string;
+  message: string;
+  phoneNumber: string;
+  status: 'pending' | 'sent' | 'failed';
+  createdAt: string;
+  sentAt?: string;
 }

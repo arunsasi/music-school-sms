@@ -1,200 +1,168 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useMediaQuery } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
-import { UserRole } from '@/types';
+import { Button } from '@/components/ui/button';
 import {
-  Home,
+  LayoutDashboard,
   Users,
+  CalendarDays,
   GraduationCap,
-  Calendar,
-  Clock,
+  ClipboardCheck,
   DollarSign,
-  BarChart3,
+  FileBarChart,
   Settings,
-  HelpCircle,
-  User,
-  LogOut
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  MessageSquare,
+  Mail
 } from 'lucide-react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/context/AuthContext';
+import { ScrollArea } from './ui/scroll-area';
+import { toast } from 'sonner';
 
-// Define the navigation items with access control
-const navItems = [
+// Define the sidebar items
+const sidebarItems = [
   {
-    label: 'Dashboard',
-    icon: Home,
-    href: '/dashboard',
-    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+    title: 'Dashboard',
+    path: '/dashboard',
+    icon: <LayoutDashboard size={20} />,
   },
   {
-    label: 'Employees',
-    icon: Users,
-    href: '/employees',
-    allowedRoles: ['admin', 'accounts'] as UserRole[],
+    title: 'Students',
+    path: '/students',
+    icon: <GraduationCap size={20} />,
   },
   {
-    label: 'Students',
-    icon: GraduationCap,
-    href: '/students',
-    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+    title: 'Classes',
+    path: '/classes',
+    icon: <Calendar size={20} />,
   },
   {
-    label: 'Classes',
-    icon: Calendar,
-    href: '/classes',
-    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+    title: 'Employees',
+    path: '/employees',
+    icon: <Users size={20} />,
   },
   {
-    label: 'Attendance',
-    icon: Clock,
-    href: '/attendance',
-    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+    title: 'Attendance',
+    path: '/attendance',
+    icon: <ClipboardCheck size={20} />,
   },
   {
-    label: 'Finance',
-    icon: DollarSign,
-    href: '/finance',
-    allowedRoles: ['admin', 'accounts'] as UserRole[],
+    title: 'SMS Notifications',
+    path: '/sms',
+    icon: <MessageSquare size={20} />,
   },
   {
-    label: 'Reports',
-    icon: BarChart3,
-    href: '/reports',
-    allowedRoles: ['admin', 'accounts'] as UserRole[],
+    title: 'Finance',
+    path: '/finance',
+    icon: <DollarSign size={20} />,
   },
   {
-    label: 'Settings',
-    icon: Settings,
-    href: '/settings',
-    allowedRoles: ['admin'] as UserRole[],
+    title: 'Reports',
+    path: '/reports',
+    icon: <FileBarChart size={20} />,
   },
   {
-    label: 'Profile',
-    icon: User,
-    href: '/profile',
-    allowedRoles: ['admin', 'accounts', 'teacher'] as UserRole[],
+    title: 'Settings',
+    path: '/settings',
+    icon: <Settings size={20} />,
   },
 ];
 
-const AppSidebar: React.FC = () => {
-  const { user, hasPermission, logout } = useAuth();
+interface AppSidebarProps {
+  className?: string;
+}
+
+const AppSidebar: React.FC<AppSidebarProps> = ({ className }) => {
   const location = useLocation();
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [isCollapsed, setIsCollapsed] = useState(!isMobile);
+  const { logout } = useAuth();
 
-  // Filter navigation items based on user role
-  const filteredNavItems = navItems.filter(item => 
-    user && hasPermission(item.allowedRoles)
-  );
-  
-  // Extract initials for avatar fallback
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase();
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
   };
 
-  // Get user display name, with fallbacks
-  const getUserDisplayName = () => {
-    if (user?.name) return user.name;
-    if (user?.full_name) return user.full_name;
-    return user?.email?.split('@')[0] || 'User';
+  // Toggle collapse only if not on mobile
+  const toggleCollapse = () => {
+    if (!isMobile) {
+      setIsCollapsed(!isCollapsed);
+    }
   };
 
-  const userDisplayName = getUserDisplayName();
-  const userAvatar = user?.avatar || '';
+  // Collapse on mobile
+  const collapseOnMobile = () => {
+    if (isMobile) {
+      setIsCollapsed(true);
+    }
+  };
 
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <div className="flex items-center gap-2 px-4 py-5">
-          <div className="music-bars flex-shrink-0">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <div>
-            <h1 className="text-lg font-semibold">Music School</h1>
-            <p className="text-xs text-muted-foreground">Management System</p>
-          </div>
-        </div>
-        
-        {/* User info */}
-        <div className="px-4 py-3 border-y border-sidebar-border">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src={userAvatar} alt={userDisplayName} />
-              <AvatarFallback className="bg-primary/10 text-primary">
-                {getInitials(userDisplayName)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <span className="font-medium text-sm">{userDisplayName}</span>
-              <span className="text-xs text-muted-foreground capitalize">{user?.role || 'User'}</span>
+    <div
+      className={cn(
+        "flex flex-col h-screen bg-secondary border-r border-r-border",
+        isCollapsed ? 'w-16' : 'w-60',
+        className
+      )}
+    >
+      <div className="flex items-center justify-between py-3 px-4">
+        {!isCollapsed && (
+          <div className="flex items-center gap-2">
+            <div className="music-bars">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
+            <h1 className="text-lg font-bold">Music School</h1>
           </div>
+        )}
+        <Button variant="ghost" size="icon" onClick={toggleCollapse}>
+          {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+        </Button>
+      </div>
+
+      <ScrollArea className="flex-1">
+        <div className="py-2">
+          {sidebarItems.map((item) => (
+            <Link
+              to={item.path}
+              key={item.path}
+              onClick={collapseOnMobile}
+            >
+              <Button
+                variant="ghost"
+                className={cn(
+                  "justify-start px-4 mb-1 w-full font-normal",
+                  location.pathname === item.path ? "bg-primary/10 text-primary" : "text-muted-foreground",
+                  isCollapsed && "px-2.5"
+                )}
+              >
+                <div className="flex items-center">
+                  {item.icon}
+                  {!isCollapsed && <span className="ml-2">{item.title}</span>}
+                </div>
+              </Button>
+            </Link>
+          ))}
         </div>
-      </SidebarHeader>
-      
-      <SidebarContent className="py-4">
-        <SidebarMenu>
-          {filteredNavItems.map((item) => {
-            const isActive = location.pathname === item.href;
-            
-            return (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton 
-                  asChild 
-                  isActive={isActive}
-                  tooltip={item.label}
-                >
-                  <Link to={item.href} className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors",
-                    isActive 
-                      ? "bg-primary/10 text-primary font-medium" 
-                      : "text-sidebar-foreground hover:bg-sidebar-muted"
-                  )}>
-                    <item.icon className={cn(
-                      "h-5 w-5",
-                      isActive ? "text-primary" : "text-sidebar-foreground"
-                    )} />
-                    <span>{item.label}</span>
-                    {isActive && (
-                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
-                    )}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-      </SidebarContent>
-      
-      <SidebarFooter>
-        <div className="flex items-center gap-2 p-4 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-          <HelpCircle className="h-5 w-5" />
-          <span>Help & Support</span>
-        </div>
-        <div 
-          onClick={logout}
-          className="flex items-center gap-2 p-4 text-destructive hover:bg-destructive/10 transition-colors cursor-pointer rounded-md mx-2 mb-2"
+      </ScrollArea>
+
+      <div className="p-3">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleLogout}
         >
-          <LogOut className="h-5 w-5" />
-          <span>Log out</span>
-        </div>
-      </SidebarFooter>
-    </Sidebar>
+          <LogOut size={16} className="mr-2" />
+          {!isCollapsed && <span>Logout</span>}
+        </Button>
+      </div>
+    </div>
   );
 };
 
