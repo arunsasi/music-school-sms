@@ -10,6 +10,7 @@ import ClassesHeader from '@/components/classes/ClassesHeader';
 import ClassesFilterBar from '@/components/classes/ClassesFilterBar';
 import { useClassesData } from '@/hooks/useClassesData';
 import TablePagination from '@/components/common/TablePagination';
+import { Class, ScheduleItem } from '@/types';
 
 const Classes: React.FC = () => {
   const { 
@@ -83,6 +84,54 @@ const Classes: React.FC = () => {
     );
   }
   
+  // Form submission handlers that convert form data to Class objects
+  const handleFormSubmit = (formData: any) => {
+    // Transform form data to match the Class type structure
+    const classData: Omit<Class, 'id'> = {
+      name: formData.className,
+      subject: {
+        id: formData.subject,
+        name: '', // This will be populated from subjects data
+        description: formData.description || ''
+      },
+      teacherId: formData.teacher,
+      schedule: formData.daysOfWeek.map((day: string) => ({
+        day: day,
+        startTime: formData.startTime,
+        endTime: formData.endTime
+      })) as ScheduleItem[],
+      fee: Number(formData.fee),
+      students: []
+    };
+    
+    handleAddClass(classData);
+  };
+  
+  const handleFormUpdate = (formData: any) => {
+    if (!editingClass) return;
+    
+    // Transform form data to match the Class type structure
+    const classData: Class = {
+      id: editingClass.id,
+      name: formData.className,
+      subject: {
+        id: formData.subject,
+        name: '', // This will be populated from subjects data
+        description: formData.description || ''
+      },
+      teacherId: formData.teacher,
+      schedule: formData.daysOfWeek.map((day: string) => ({
+        day: day,
+        startTime: formData.startTime,
+        endTime: formData.endTime
+      })) as ScheduleItem[],
+      fee: Number(formData.fee),
+      students: editingClass.students
+    };
+    
+    handleUpdateClass(classData);
+  };
+  
   return (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <ClassesHeader onAddClass={() => setIsAddingClass(true)} />
@@ -119,7 +168,7 @@ const Classes: React.FC = () => {
         <ClassForm
           isOpen={isAddingClass}
           onClose={() => setIsAddingClass(false)}
-          onSubmit={handleAddClass}
+          onSubmit={handleFormSubmit}
         />
       )}
       
@@ -127,7 +176,7 @@ const Classes: React.FC = () => {
         <ClassForm
           isOpen={!!editingClass}
           onClose={() => setEditingClass(null)}
-          onSubmit={handleUpdateClass}
+          onSubmit={handleFormUpdate}
           initialData={editingClass}
         />
       )}

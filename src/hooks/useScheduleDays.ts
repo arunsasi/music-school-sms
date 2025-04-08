@@ -20,6 +20,7 @@ export const useScheduleDays = () => {
         setLoading(true);
         setError(null);
         
+        // Using type casting since the types don't automatically recognize our newly created tables
         const { data, error } = await supabase
           .from('schedule_days')
           .select('*')
@@ -28,11 +29,11 @@ export const useScheduleDays = () => {
         if (error) throw error;
         
         if (data) {
-          // Transform the data to match our ScheduleDay type
+          // Transform the data to match our ScheduleDay type using type assertion for safety
           const formattedDays: ScheduleDay[] = data.map(day => ({
-            id: day.id,
-            name: day.name,
-            displayOrder: day.display_order
+            id: day.id as string,
+            name: day.name as string,
+            displayOrder: day.display_order as number
           }));
           
           setScheduleDays(formattedDays);

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,7 +25,6 @@ import { useSubjects } from '@/hooks/useSubjects';
 import { useScheduleDays } from '@/hooks/useScheduleDays';
 import { Skeleton } from './ui/skeleton';
 
-// Define the schema for form validation
 const classFormSchema = z.object({
   className: z.string().min(3, { message: "Class name must be at least 3 characters" }),
   description: z.string().optional(),
@@ -44,7 +42,6 @@ const classFormSchema = z.object({
 
 type ClassFormValues = z.infer<typeof classFormSchema>;
 
-// Mock data for select fields
 const MOCK_TEACHERS = [
   { id: '1', name: 'John Doe' },
   { id: '2', name: 'Jane Smith' },
@@ -95,7 +92,6 @@ const ClassForm: React.FC<ClassFormProps> = ({
     },
   });
 
-  // If the form is not open, don't render anything
   if (!isOpen) {
     return null;
   }
@@ -118,7 +114,6 @@ const ClassForm: React.FC<ClassFormProps> = ({
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Basic Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Basic Information</h3>
               
@@ -236,7 +231,6 @@ const ClassForm: React.FC<ClassFormProps> = ({
               />
             </div>
 
-            {/* Schedule Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Schedule Information</h3>
               
@@ -370,7 +364,6 @@ const ClassForm: React.FC<ClassFormProps> = ({
               />
             </div>
 
-            {/* Fee Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Fee Information</h3>
               
