@@ -15,7 +15,7 @@ export const useSubjects = () => {
         setLoading(true);
         setError(null);
         
-        // Using type casting since the types don't automatically recognize our newly created tables
+        // Using a more generic query to avoid type errors
         const { data, error } = await supabase
           .from('subjects')
           .select('*')
@@ -24,11 +24,11 @@ export const useSubjects = () => {
         if (error) throw error;
         
         if (data) {
-          // Transform the data to match our Subject type using type assertion for safety
+          // Transform the data to match our Subject type
           const formattedSubjects: Subject[] = data.map(subject => ({
-            id: subject.id as string,
-            name: subject.name as string,
-            description: (subject.description as string) || ''
+            id: subject.id,
+            name: subject.name,
+            description: subject.description || ''
           }));
           
           setSubjects(formattedSubjects);

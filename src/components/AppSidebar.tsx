@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useMediaQuery } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -14,14 +14,9 @@ import {
   FileBarChart,
   Settings,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  MessageSquare,
-  Mail
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { ScrollArea } from './ui/scroll-area';
 import { toast } from 'sonner';
 import { 
   Sidebar, 
@@ -86,7 +81,6 @@ interface AppSidebarProps {
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ className }) => {
   const location = useLocation();
-  const isMobile = useMediaQuery('(max-width: 768px)');
   const { logout } = useAuth();
 
   const handleLogout = () => {
