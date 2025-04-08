@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useMediaQuery } from '@/hooks/use-mobile';
@@ -38,7 +39,7 @@ const sidebarItems = [
   {
     title: 'Classes',
     path: '/classes',
-    icon: <Calendar size={20} />,
+    icon: <CalendarDays size={20} />,
   },
   {
     title: 'Employees',

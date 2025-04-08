@@ -10,7 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
-  hasPermission: (permission: string) => boolean;
+  hasPermission: (permission: string | string[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -106,7 +106,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     toast.success('Logged out successfully');
   };
 
-  const hasPermission = (permission: string): boolean => {
+  const hasPermission = (permission: string | string[]): boolean => {
     if (!user || !user.role) return false;
     
     // Get permissions for the user's role
@@ -115,6 +115,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Admin has all permissions
     if (user.role === 'admin') return true;
     
+    // Check if the user has any of the required permissions
+    if (Array.isArray(permission)) {
+      return permission.some(p => permissions.includes(p));
+    }
+    
+    // Check for a single permission
     return permissions.includes(permission);
   };
 
