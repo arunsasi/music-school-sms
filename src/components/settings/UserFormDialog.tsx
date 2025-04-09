@@ -28,7 +28,8 @@ const userFormSchema = z.object({
 
 type UserFormValues = z.infer<typeof userFormSchema>;
 
-type User = {
+// Use consistent UserItem type
+type UserItem = {
   id: string;
   name: string;
   email: string;
@@ -40,7 +41,7 @@ interface UserFormDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: UserFormValues) => void;
-  selectedUser: User | null;
+  selectedUser: UserItem | null;
   isSubmitting: boolean;
 }
 

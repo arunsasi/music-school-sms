@@ -10,19 +10,20 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { UserRole } from '@/types';
 
-type User = {
+type UserItem = {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'accounts' | 'teacher';
+  role: UserRole;
   active: boolean;
 };
 
 interface UserListProps {
-  users: User[];
-  onEditUser: (user: User) => void;
-  onDeleteUser: (user: User) => void;
+  users: UserItem[];
+  onEditUser: (user: UserItem) => void;
+  onDeleteUser: (user: UserItem) => void;
   onToggleUserStatus: (userId: string) => void;
 }
 

@@ -13,7 +13,8 @@ import UserSearchBar from './UserSearchBar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 
-type User = {
+// Define a local User type to avoid conflicts with Supabase's User type
+type UserItem = {
   id: string;
   name: string;
   email: string;
@@ -23,11 +24,11 @@ type User = {
 
 const UserManagementTab = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserItem[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserItem[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { hasPermission } = useAuth();
@@ -91,7 +92,7 @@ const UserManagementTab = () => {
             full_name: data.name,
             email: data.email,
             role: data.role,
-            updated_at: new Date()
+            updated_at: new Date().toISOString() // Convert Date to string
           })
           .eq('id', selectedUser.id);
           
@@ -121,7 +122,7 @@ const UserManagementTab = () => {
         
         // Add the new user to local state
         if (authData.user) {
-          const newUser = {
+          const newUser: UserItem = {
             id: authData.user.id,
             name: data.name,
             email: data.email,
@@ -142,12 +143,12 @@ const UserManagementTab = () => {
     }
   };
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: UserItem) => {
     setSelectedUser(user);
     setIsDialogOpen(true);
   };
 
-  const handleDeleteUser = (user: User) => {
+  const handleDeleteUser = (user: UserItem) => {
     setSelectedUser(user);
     setIsDeleteDialogOpen(true);
   };
