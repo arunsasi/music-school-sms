@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, CheckSquare } from 'lucide-react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { UserRole } from '@/types';
@@ -12,6 +12,7 @@ import DeleteUserDialog from './DeleteUserDialog';
 import UserSearchBar from './UserSearchBar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // Define a local User type to avoid conflicts with Supabase's User type
 type UserItem = {
@@ -31,6 +32,8 @@ const UserManagementTab = () => {
   const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const { hasPermission } = useAuth();
 
   // Fetch users from Supabase on component mount
@@ -188,6 +191,54 @@ const UserManagementTab = () => {
     toast.success(`User ${user.active ? 'deactivated' : 'activated'} successfully`);
   };
 
+  const handleBulkAction = async (action: string, userIds: string[]) => {
+    if (userIds.length === 0) return;
+    
+    try {
+      if (action === 'delete') {
+        setSelectedUserIds(userIds);
+        setIsBulkDeleteDialogOpen(true);
+        return;
+      }
+      
+      if (action === 'activate' || action === 'deactivate') {
+        const isActive = action === 'activate';
+        const updatedUsers = users.map(user => 
+          userIds.includes(user.id) ? { ...user, active: isActive } : user
+        );
+        setUsers(updatedUsers);
+        toast.success(`${userIds.length} users ${isActive ? 'activated' : 'deactivated'} successfully`);
+      }
+    } catch (error: any) {
+      console.error(`Error during bulk ${action}:`, error);
+      toast.error(`Failed to ${action} users`);
+    }
+  };
+
+  const confirmBulkDelete = async () => {
+    if (selectedUserIds.length === 0) return;
+    
+    try {
+      // In a real app, we would use a batch operation or transaction
+      for (const userId of selectedUserIds) {
+        const { error } = await supabase.auth.admin.deleteUser(userId);
+        if (error) throw error;
+      }
+      
+      // Update local state
+      const updatedUsers = users.filter(user => !selectedUserIds.includes(user.id));
+      setUsers(updatedUsers);
+      
+      toast.success(`${selectedUserIds.length} users deleted successfully`);
+    } catch (error: any) {
+      console.error('Error deleting users:', error);
+      toast.error(error.message || 'Failed to delete users');
+    } finally {
+      setIsBulkDeleteDialogOpen(false);
+      setSelectedUserIds([]);
+    }
+  };
+
   const openCreateDialog = () => {
     setSelectedUser(null);
     setIsDialogOpen(true);
@@ -234,6 +285,9 @@ const UserManagementTab = () => {
             <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox />
+                  </TableHead>
                   <TableHead className="w-[200px]">Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
@@ -244,7 +298,7 @@ const UserManagementTab = () => {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableHead colSpan={5} className="h-24 text-center">
+                    <TableHead colSpan={6} className="h-24 text-center">
                       <div className="flex justify-center items-center">
                         <Loader2 className="h-6 w-6 animate-spin mr-2" />
                         Loading users...
@@ -257,6 +311,7 @@ const UserManagementTab = () => {
                     onEditUser={handleEditUser}
                     onDeleteUser={handleDeleteUser}
                     onToggleUserStatus={handleToggleUserStatus}
+                    onBulkAction={handleBulkAction}
                   />
                 )}
               </TableBody>
@@ -280,6 +335,15 @@ const UserManagementTab = () => {
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={confirmDeleteUser}
         userName={selectedUser?.name || ''}
+      />
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <DeleteUserDialog 
+        isOpen={isBulkDeleteDialogOpen}
+        onClose={() => setIsBulkDeleteDialogOpen(false)}
+        onConfirm={confirmBulkDelete}
+        userName={`${selectedUserIds.length} users`}
+        isBulkDelete={true}
       />
     </div>
   );

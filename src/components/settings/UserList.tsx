@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Edit, MoreHorizontal } from 'lucide-react';
+import { CheckCircle, XCircle, Edit, MoreHorizontal, Trash2, CheckSquare } from 'lucide-react';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from '@/components/ui/checkbox';
 import { UserRole } from '@/types';
 
 type UserItem = {
@@ -25,18 +26,52 @@ interface UserListProps {
   onEditUser: (user: UserItem) => void;
   onDeleteUser: (user: UserItem) => void;
   onToggleUserStatus: (userId: string) => void;
+  onBulkAction?: (action: string, userIds: string[]) => void;
 }
 
 const UserList: React.FC<UserListProps> = ({ 
   users, 
   onEditUser, 
   onDeleteUser, 
-  onToggleUserStatus 
+  onToggleUserStatus,
+  onBulkAction 
 }) => {
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [selectAll, setSelectAll] = useState(false);
+
+  const handleUserSelect = (userId: string, isChecked: boolean) => {
+    const newSelectedUsers = new Set(selectedUsers);
+    
+    if (isChecked) {
+      newSelectedUsers.add(userId);
+    } else {
+      newSelectedUsers.delete(userId);
+    }
+    
+    setSelectedUsers(newSelectedUsers);
+  };
+
+  const handleSelectAll = (isChecked: boolean) => {
+    setSelectAll(isChecked);
+    
+    if (isChecked) {
+      const allUserIds = users.map(user => user.id);
+      setSelectedUsers(new Set(allUserIds));
+    } else {
+      setSelectedUsers(new Set());
+    }
+  };
+
+  const handleBulkAction = (action: string) => {
+    if (onBulkAction && selectedUsers.size > 0) {
+      onBulkAction(action, Array.from(selectedUsers));
+    }
+  };
+
   if (users.length === 0) {
     return (
       <TableRow>
-        <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+        <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
           No users found.
         </TableCell>
       </TableRow>
@@ -45,8 +80,50 @@ const UserList: React.FC<UserListProps> = ({
 
   return (
     <>
+      {selectedUsers.size > 0 && (
+        <div className="flex items-center justify-between py-2 px-4 bg-muted/40 rounded-md mb-2">
+          <div className="text-sm">
+            {selectedUsers.size} user{selectedUsers.size > 1 ? 's' : ''} selected
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleBulkAction('activate')}
+              className="text-xs"
+            >
+              <CheckCircle className="mr-1 h-3 w-3" />
+              Activate
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleBulkAction('deactivate')}
+              className="text-xs"
+            >
+              <XCircle className="mr-1 h-3 w-3" />
+              Deactivate
+            </Button>
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={() => handleBulkAction('delete')}
+              className="text-xs"
+            >
+              <Trash2 className="mr-1 h-3 w-3" />
+              Delete
+            </Button>
+          </div>
+        </div>
+      )}
       {users.map((user) => (
-        <TableRow key={user.id}>
+        <TableRow key={user.id} className="hover:bg-muted/50 transition-colors">
+          <TableCell className="w-10">
+            <Checkbox
+              checked={selectedUsers.has(user.id)}
+              onCheckedChange={(checked: boolean) => handleUserSelect(user.id, checked)}
+            />
+          </TableCell>
           <TableCell className="font-medium">{user.name}</TableCell>
           <TableCell>{user.email}</TableCell>
           <TableCell className="capitalize">{user.role}</TableCell>
@@ -95,24 +172,7 @@ const UserList: React.FC<UserListProps> = ({
                   className="text-destructive focus:text-destructive"
                 >
                   <span className="flex items-center">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="16" 
-                      height="16" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      className="mr-2"
-                    >
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                      <line x1="10" y1="11" x2="10" y2="17"></line>
-                      <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
+                    <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                   </span>
                 </DropdownMenuItem>

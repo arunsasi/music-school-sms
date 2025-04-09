@@ -9,38 +9,53 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
+import { AlertTriangle } from 'lucide-react';
 
 interface DeleteUserDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   userName: string;
+  isBulkDelete?: boolean;
 }
 
-const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  userName 
+const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  userName,
+  isBulkDelete = false
 }) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogTitle className="flex items-center text-destructive">
+            <AlertTriangle className="h-5 w-5 mr-2" />
+            {isBulkDelete ? 'Delete Multiple Users' : 'Delete User'}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete the user account for {userName}. 
-            This action cannot be undone.
+            {isBulkDelete ? (
+              <>
+                Are you sure you want to delete <strong>{userName}</strong>?<br />
+                This action will permanently remove all selected user accounts and cannot be undone.
+              </>
+            ) : (
+              <>
+                Are you sure you want to delete <strong>{userName}</strong>?<br />
+                This action will permanently remove the user account and cannot be undone.
+              </>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction 
-            onClick={onConfirm}
+          <AlertDialogAction
+            onClick={onConfirm} 
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            Delete
+            Delete {isBulkDelete ? 'Users' : 'User'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
