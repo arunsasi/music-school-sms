@@ -14,6 +14,16 @@ export const supabase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true,
+      debug: true // Enable debug mode to see detailed auth logs
     }
   }
 );
+
+// Utility function to clean auth state - can be used when debugging
+export const cleanupAuthState = () => {
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+};

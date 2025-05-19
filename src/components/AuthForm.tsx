@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label';
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { Lock, Mail, Loader2, UserPlus } from 'lucide-react';
+import { Lock, Mail, Loader2, UserPlus, AlertCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -28,10 +29,15 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 const AuthForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+  const [authError, setAuthError] = useState<string | null>(null);
   const { login, signup } = useAuth();
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    }
   });
 
   const signupForm = useForm<SignupFormValues>({
@@ -40,10 +46,12 @@ const AuthForm: React.FC = () => {
 
   const onLoginSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
+    setAuthError(null);
     try {
       await login(data.email, data.password);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
+      setAuthError(error.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
@@ -51,16 +59,23 @@ const AuthForm: React.FC = () => {
 
   const onSignupSubmit = async (data: SignupFormValues) => {
     setIsLoading(true);
+    setAuthError(null);
     try {
       await signup(data.email, data.password, data.fullName);
       toast.success('Account created successfully! Please check your email for verification.');
       setActiveTab('login');
       signupForm.reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup error:', error);
+      setAuthError(error.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleTabChange = (value: string) => {
+    setAuthError(null);
+    setActiveTab(value as 'login' | 'signup');
   };
 
   return (
@@ -72,7 +87,16 @@ const AuthForm: React.FC = () => {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'login' | 'signup')} className="w-full">
+      {authError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            {authError}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="signup">Sign up</TabsTrigger>

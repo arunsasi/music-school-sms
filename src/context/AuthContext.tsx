@@ -34,6 +34,21 @@ const rolePermissions: Record<UserRole, string[]> = {
   parent: ['view_student_info']
 };
 
+// Auth state cleanup utility
+const cleanupAuthState = () => {
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+  
+  Object.keys(sessionStorage || {}).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+};
+
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -50,32 +65,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
-          try {
-            const { data: profile, error } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single();
+          // Use setTimeout to avoid potential deadlocks
+          setTimeout(async () => {
+            try {
+              const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+                
+              if (error) throw error;
               
-            if (error) throw error;
-            
-            if (profile) {
-              const userData: User = {
-                id: session.user.id,
-                email: session.user.email,
-                name: profile.full_name,
-                role: profile.role as UserRole,
-                avatar: '/placeholder.svg'
-              };
-              
-              setUser(userData);
-              setUserRole(profile.role as UserRole);
+              if (profile) {
+                const userData: User = {
+                  id: session.user.id,
+                  email: session.user.email,
+                  name: profile.full_name,
+                  role: profile.role as UserRole,
+                  avatar: '/placeholder.svg'
+                };
+                
+                setUser(userData);
+                setUserRole(profile.role as UserRole);
+              }
+            } catch (error) {
+              console.error('Error fetching user profile:', error);
+              setUser(null);
+              setUserRole(null);
             }
-          } catch (error) {
-            console.error('Error fetching user profile:', error);
-            setUser(null);
-            setUserRole(null);
-          }
+          }, 0);
         } else {
           setUser(null);
           setUserRole(null);
@@ -123,32 +141,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
+      console.log("Attempting login for:", email);
+      
       // Clean up any existing auth state before login
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-          localStorage.removeItem(key);
-        }
-      });
+      cleanupAuthState();
 
       // Attempt global sign out before sign in
       try {
         await supabase.auth.signOut({ scope: 'global' });
       } catch (err) {
-        // Continue even if this fails
+        console.log("Pre-signin signout failed (this is usually ok):", err);
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("Starting login process with clean state");
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase auth error:", error);
+        throw error;
+      }
       
-      navigate('/dashboard');
+      console.log("Login successful, navigating to dashboard");
       toast.success('Logged in successfully');
+      
+      // Force a full page refresh to ensure a clean state
+      window.location.href = '/dashboard';
     } catch (error: any) {
       console.error('Error logging in:', error.message);
-      toast.error('Login failed. Please check your credentials.');
+      toast.error(`Login failed. ${error.message || 'Please check your credentials.'}`);
       throw error;
     } finally {
       setLoading(false);
@@ -158,6 +181,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (email: string, password: string, fullName: string, role: UserRole = 'student'): Promise<void> => {
     setLoading(true);
     try {
+      // Clean up any existing auth state before signup
+      cleanupAuthState();
+      
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -184,17 +210,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     try {
       // Clean up any existing auth state before logout
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-          localStorage.removeItem(key);
-        }
-      });
+      cleanupAuthState();
 
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) throw error;
       
       setUser(null);
-      navigate('/');
       toast.success('Logged out successfully');
 
       // Force page reload for a clean state
