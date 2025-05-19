@@ -123,6 +123,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
+      // Clean up any existing auth state before login
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Attempt global sign out before sign in
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -169,12 +183,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async (): Promise<void> => {
     try {
-      const { error } = await supabase.auth.signOut();
+      // Clean up any existing auth state before logout
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) throw error;
       
       setUser(null);
       navigate('/');
       toast.success('Logged out successfully');
+
+      // Force page reload for a clean state
+      window.location.href = '/';
     } catch (error: any) {
       console.error('Error logging out:', error.message);
       toast.error('Failed to log out');

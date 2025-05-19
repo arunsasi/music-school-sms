@@ -142,7 +142,7 @@ const AuthForm: React.FC = () => {
 
             <div className="text-center text-sm">
               <p className="text-muted-foreground">
-                Use demo account: <span className="font-medium">admin@example.com</span> / <span className="font-medium">password123</span>
+                Use demo account: <span className="font-medium">admin@musicschool.com</span> / <span className="font-medium">password123</span>
               </p>
             </div>
           </form>
