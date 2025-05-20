@@ -8,9 +8,10 @@ import { Label } from '@/components/ui/label';
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { Lock, Mail, Loader2, UserPlus, AlertCircle } from 'lucide-react';
+import { Lock, Mail, Loader2, UserPlus, AlertCircle, RefreshCw } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { cleanupAuthState } from '@/integrations/supabase/client';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -30,6 +31,7 @@ const AuthForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isCleaningState, setIsCleaningState] = useState(false);
   const { login, signup } = useAuth();
 
   const loginForm = useForm<LoginFormValues>({
@@ -78,6 +80,23 @@ const AuthForm: React.FC = () => {
     setActiveTab(value as 'login' | 'signup');
   };
 
+  // Function to clear auth state and reset forms
+  const handleResetAuthState = async () => {
+    setIsCleaningState(true);
+    try {
+      setAuthError(null);
+      cleanupAuthState();
+      loginForm.reset();
+      signupForm.reset();
+      toast.success('Authentication state has been reset');
+    } catch (error) {
+      console.error('Error clearing auth state:', error);
+      toast.error('Failed to reset authentication state');
+    } finally {
+      setIsCleaningState(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
@@ -90,9 +109,23 @@ const AuthForm: React.FC = () => {
       {authError && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+          <AlertDescription className="flex-1">
             {authError}
           </AlertDescription>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="ml-2 h-6"
+            onClick={handleResetAuthState}
+            disabled={isCleaningState}
+          >
+            {isCleaningState ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3 w-3" />
+            )}
+            <span className="sr-only">Reset Auth State</span>
+          </Button>
         </Alert>
       )}
 
@@ -151,7 +184,7 @@ const AuthForm: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full bg-music-500 text-white hover:bg-music-600"
+              className="w-full"
               disabled={isLoading}
             >
               {isLoading ? (
