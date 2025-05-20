@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, cleanupAuthState, enhancedSignIn } from '@/integrations/supabase/client';
+import { supabase, cleanupAuthState, enhancedSignIn, enhancedSignUp } from '@/integrations/supabase/client';
 import { User, UserRole } from '@/types';
 import { toast } from 'sonner';
 
@@ -145,7 +145,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       console.log("Starting login process for:", email);
       
-      // Use our enhanced sign-in function
+      // Use our enhanced sign-in function for admin or test account
       const { data, error } = await enhancedSignIn(email, password);
       
       if (error) {
@@ -170,20 +170,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (email: string, password: string, fullName: string, role: UserRole = 'student'): Promise<void> => {
     setLoading(true);
     try {
-      // Clean up any existing auth state before signup
-      cleanupAuthState();
-      
       console.log("Starting signup process for:", email);
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            role: role
-          }
-        }
-      });
+      
+      // Use our enhanced sign-up function
+      const { data, error } = await enhancedSignUp(email, password, fullName, role);
       
       if (error) {
         console.error("Signup error:", error);
@@ -194,7 +184,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       toast.success('Account created successfully! Please check your email for verification.');
     } catch (error: any) {
       console.error('Error signing up:', error.message);
-      toast.error('Registration failed. Please try again.');
+      toast.error(`Registration failed. ${error.message || 'Please try again.'}`);
       throw error;
     } finally {
       setLoading(false);

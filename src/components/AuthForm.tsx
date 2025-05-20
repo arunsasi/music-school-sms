@@ -97,6 +97,13 @@ const AuthForm: React.FC = () => {
     }
   };
 
+  // Function to use test account
+  const useTestAccount = () => {
+    loginForm.setValue('email', 'admin@musicschool.com');
+    loginForm.setValue('password', 'password123');
+    toast.info('Test account credentials filled');
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
@@ -198,8 +205,17 @@ const AuthForm: React.FC = () => {
             </Button>
 
             <div className="text-center text-sm">
-              <p className="text-muted-foreground">
-                Use demo account: <span className="font-medium">admin@musicschool.com</span> / <span className="font-medium">password123</span>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs text-muted-foreground h-auto py-1"
+                onClick={useTestAccount}
+              >
+                Use test account
+              </Button>
+              <p className="text-muted-foreground mt-1">
+                <span className="font-medium">admin@musicschool.com</span> / <span className="font-medium">password123</span>
               </p>
             </div>
           </form>
